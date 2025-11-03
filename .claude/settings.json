@@ -1,0 +1,15 @@
+{
+  "enableAllProjectMcpServers": true,
+  "permissions": {
+    "allow": [
+      "mcp__github",
+      "mcp__context7",
+      "Bash(.specify/scripts/bash/check-prerequisites.sh:*)",
+      "Bash(git add:*)",
+      "Read(.env.sample)",
+      "Write(.env.sample)"
+    ],
+    "deny": ["Read(.env*)", "Write(.env*)", "Bash(rm -rf:*)"],
+    "ask": []
+  }
+}
