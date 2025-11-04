@@ -2,13 +2,9 @@ name: Lint と Format のチェック
 
 on:
   pull_request:
-    branches:
-      - main
-      - develop
   push:
     branches:
       - main
-      - develop
 
 jobs:
   lint:
