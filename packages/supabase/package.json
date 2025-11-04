@@ -1,12 +1,12 @@
 {
+	"dependencies": {
+		"supabase": "^2.54.11"
+	},
 	"name": "@repo/supabase",
-	"version": "0.0.0",
+	"packageManager": "pnpm@10.12.4",
 	"private": true,
 	"scripts": {
 		"supabase:start": "supabase start"
 	},
-	"packageManager": "pnpm@10.12.4",
-	"dependencies": {
-		"supabase": "^2.54.11"
-	}
+	"version": "0.0.0"
 }

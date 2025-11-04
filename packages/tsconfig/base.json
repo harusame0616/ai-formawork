@@ -1,22 +1,22 @@
 {
-  "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "Default",
-  "compilerOptions": {
-    "esModuleInterop": true,
-    "incremental": true,
-    "isolatedModules": true,
-    "lib": ["esnext", "DOM", "DOM.Iterable"],
-    "module": "esnext",
-    "moduleDetection": "force",
-    "moduleResolution": "bundler",
-    "noUncheckedIndexedAccess": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "target": "ES2022"
-  }
+	"$schema": "https://json.schemastore.org/tsconfig",
+	"compilerOptions": {
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"incremental": true,
+		"isolatedModules": true,
+		"lib": ["esnext", "DOM", "DOM.Iterable"],
+		"module": "esnext",
+		"moduleDetection": "force",
+		"moduleResolution": "bundler",
+		"noEmit": true,
+		"noPropertyAccessFromIndexSignature": true,
+		"noUncheckedIndexedAccess": true,
+		"resolveJsonModule": true,
+		"skipLibCheck": true,
+		"strict": true,
+		"target": "ES2022"
+	},
+	"display": "Default"
 }
