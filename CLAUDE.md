@@ -19,6 +19,7 @@
 - **ファイル名**: kebab（例: `user-profile.tsx`）
 - **関数名**: camel（例: `createUser`）
 - **変数名**: camel（例: `fooBar`）
+- **コンポーネント名: pascal（例：LoginButton）
 - **Object Literal**: pascal（例: `const UserStatus = { Active: 'active', Inactive: 'inactive' } as const`）
 
 ## ユーザー体験
