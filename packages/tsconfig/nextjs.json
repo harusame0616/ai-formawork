@@ -3,7 +3,6 @@
   "display": "nextjs",
   "extends": "./base.json",
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"],
     "jsx": "react-jsx",
     "paths": {
       "@/*": ["./*"]
