@@ -1,5 +1,14 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "display": "web",
-  "extends": "@workspace/tsconfig/nextjs.json"
+  "extends": "@workspace/tsconfig/nextjs.json",
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts",
+    "**/*.mts"
+  ],
+  "exclude": ["node_modules"]
 }
