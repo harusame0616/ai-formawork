@@ -1,0 +1,11 @@
+{
+	"compilerOptions": {
+		"baseUrl": ".",
+		"paths": {
+			"@workspace/ui/*": ["./src/*"]
+		}
+	},
+	"exclude": ["node_modules", "dist"],
+	"extends": "@workspace/tsconfig/react.json",
+	"include": ["."]
+}
