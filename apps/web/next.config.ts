@@ -2,7 +2,6 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
 	cacheComponents: true,
-	typedRoutes: true,
 	cacheLife: {
 		permanent: {
 			expire: Number.MAX_VALUE,
@@ -10,6 +9,7 @@ const nextConfig: NextConfig = {
 			stale: Number.MAX_VALUE,
 		},
 	},
+	typedRoutes: true,
 };
 
 export default nextConfig;
