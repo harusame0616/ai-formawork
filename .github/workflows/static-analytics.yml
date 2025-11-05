@@ -27,8 +27,10 @@ jobs:
       - name: 依存関係をインストール
         run: pnpm install --frozen-lockfile
 
-      - name: Biome CI チェックを実行
+      - name: Lint & Format チェック
         run: pnpm biome ci .
 
-      - name: Knip チェックを実行
+      - name: デッドコードチェック
         run: pnpm knip
+      - name: スペルチェック
+        run: pnpm cspell .

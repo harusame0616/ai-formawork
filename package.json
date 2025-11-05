@@ -1,11 +1,12 @@
 {
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
+		"cspell": "^9.2.2",
 		"knip": "catalog:"
 	},
 	"packageManager": "pnpm@10.12.4",
 	"scripts": {
-		"validate:check": "biome check . && knip",
+		"validate:check": "biome check . && knip && cspell .",
 		"validate:fix": "biome check --write . && knip --fix --allow-remove-files"
 	}
 }

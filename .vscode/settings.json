@@ -17,7 +17,6 @@
 	"[typescriptreact]": {
 		"editor.defaultFormatter": "biomejs.biome"
 	},
-	"cSpell.words": ["knip"],
 	"editor.codeActionsOnSave": {
 		"source.action.useSortedAttributes.biome": "explicit",
 		"source.action.useSortedKeys.biome": "explicit",

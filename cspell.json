@@ -1,0 +1,11 @@
+{
+	"ignorePaths": [
+		"**/*.svg",
+		"**/*tsconfig.tsbuildinfo",
+		"pnpm-lock.yaml",
+		"packages/supabase/config.toml"
+	],
+	"language": "en",
+	"version": "0.2",
+	"words": ["wcag", "supabase", "clsx", "lucide", "biomejs", "knip", "unrs"]
+}
