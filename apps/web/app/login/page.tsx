@@ -1,3 +1,6 @@
+"use client";
+
+import { valibotResolver } from "@hookform/resolvers/valibot";
 import { Button } from "@workspace/ui/components/button";
 import {
 	Card,
@@ -6,55 +9,96 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@workspace/ui/components/card";
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@workspace/ui/components/form";
 import { Input } from "@workspace/ui/components/input";
-import { Label } from "@workspace/ui/components/label";
-import Link from "next/link";
+import { useForm } from "react-hook-form";
+import * as v from "valibot";
+import { passwordSchema, usernameSchema } from "../../features/auth/auth";
+
+const loginFormSchema = v.object({
+	password: passwordSchema,
+	username: usernameSchema,
+});
+
+type LoginFormSchema = v.InferOutput<typeof loginFormSchema>;
 
 export default function LoginPage() {
+	const form = useForm<LoginFormSchema>({
+		defaultValues: {
+			password: "",
+			username: "",
+		},
+		resolver: valibotResolver(loginFormSchema),
+	});
+
+	function onSubmit(values: LoginFormSchema) {
+		console.log(values);
+		// TODO: ログイン処理を実装
+	}
+
 	return (
 		<div className="flex min-h-screen items-center justify-center p-4">
 			<Card className="w-full max-w-sm">
 				<CardHeader>
-					<CardTitle className="text-2xl">Login</CardTitle>
-					<CardDescription>
-						Enter your email below to login to your account
-					</CardDescription>
+					<CardTitle className="text-2xl">ログイン</CardTitle>
+					<CardDescription>FORMAWORK 顧客カルテへログイン</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<form>
-						<div className="flex flex-col gap-6">
-							<div className="grid gap-2">
-								<Label htmlFor="email">Email</Label>
-								<Input
-									id="email"
-									placeholder="m@example.com"
-									required
-									type="email"
-								/>
-							</div>
-							<div className="grid gap-2">
-								<div className="flex items-center">
-									<Label htmlFor="password">Password</Label>
-									<Link
-										className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-										href="/forgot-password"
-									>
-										Forgot your password?
-									</Link>
-								</div>
-								<Input id="password" required type="password" />
-							</div>
+					<Form {...form}>
+						<form
+							className="flex flex-col gap-6"
+							onSubmit={form.handleSubmit(onSubmit)}
+						>
+							<FormField
+								control={form.control}
+								name="username"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>メールアドレス</FormLabel>
+										<FormControl>
+											<Input
+												autoComplete="username"
+												id="username"
+												type="email"
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="password"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>パスワード</FormLabel>
+										<FormControl>
+											<Input
+												autoComplete="current-password"
+												type="password"
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
 							<Button className="w-full" type="submit">
-								Login
+								ログイン
 							</Button>
-						</div>
-						<div className="mt-4 text-center text-sm">
-							Don't have an account?{" "}
-							<Link className="underline underline-offset-4" href="/signup">
-								Sign up
-							</Link>
-						</div>
-					</form>
+							<div className="text-center text-sm text-muted-foreground">
+								アカウントがない場合、パスワードを忘れた場合は管理者にお問い合わせください。
+							</div>
+						</form>
+					</Form>
 				</CardContent>
 			</Card>
 		</div>

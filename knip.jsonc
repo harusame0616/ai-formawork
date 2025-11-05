@@ -18,11 +18,9 @@
 			// @source ディレクティブが Unresolved Imports 違反として検出されるため無視
 			"ignore": ["src/styles/globals.css"],
 			"ignoreDependencies": [
-				"react-dom",
 				"@tailwindcss/postcss",
 				// turbo/gen 必要か調査
-				"@turbo/gen",
-				"@types/react-dom"
+				"@turbo/gen"
 			]
 		}
 	}
