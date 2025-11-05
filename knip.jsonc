@@ -3,7 +3,11 @@
 	"ignoreDependencies": [],
 	"workspaces": {
 		"apps/web": {
-			"ignoreDependencies": ["tailwindcss"]
+			"ignoreDependencies": [
+				"tailwindcss",
+				// Next で builtin されているため不要
+				"postcss"
+			]
 		},
 		"packages/tsconfig": {
 			// tsconfig の plugin 設定を使っている。

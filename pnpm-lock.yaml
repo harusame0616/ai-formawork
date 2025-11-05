@@ -39,12 +39,6 @@ catalogs:
     next:
       specifier: 16.0.1
       version: 16.0.1
-    postcss:
-      specifier: 8.5.6
-      version: 8.5.6
-    postcss-load-config:
-      specifier: 6.0.1
-      version: 6.0.1
     react:
       specifier: 19.2.0
       version: 19.2.0
@@ -108,9 +102,6 @@ importers:
       '@workspace/tsconfig':
         specifier: 'workspace:'
         version: link:../../packages/tsconfig
-      postcss:
-        specifier: 'catalog:'
-        version: 8.5.6
       tailwindcss:
         specifier: 'catalog:'
         version: 4.1.16
@@ -168,9 +159,6 @@ importers:
       '@workspace/tsconfig':
         specifier: 'workspace:'
         version: link:../tsconfig
-      postcss-load-config:
-        specifier: 'catalog:'
-        version: 6.0.1(jiti@2.6.1)(postcss@8.5.6)
       tailwindcss:
         specifier: 'catalog:'
         version: 4.1.16
@@ -1284,10 +1272,6 @@ packages:
     resolution: {integrity: sha512-utfs7Pr5uJyyvDETitgsaqSyjCb2qNRAtuqUeWIAKztsOYdcACf2KtARYXg2pSvhkt+9NfoaNY7fxjl6nuMjIQ==}
     engines: {node: '>= 12.0.0'}
 
-  lilconfig@3.1.3:
-    resolution: {integrity: sha512-/vlFKAoH5Cgt3Ie+JLhRbwOsCQePABiU3tJ1egGvyQ+33R/vcwM2Zl2QR/LzjsBeItPt3oSVXapn+m4nQDvpzw==}
-    engines: {node: '>=14'}
-
   lodash.get@4.4.2:
     resolution: {integrity: sha512-z+Uw/vLuy6gQe8cfaFWD7p0wVv8fJl3mbzXh33RS+0oW2wvUqiRXiQ69gLWSLpgB5/6sU+r6BlQR0MBILadqTQ==}
     deprecated: This package is deprecated. Use the optional chaining (?.) operator instead.
@@ -1490,24 +1474,6 @@ packages:
   picomatch@4.0.3:
     resolution: {integrity: sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q==}
     engines: {node: '>=12'}
-
-  postcss-load-config@6.0.1:
-    resolution: {integrity: sha512-oPtTM4oerL+UXmx+93ytZVN82RrlY/wPUV8IeDxFrzIjXOLF1pN+EmKPLbubvKHT2HC20xXsCAH2Z+CKV6Oz/g==}
-    engines: {node: '>= 18'}
-    peerDependencies:
-      jiti: '>=1.21.0'
-      postcss: '>=8.0.9'
-      tsx: ^4.8.1
-      yaml: ^2.4.2
-    peerDependenciesMeta:
-      jiti:
-        optional: true
-      postcss:
-        optional: true
-      tsx:
-        optional: true
-      yaml:
-        optional: true
 
   postcss@8.4.31:
     resolution: {integrity: sha512-PS08Iboia9mts/2ygV3eLpY5ghnUcfLV/EXTOW1E2qYxJKGGBUtNjN76FYHnMs36RmARn41bC0AZmn+rR0OVpQ==}
@@ -2884,8 +2850,6 @@ snapshots:
       lightningcss-win32-arm64-msvc: 1.30.2
       lightningcss-win32-x64-msvc: 1.30.2
 
-  lilconfig@3.1.3: {}
-
   lodash.get@4.4.2: {}
 
   lodash@4.17.21: {}
@@ -3114,13 +3078,6 @@ snapshots:
   picomatch@2.3.1: {}
 
   picomatch@4.0.3: {}
-
-  postcss-load-config@6.0.1(jiti@2.6.1)(postcss@8.5.6):
-    dependencies:
-      lilconfig: 3.1.3
-    optionalDependencies:
-      jiti: 2.6.1
-      postcss: 8.5.6
 
   postcss@8.4.31:
     dependencies:

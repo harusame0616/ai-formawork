@@ -15,7 +15,6 @@
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
 		"@workspace/tsconfig": "workspace:",
-		"postcss-load-config": "catalog:",
 		"tailwindcss": "catalog:",
 		"typescript": "catalog:"
 	},
