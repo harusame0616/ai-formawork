@@ -7,5 +7,15 @@
 	],
 	"language": "en",
 	"version": "0.2",
-	"words": ["wcag", "supabase", "clsx", "lucide", "biomejs", "knip", "unrs"]
+	"words": [
+		"biomejs",
+		"clsx",
+		"FORMAWORK",
+		"harusame",
+		"knip",
+		"lucide",
+		"supabase",
+		"unrs",
+		"wcag"
+	]
 }

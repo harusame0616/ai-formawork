@@ -1,6 +1,14 @@
 {
 	"dependencies": {
-		"supabase": "catalog:"
+		"@supabase/ssr": "^0.7.0",
+		"@supabase/supabase-js": "^2.79.0",
+		"next": "catalog:",
+		"supabase": "catalog:",
+		"valibot": "^1.1.0"
+	},
+	"exports": {
+		"./config": "./src/config.ts",
+		"./nextjs/server": "./src/nextjs/server.ts"
 	},
 	"name": "@repo/supabase",
 	"packageManager": "pnpm@10.12.4",
