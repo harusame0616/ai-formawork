@@ -1,0 +1,26 @@
+{
+	"dependencies": {
+		"drizzle-orm": "^0.44.7",
+		"postgres": "^3.4.5"
+	},
+	"devDependencies": {
+		"@types/node": "catalog:",
+		"@workspace/tsconfig": "workspace:",
+		"drizzle-kit": "^0.31.0",
+		"typescript": "catalog:"
+	},
+	"exports": {
+		"./client": "./src/client.ts",
+		"./schema": "./src/schema/index.ts"
+	},
+	"name": "@workspace/db",
+	"private": true,
+	"scripts": {
+		"db:generate": "drizzle-kit generate",
+		"db:migrate": "drizzle-kit migrate",
+		"db:push": "drizzle-kit push",
+		"db:studio": "drizzle-kit studio"
+	},
+	"type": "module",
+	"version": "0.0.0"
+}
