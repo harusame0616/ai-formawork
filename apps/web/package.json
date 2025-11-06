@@ -1,7 +1,10 @@
 {
 	"dependencies": {
+		"@harusame0616/result": "^0.1.2",
 		"@hookform/resolvers": "^5.2.2",
+		"@repo/supabase": "workspace:",
 		"@workspace/ui": "workspace:",
+		"lucide-react": "catalog:",
 		"next": "catalog:",
 		"react": "catalog:",
 		"react-dom": "catalog:",

@@ -1,7 +1,7 @@
 import * as v from "valibot";
 
 /**
- * ユーザー名（メールアドレス）のバリデーションルール
+ * ユーザー名(メールアドレス)のバリデーションルール
  */
 export const usernameSchema = v.pipe(
 	v.string("メールアドレスを入力してください"),
@@ -17,7 +17,7 @@ export const usernameSchema = v.pipe(
  * - 数字を含む
  * - 記号を含む
  */
-export const passwordSchema = v.pipe(
+const _passwordSchema = v.pipe(
 	v.string("パスワードを入力してください"),
 	v.nonEmpty("パスワードを入力してください"),
 	v.minLength(8, "パスワードは8文字以上である必要があります"),
@@ -30,3 +30,16 @@ export const passwordSchema = v.pipe(
 		"パスワードには記号を含む必要があります",
 	),
 );
+
+// ログイン時はパスワードの条件が漏洩しないように詳細なバリデーションを行わない
+export const loginPasswordSchema = v.pipe(
+	v.string("パスワードを入力してください"),
+	v.nonEmpty("パスワードを入力してください"),
+);
+
+export const loginSchema = v.object({
+	password: loginPasswordSchema,
+	username: usernameSchema,
+});
+
+export type LoginSchema = v.InferOutput<typeof loginSchema>;
