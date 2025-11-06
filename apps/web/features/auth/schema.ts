@@ -3,7 +3,7 @@ import * as v from "valibot";
 /**
  * ユーザー名(メールアドレス)のバリデーションルール
  */
-export const usernameSchema = v.pipe(
+const usernameSchema = v.pipe(
 	v.string("メールアドレスを入力してください"),
 	v.nonEmpty("メールアドレスを入力してください"),
 	v.email("有効なメールアドレスを入力してください"),
@@ -32,7 +32,7 @@ const _passwordSchema = v.pipe(
 );
 
 // ログイン時はパスワードの条件が漏洩しないように詳細なバリデーションを行わない
-export const loginPasswordSchema = v.pipe(
+const loginPasswordSchema = v.pipe(
 	v.string("パスワードを入力してください"),
 	v.nonEmpty("パスワードを入力してください"),
 );
