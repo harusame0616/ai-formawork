@@ -6,20 +6,18 @@ import * as v from "valibot";
 import { type LoginErrorMessage, login } from "../../features/auth/login";
 import { type LoginSchema, loginSchema } from "../../features/auth/schema";
 
-const ErrorMessage = {
-	InvalidInput: "入力内容に誤りがあります",
-} as const;
+const INVALID_INPUT_ERROR_MESSAGE = "入力内容に誤りがあります" as const;
 
 type LoginActionErrorMessage =
 	| LoginErrorMessage
-	| (typeof ErrorMessage)[keyof typeof ErrorMessage];
+	| typeof INVALID_INPUT_ERROR_MESSAGE;
 
 export async function loginAction(
 	params: LoginSchema,
 ): Promise<Result<never, LoginActionErrorMessage>> {
 	const paramsParseResult = v.safeParse(loginSchema, params);
 	if (!paramsParseResult.success) {
-		return fail(ErrorMessage.InvalidInput);
+		return fail(INVALID_INPUT_ERROR_MESSAGE);
 	}
 
 	// ログイン処理
