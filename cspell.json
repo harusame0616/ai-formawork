@@ -9,6 +9,7 @@
 	"language": "en",
 	"version": "0.2",
 	"words": [
+		"bidi",
 		"biomejs",
 		"clsx",
 		"FORMAWORK",
@@ -20,6 +21,8 @@
 		"unrs",
 		"valibot",
 		"viewports",
+		"vitejs",
+		"vitest",
 		"wcag"
 	]
 }
