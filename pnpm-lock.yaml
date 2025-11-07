@@ -214,6 +214,10 @@ importers:
       valibot:
         specifier: 'catalog:'
         version: 1.1.0(typescript@5.9.3)
+    devDependencies:
+      '@workspace/tsconfig':
+        specifier: 'workspace:'
+        version: link:../tsconfig
 
   packages/tsconfig: {}
 

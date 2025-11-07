@@ -6,6 +6,9 @@
 		"supabase": "catalog:",
 		"valibot": "catalog:"
 	},
+	"devDependencies": {
+		"@workspace/tsconfig": "workspace:"
+	},
 	"exports": {
 		"./config": "./src/config.ts",
 		"./nextjs/server": "./src/nextjs/server.ts"
