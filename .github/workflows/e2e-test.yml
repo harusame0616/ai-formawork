@@ -57,6 +57,9 @@ jobs:
           cd packages/supabase
           supabase start
 
+      - name: データベースマイグレーション
+        run: pnpm --filter @workspace/db db:push
+
       - name: テストユーザーのシード
         run: pnpm --filter @repo/supabase seed
 
