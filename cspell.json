@@ -13,11 +13,15 @@
 		"FORMAWORK",
 		"harusame",
 		"hookform",
+		"jsdom",
 		"knip",
 		"lucide",
 		"supabase",
+		"testexample",
 		"unrs",
 		"valibot",
+		"vitejs",
+		"vitest",
 		"wcag"
 	]
 }
