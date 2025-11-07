@@ -34,6 +34,14 @@ catalog:
   valibot: 1.1.0
   '@supabase/ssr': 0.7.0
   '@supabase/supabase-js': 2.79.0
+  vitest: 3.0.0
+  '@vitest/ui': 3.0.0
+  '@vitest/browser': 3.0.0
+  '@vitejs/plugin-react': 4.3.4
+  '@testing-library/react': 16.3.0
+  '@testing-library/jest-dom': 6.6.3
+  '@testing-library/user-event': 14.5.2
+  jsdom: 24.1.1
 
 catalogMode: strict
 
