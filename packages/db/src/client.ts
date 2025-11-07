@@ -1,20 +1,18 @@
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
+import { env } from "./env";
 import * as schema from "./schema";
 
-function getConnectionString() {
-	// biome-ignore lint/complexity/useLiteralKeys: ts(4111)
-	const connectionString = process.env["DATABASE_URL"];
-	if (!connectionString) {
-		throw new Error("DATABASE_URL environment variable is not set");
-	}
-	return connectionString;
-}
+const globalForDb = global as unknown as {
+	db: PostgresJsDatabase<typeof schema>;
+};
 
-export function createDbClient() {
-	const connectionString = getConnectionString();
-	const client = postgres(connectionString);
-	return drizzle(client, { schema });
-}
+const client = postgres(env.DATABASE_URL);
 
-export type DbClient = ReturnType<typeof createDbClient>;
+export const db = globalForDb.db || drizzle(client, { schema });
+
+// biome-ignore lint/complexity/useLiteralKeys: ts(4111)
+if (process.env["NODE_ENV"] !== "production") globalForDb.db = db;
+
+export type DbClient = typeof db;

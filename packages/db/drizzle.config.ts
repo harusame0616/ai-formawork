@@ -2,7 +2,8 @@ import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({
 	dbCredentials: {
-		url: process.env.DATABASE_URL || "",
+		// biome-ignore lint/style/noNonNullAssertion: drizzle-kit requires DATABASE_URL to be set
+		url: process.env.DATABASE_URL!,
 	},
 	dialect: "postgresql",
 	out: "./drizzle",

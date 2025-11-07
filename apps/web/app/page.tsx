@@ -1,4 +1,4 @@
-import { createDbClient } from "@workspace/db/client";
+import { db } from "@workspace/db/client";
 import { customersTable } from "@workspace/db/schema/customer";
 import { Button } from "@workspace/ui/components/button";
 import { cacheTag, updateTag } from "next/cache";
@@ -9,8 +9,7 @@ const TAG_CUSTOMER = "tag_customer";
 async function insertCustomer() {
 	"use server";
 
-	const client = createDbClient();
-	await client.insert(customersTable).values({
+	await db.insert(customersTable).values({
 		customerId: crypto.randomUUID(),
 		email: `${crypto.randomUUID()}@example.com`,
 		name: crypto.randomUUID(),
@@ -32,15 +31,14 @@ export default async function Home() {
 	);
 }
 
-function getCustomerNames() {
-	const client = createDbClient();
-
-	return client
+async function getCustomerNames() {
+	const customers = await db
 		.select({
 			name: customersTable.name,
 		})
-		.from(customersTable)
-		.then((customers) => customers.map(({ name }) => name));
+		.from(customersTable);
+
+	return customers.map((customer) => customer.name);
 }
 
 async function CustomersContainer() {

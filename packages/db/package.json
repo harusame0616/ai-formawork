@@ -1,7 +1,8 @@
 {
 	"dependencies": {
 		"drizzle-orm": "catalog:",
-		"postgres": "catalog:"
+		"postgres": "catalog:",
+		"valibot": "catalog:"
 	},
 	"devDependencies": {
 		"@types/node": "catalog:",
