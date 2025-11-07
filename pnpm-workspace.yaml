@@ -34,6 +34,17 @@ catalog:
   valibot: 1.1.0
   '@supabase/ssr': 0.7.0
   '@supabase/supabase-js': 2.79.0
+  vitest: ^4.0.8
+  '@vitest/browser': ^4.0.8
+  '@vitest/ui': ^4.0.8
+  playwright: ^1.56.1
+  happy-dom: ^20.0.10
+  '@vitejs/plugin-react': ^5.1.0
+  '@testing-library/react': ^16.3.0
+  '@testing-library/user-event': ^14.6.1
+  '@vitest/browser-playwright': ^4.0.8
+  vite-tsconfig-paths: ^5.1.4
+  '@vitejs/plugin-react-swc': ^4.2.1
 
 catalogMode: strict
 
