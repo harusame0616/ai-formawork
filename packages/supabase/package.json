@@ -7,7 +7,8 @@
 		"valibot": "catalog:"
 	},
 	"devDependencies": {
-		"@workspace/tsconfig": "workspace:"
+		"@workspace/tsconfig": "workspace:",
+		"typescript": "catalog:"
 	},
 	"exports": {
 		"./config": "./src/config.ts",

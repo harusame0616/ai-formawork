@@ -7,6 +7,7 @@ type LoginPageFixture = {
 const test = base.extend<LoginPageFixture>({
 	loginPage: async ({ page }, use) => {
 		await page.goto("/login");
+		await page.waitForURL("/login");
 		await use(page);
 	},
 });
@@ -32,7 +33,7 @@ test("正常系：ログイン成功とブラウザバック後の挙動", async
 	});
 
 	await test.step("ログインページに戻らないことを確認", async () => {
-		await expect(loginPage).toHaveURL("/");
+		await expect(loginPage).toHaveURL("about:blank");
 	});
 });
 

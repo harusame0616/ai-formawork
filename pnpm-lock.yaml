@@ -218,6 +218,9 @@ importers:
       '@workspace/tsconfig':
         specifier: 'workspace:'
         version: link:../tsconfig
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
 
   packages/tsconfig: {}
 

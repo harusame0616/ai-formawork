@@ -2,8 +2,6 @@ packages:
   - apps/*
   - packages/*
 
-catalogMode: strict
-
 catalog:
   react: 19.2.0
   react-dom: 19.2.0
@@ -36,6 +34,9 @@ catalog:
   valibot: 1.1.0
   '@supabase/ssr': 0.7.0
   '@supabase/supabase-js': 2.79.0
+  wait-on: ^9.0.1
+
+catalogMode: strict
 
 onlyBuiltDependencies:
   - supabase

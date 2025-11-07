@@ -3,7 +3,8 @@
 		"**/*.svg",
 		"**/*tsconfig.tsbuildinfo",
 		"pnpm-lock.yaml",
-		"packages/supabase/config.toml"
+		"packages/supabase/config.toml",
+		"**/playwright-report/**"
 	],
 	"language": "en",
 	"version": "0.2",

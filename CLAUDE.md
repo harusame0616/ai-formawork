@@ -284,6 +284,28 @@ lint, format, デッドコードの自動修正を行います。スペルチェ
 
 - 各モノレポパッケージでは JIT パッケージとして実装し、使用する側でビルド時にコンパイルすること
 
+## GitHub Actions
+
+GitHub Actionsワークフローは以下のルールに従うこと。
+
+**必須設定:**
+
+- **ステップ名の日本語化**: 各ステップには日本語でわかりやすい名前を必ず付けること
+  - 例: `name: リポジトリのチェックアウト`, `name: 依存関係のインストール`
+- **pnpm バージョン**: `pnpm/action-setup@v4` でバージョンを省略し、`package.json` の `packageManager` フィールドのバージョンを自動使用させること
+  - ❌ 悪い例: `version: 10.12.4`
+  - ✅ 良い例: バージョン指定なし（省略）
+- **Node.js バージョン**: `setup-node` で `.node-version` ファイルを参照すること
+  - 設定: `node-version-file: .node-version`
+- **concurrency 設定**: PR ごとに重複実行を防ぐため、必ず concurrency を設定すること
+  ```yaml
+  concurrency:
+    group: <workflow-name>-${{ github.ref }}
+    cancel-in-progress: true
+  ```
+- **タイムアウト設定**: 各ジョブには最低でも 10 分のタイムアウトを設定すること
+  - 設定: `timeout-minutes: 10`（またはそれ以上）
+
 ## MCP
 
 - 外部ライブラリを使用する場合は必ず Context7 のツールを利用して、使用バージョンと一致した情報を取得すること
