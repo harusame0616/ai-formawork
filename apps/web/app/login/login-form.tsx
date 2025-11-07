@@ -55,12 +55,7 @@ export function LoginForm() {
 						<FormItem>
 							<FormLabel>メールアドレス</FormLabel>
 							<FormControl>
-								<Input
-									autoComplete="username"
-									id="username"
-									type="email"
-									{...field}
-								/>
+								<Input autoComplete="username" type="email" {...field} />
 							</FormControl>
 							<FormMessage />
 						</FormItem>

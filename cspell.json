@@ -18,6 +18,7 @@
 		"supabase",
 		"unrs",
 		"valibot",
+		"viewports",
 		"wcag"
 	]
 }
