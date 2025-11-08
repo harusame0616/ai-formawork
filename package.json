@@ -6,7 +6,7 @@
 	},
 	"packageManager": "pnpm@10.12.4",
 	"scripts": {
-		"validate:check": "biome check . && knip && cspell .",
+		"validate:check": "biome check . && knip && cspell . && pnpm -r type:check",
 		"validate:fix": "biome check --write . && knip --fix --allow-remove-files"
 	}
 }
