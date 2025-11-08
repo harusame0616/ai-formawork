@@ -11,7 +11,7 @@ function setLoggerHeaders(
 
 	response.headers.set(
 		"x-request-id",
-		request.headers.get("x-request-id") ?? "",
+		request.headers.get("x-request-id") ?? crypto.randomUUID(),
 	);
 	response.headers.set("x-git-commit-sha", config.gitCommitSha ?? "");
 	response.headers.set("x-deployment-id", config.deploymentId ?? "");

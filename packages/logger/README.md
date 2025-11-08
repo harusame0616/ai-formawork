@@ -1,6 +1,6 @@
 # @repo/logger
 
-OWASP Logging Cheat Sheet に準拠したロギングパッケージ。pino をベースにした薄いラッパーを提供します。
+OWASP Logging Cheat Sheet に準拠したロギングパッケージ。構造化ログ、セキュリティ重視の設計、環境別設定を提供します。
 
 ## ロギング方針
 

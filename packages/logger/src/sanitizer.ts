@@ -15,7 +15,7 @@ const SENSITIVE_PATTERNS: SensitivePattern[] = [
 	{
 		mask: '"api_key":"[REDACTED]"',
 		name: "apiKey",
-		pattern: /"(?:api_key|apikey|secret_key|secret)"\s*:\s*"[^"]*"/gi,
+		pattern: /"(?:api[-_]?key|secret[-_]?key|secret)"\s*:\s*"[^"]*"/gi,
 	},
 	{
 		mask: '"authorization":"[REDACTED]"',
@@ -56,17 +56,42 @@ function sanitizeString(value: string): string {
 	return sanitized;
 }
 
+function isSensitiveKey(key: string): boolean {
+	const lowerKey = key.toLowerCase();
+	const sensitivePatterns = [
+		/^.*password.*$/,
+		/^.*token$/,
+		/^.*secret.*$/,
+		/^.*[-_]key$/,
+		/^api[-_]?key$/,
+	];
+
+	return sensitivePatterns.some((pattern) => pattern.test(lowerKey));
+}
+
+function isErrorObject(value: unknown): value is Error {
+	return value instanceof Error;
+}
+
+function serializeError(error: Error): Record<string, unknown> {
+	return {
+		message: error.message,
+		name: error.name,
+		stack: error.stack,
+	};
+}
+
 function sanitizeObject(obj: Record<string, unknown>): Record<string, unknown> {
 	const sanitized: Record<string, unknown> = {};
 
 	for (const [key, value] of Object.entries(obj)) {
-		if (
-			key.toLowerCase().includes("password") ||
-			key.toLowerCase().includes("token") ||
-			key.toLowerCase().includes("secret") ||
-			key.toLowerCase().includes("key")
-		) {
+		if (isSensitiveKey(key)) {
 			sanitized[key] = "[REDACTED]";
+			continue;
+		}
+
+		if (key === "err" && isErrorObject(value)) {
+			sanitized[key] = serializeError(value);
 			continue;
 		}
 
