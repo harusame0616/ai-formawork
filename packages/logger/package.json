@@ -1,0 +1,30 @@
+{
+	"dependencies": {
+		"pino": "catalog:",
+		"valibot": "catalog:"
+	},
+	"devDependencies": {
+		"@types/node": "catalog:",
+		"@workspace/tsconfig": "workspace:",
+		"typescript": "catalog:"
+	},
+	"exports": {
+		".": "./src/get-logger.ts",
+		"./event-types": "./src/event-types.ts",
+		"./logger": "./src/logger.ts",
+		"./nextjs/server": "./src/nextjs/server.ts",
+		"./types": "./src/types.ts"
+	},
+	"name": "@repo/logger",
+	"packageManager": "pnpm@10.12.4",
+	"peerDependencies": {
+		"next": ">=15.0.0"
+	},
+	"peerDependenciesMeta": {
+		"next": {
+			"optional": true
+		}
+	},
+	"private": true,
+	"version": "0.0.0"
+}

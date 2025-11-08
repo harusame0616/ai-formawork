@@ -9,6 +9,12 @@
 				"postcss"
 			]
 		},
+		"packages/logger": {
+			// テンプレートファイルのため除外
+			"ignore": ["src/nextjs/middleware.example.ts"],
+			// Next.js 専用機能のため optional peerDependency として定義
+			"ignoreDependencies": ["next"]
+		},
 		"packages/tsconfig": {
 			// tsconfig の plugin 設定を使っている。
 			// プラグインの解決は使用する側でされるためこちらでは不要

@@ -1,17 +1,45 @@
 ## 開発原則
 
-
 - You Aren't Gonna Need It (YAGNI)
 - Single Responsibility Principle
 - Keep it Simple, Stupid (KISS)
 - Avoid Hasty Abstractions (AHA)
 - Don't repeat yourself (DRY)
+- **シンプルさの優先**: 汎用性や厳密性よりも常にシンプルな選択を採用すること
+  - 将来の拡張性を過度に考慮せず、現在必要な機能に絞ること
+  - 複雑な型定義や厳密なバリデーションよりも、読みやすく理解しやすいコードを優先すること
+  - 環境に応じた分岐処理よりも、シンプルなデフォルト値を優先すること
+
+## API設計とバージョニング
+
+### 後方互換性
+
+**基本方針: 後方互換性を保つのではなく、新方式に既存コードを修正する。**
+- 変更時は影響範囲を特定し、すべての使用箇所を一括で更新する
+
+**例外: 後方互換性を保つべきケース**
+
+- 外部に公開されているAPI（将来的な可能性を含む）
+- データベーススキーマの変更（マイグレーション戦略が必要）
+- ユーザーデータに影響する変更
+
+**破壊的変更の手順**
+
+1. 変更の影響範囲をコードベース全体で検索
+2. すべての使用箇所を特定
+3. 変更を実装し、すべての使用箇所を一括更新
+4. テストを実行して問題がないことを確認
+5. 必要に応じてドキュメントを更新
 
 ## コーディングスタイル
 
 - 型定義では type を優先する
 - 関数定義では function を優先する
 - TypeScript ネイティブの Enum の利用は避け Object Literal を使用する
+- **環境変数へのアクセス**: 環境変数に直接アクセスせず、必ず valibot でパースした値を使用すること
+  - `process.env.VARIABLE_NAME` を直接使用しない
+  - 環境変数を使用するモジュールごとに専用の設定ファイルを作成し、valibot でバリデーションを行う
+  - 例: `getConfig()` のような関数経由でアクセスする
 
 ## 命名規則
 
@@ -223,6 +251,112 @@ Next.js は、それぞれ異なるユースケース向けに設計された 3 
 3. **テスト ID（最終手段）**
    - 他の方法で特定できない場合のみ使用
    - 例: `getByTestId()`
+
+### ロギング
+
+すべてのログ出力には `@repo/logger` パッケージを使用すること（OWASP Logging Cheat Sheet 準拠）。
+
+**基本原則:**
+
+- **Next.js Server Component/Server Action**: `@repo/logger/nextjs/server` から `getLogger()` を使用（IP アドレスとリクエストIDを自動取得）
+- **Next.js Route Handler**: `getBaseLogger()` を使用し、`request` オブジェクトから IP アドレスとリクエストIDを取得
+- **Next.js Middleware**: リクエストIDを自動生成するため middleware を設定すること（推奨）
+- **その他の環境**: `getBaseLogger()` を使用
+- `application`、`environment`、`service` は環境変数から自動取得
+- 動的なコンテキスト（userId など）は `logger.child()` で追加すること
+- 機密情報（パスワード、トークン、キーなど）は自動的にマスキングされるが、意図的に含めないこと
+
+**環境変数（必須）:**
+
+- `APP_NAME`: アプリケーション名
+- `HOST_ENVIRONMENT`: ホスト環境（development/staging/production）
+- `SERVICE_NAME`: サービス名（web/api/db など）
+
+**ログレベルの使い分け:**
+
+- `fatal`: 全体に影響する深刻なエラー。サービスの正常な動作を阻害（通知対象）
+- `error`: 特定の操作に影響する重要なエラー。早急な対応が必要（通知対象）
+- `warn`: 注意が必要な事象や潜在的な問題。サービスの正常な動作には影響しない
+- `info`: サービスの正常な流れや重要なイベント
+- `debug`: 開発やデバッグ用の詳細情報（本番環境では通常無効化）
+- `trace`: 非常に詳細な処理ステップ（本番環境では無効化）
+
+**通知ポリシー:**
+
+- ERROR レベル以上（ERROR, FATAL）は通知対象
+- 通知は observability サービス（監視ツール）によって行われる
+- アプリケーションレベルでは通知を行わない
+
+**記録必須のセキュリティイベント（OWASP 推奨）:**
+
+- **認証・認可**: ログイン成功/失敗、アクセス拒否、パスワードリセット
+- **データ操作**: CRUD 操作（特に削除・更新）、ユーザー管理操作、管理者権限での操作
+- **入力検証**: バリデーション失敗、不正なファイルアップロード試行
+- **セッション管理**: Cookie 値の変更、JWT 検証の失敗
+- **システムイベント**: 起動/停止、設定変更、外部 API 呼び出し
+
+**ログに含めるべき情報:**
+
+- **必須**: タイムスタンプ、ログレベル、メッセージ、アプリケーション名、環境、サービス名
+- **推奨**: ユーザー ID、IP アドレス、リクエスト ID、アクション種別、影響を受けたリソース
+
+**絶対に記録してはいけない情報:**
+
+- パスワード、API トークン、暗号化キー
+- 支払いカード情報、銀行口座情報
+- セッション ID（必要な場合はハッシュ化）
+- 機密な個人情報（PII）
+
+**Middleware設定（Next.js）:**
+
+Next.js Middleware でロギングに必要なヘッダーを自動設定すること。以下のヘッダーを設定することで、`@repo/logger/nextjs/server` の `getLogger()` が自動的にコンテキスト情報を取得できる。
+
+設定すべきヘッダー：
+- `x-request-id`: リクエストトレーシング用のUUID（必須）
+- `x-git-commit-sha`: Gitコミットハッシュ（Vercel環境変数 `VERCEL_GIT_COMMIT_SHA` から取得）
+- `x-deployment-id`: デプロイID（Vercel環境変数 `VERCEL_DEPLOYMENT_ID` から取得）
+- `x-auth-user-id`: 認証ユーザーID（Supabase認証から取得）
+
+実装例は [apps/web/middleware.ts](apps/web/middleware.ts) を参照。
+
+**使用例:**
+
+```typescript
+// Next.js Server Component/Server Action
+import { getLogger } from "@repo/logger/nextjs/server";
+
+export async function loginAction(formData: FormData) {
+	const logger = await getLogger(); // IPアドレスとリクエストIDを自動取得
+	logger.info({ userId, action: "login" }, "User logged in successfully");
+}
+
+// Next.js Route Handler
+import { getBaseLogger } from "@repo/logger";
+
+export async function POST(request: Request) {
+	const logger = getBaseLogger({});
+
+	// requestから直接取得
+	const forwardedFor = request.headers.get("x-forwarded-for");
+	const ipAddress = forwardedFor?.split(",")[0]?.trim();
+	const requestId = request.headers.get("x-request-id");
+
+	const requestLogger = logger.child({
+		requestId,
+		ipAddress,
+	});
+
+	requestLogger.info("Processing request");
+}
+
+// その他の環境
+import { getBaseLogger } from "@repo/logger";
+
+const logger = getBaseLogger({});
+logger.error({ err }, "Authentication failed");
+```
+
+詳細は [packages/logger/README.md](packages/logger/README.md) を参照。
 
 ### モニタリング・観測可能性
 

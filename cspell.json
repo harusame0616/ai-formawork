@@ -9,6 +9,7 @@
 	"language": "en",
 	"version": "0.2",
 	"words": [
+		"apikey",
 		"biomejs",
 		"clsx",
 		"FORMAWORK",
@@ -16,6 +17,10 @@
 		"hookform",
 		"knip",
 		"lucide",
+		"picklist",
+		"pino",
+		"pinojs",
+		"sess",
 		"supabase",
 		"unrs",
 		"valibot",

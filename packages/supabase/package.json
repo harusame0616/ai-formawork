@@ -12,6 +12,7 @@
 	},
 	"exports": {
 		"./config": "./src/config.ts",
+		"./nextjs/proxy": "./src/nextjs/proxy.ts",
 		"./nextjs/server": "./src/nextjs/server.ts"
 	},
 	"name": "@repo/supabase",
