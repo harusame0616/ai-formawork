@@ -21,7 +21,8 @@
 		"db:migrate": "drizzle-kit migrate",
 		"db:push": "drizzle-kit push",
 		"db:reset": "pnpm --filter @repo/supabase supabase:reset && pnpm db:push ",
-		"db:studio": "drizzle-kit studio"
+		"db:studio": "drizzle-kit studio",
+		"type:check": "tsc --noEmit"
 	},
 	"type": "module",
 	"version": "0.0.0"

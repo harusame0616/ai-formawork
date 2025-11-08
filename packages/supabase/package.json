@@ -20,7 +20,8 @@
 	"scripts": {
 		"seed": "node --env-file-if-exists=.env --experimental-strip-types src/seed.ts",
 		"supabase:reset": "supabase db reset && pnpm seed",
-		"supabase:start": "supabase start"
+		"supabase:start": "supabase start",
+		"type:check": "tsc --noEmit"
 	},
 	"version": "0.0.0"
 }
