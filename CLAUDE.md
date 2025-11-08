@@ -319,8 +319,6 @@ Next.js Middleware でロギングに必要なヘッダーを自動設定する�
 - `x-deployment-id`: デプロイID（Vercel環境変数 `VERCEL_DEPLOYMENT_ID` から取得）
 - `x-auth-user-id`: 認証ユーザーID（Supabase認証から取得）
 
-実装例は [apps/web/middleware.ts](apps/web/middleware.ts) を参照。
-
 **使用例:**
 
 ```typescript
