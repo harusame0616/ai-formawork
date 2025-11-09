@@ -16,7 +16,6 @@
 	"devDependencies": {
 		"@playwright/test": "^1.56.1",
 		"@tailwindcss/postcss": "catalog:",
-		"@testing-library/react": "catalog:",
 		"@types/node": "catalog:",
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
@@ -27,7 +26,8 @@
 		"pino-pretty": "catalog:",
 		"tailwindcss": "catalog:",
 		"typescript": "catalog:",
-		"vitest": "catalog:"
+		"vitest": "catalog:",
+		"vitest-browser-react": "catalog:"
 	},
 	"name": "web",
 	"private": true,
@@ -39,8 +39,8 @@
 		"lint": "biome lint .",
 		"start": "next start",
 		"test": "vitest",
-		"test:ui": "vitest --ui",
 		"test:e2e": "playwright test",
+		"test:ui": "vitest --ui",
 		"type:check": "tsc --noEmit"
 	},
 	"version": "0.1.0"

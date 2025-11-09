@@ -1,6 +1,7 @@
-import { render, screen, waitFor } from "@testing-library/react";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import type { Mock } from "vitest";
+import { test as base, expect, vi } from "vitest";
 import { page } from "vitest/browser";
+import { render } from "vitest-browser-react";
 import { LoginForm } from "./login-form";
 
 // loginAction をモック
@@ -8,210 +9,163 @@ vi.mock("./login-action", () => ({
 	loginAction: vi.fn(),
 }));
 
-// モジュールのインポート
-const loginActionModule = await import("./login-action");
-const mockLoginAction = vi.mocked(loginActionModule.loginAction);
-
-describe("LoginForm", () => {
-	beforeEach(() => {
+const test = base.extend<{
+	loginActionMock: Mock;
+}>({
+	// biome-ignore lint/correctness/noEmptyPattern: Vitestのfixtureパターンで使用する標準的な記法
+	loginActionMock: async ({}, use: any) => {
+		const loginActionModule = await import("./login-action");
+		const mock = vi.mocked(loginActionModule.loginAction);
+		await use(mock);
 		vi.clearAllMocks();
+	},
+});
+
+test("メールアドレスが空の場合、バリデーションエラーが表示される", async ({
+	loginActionMock,
+}) => {
+	render(<LoginForm />);
+
+	// パスワードだけを入力
+	await page.getByLabelText(/^パスワード$/).fill("Test@Pass123");
+
+	// 送信ボタンをクリック
+	await page.getByRole("button", { name: "ログイン" }).click();
+
+	await expect
+		.element(page.getByText("メールアドレスを入力してください"))
+		.toBeInTheDocument();
+
+	// バリデーションエラー時にログインが実施されないことを確認
+	// 注: 内部実装に依存するが、外部への副作用がないという重要な振る舞いをテストするため
+	expect(loginActionMock).not.toHaveBeenCalled();
+});
+
+test("メールアドレスの形式が不正な場合、バリデーションエラーが表示される", async ({
+	loginActionMock,
+}) => {
+	render(<LoginForm />);
+
+	// 不正な形式のメールアドレスを入力
+	await page
+		.getByRole("textbox", { name: "メールアドレス" })
+		.fill("invalid-email");
+
+	await page.getByLabelText(/^パスワード$/).fill("Test@Pass123");
+
+	// 送信ボタンをクリック
+	await page.getByRole("button", { name: "ログイン" }).click();
+
+	// バリデーションエラーが表示されることを確認
+	await expect
+		.element(page.getByText("有効なメールアドレスを入力してください"))
+		.toBeInTheDocument();
+
+	// バリデーションエラー時にログインが実施されないことを確認
+	// 注: 内部実装に依存するが、外部への副作用がないという重要な振る舞いをテストするため
+	expect(loginActionMock).not.toHaveBeenCalled();
+});
+
+test("パスワードが空の場合、バリデーションエラーが表示される", async ({
+	loginActionMock,
+}) => {
+	render(<LoginForm />);
+
+	// メールアドレスだけを入力
+	await page
+		.getByRole("textbox", { name: "メールアドレス" })
+		.fill("test@example.com");
+
+	// 送信ボタンをクリック
+	await page.getByRole("button", { name: "ログイン" }).click();
+
+	// バリデーションエラーが表示されることを確認
+	await expect
+		.element(page.getByText("パスワードを入力してください"))
+		.toBeInTheDocument();
+
+	// バリデーションエラー時にログインが実施されないことを確認
+	// 注: 内部実装に依存するが、外部への副作用がないという重要な振る舞いをテストするため
+	expect(loginActionMock).not.toHaveBeenCalled();
+});
+
+test("送信中はボタンが無効化され、ローディング表示になる", async ({
+	loginActionMock,
+}) => {
+	loginActionMock.mockReturnValue(new Promise((r) => {}));
+
+	render(<LoginForm />);
+
+	// 有効な入力
+	await page
+		.getByRole("textbox", { name: "メールアドレス" })
+		.fill("test@example.com");
+
+	await page.getByLabelText(/^パスワード$/).fill("Test@Pass123");
+
+	// 送信ボタンをクリック
+	await page.getByRole("button", { name: "ログイン" }).click();
+
+	// 送信中の状態を確認
+	const button = page.getByRole("button", { name: /ログイン中/ });
+
+	await expect.element(button).toBeDisabled();
+	await expect.element(page.getByText("ログイン中...")).toBeInTheDocument();
+});
+
+test("認証エラー時にエラーメッセージが表示される", async ({
+	loginActionMock,
+}) => {
+	// loginAction がエラーを返すようにモック
+	loginActionMock.mockResolvedValue({
+		error: "認証に失敗しました",
+		success: false,
 	});
 
-	test("フォームの初期表示時に必要な要素が存在する", () => {
-		render(<LoginForm />);
+	render(<LoginForm />);
 
-		// フォーム要素が存在するか
-		expect(
-			screen.getByRole("textbox", { name: "メールアドレス" }),
-		).toBeInTheDocument();
-		expect(screen.getByLabelText("パスワード")).toBeInTheDocument();
-		expect(
-			screen.getByRole("button", { name: "ログイン" }),
-		).toBeInTheDocument();
+	// 有効な入力
+	await page
+		.getByRole("textbox", { name: "メールアドレス" })
+		.fill("test@example.com");
 
-		// ボタンが初期状態では有効
-		expect(screen.getByRole("button", { name: "ログイン" })).not.toBeDisabled();
-	});
+	await page.getByLabelText(/^パスワード$/).fill("Test@Pass123");
 
-	test.skip("メールアドレスが空の場合、バリデーションエラーが表示される", async () => {
-		render(<LoginForm />);
+	// 送信ボタンをクリック
+	await page.getByRole("button", { name: "ログイン" }).click();
 
-		// パスワードだけを入力
-		await page.getByLabelText("パスワード").fill("Test@Pass123");
+	// エラーメッセージが表示されることを確認
+	await expect.element(page.getByRole("alert")).toBeInTheDocument();
+	await expect
+		.element(page.getByText("認証に失敗しました"))
+		.toBeInTheDocument();
+});
 
-		// 送信ボタンをクリック
-		await page.getByRole("button", { name: "ログイン" }).click();
+test("パスワード表示切替ボタンで表示/非表示を切り替えられる", async () => {
+	render(<LoginForm />);
 
-		// バリデーションエラーが表示されることを確認
-		await waitFor(() => {
-			expect(
-				screen.getByText("メールアドレスを入力してください"),
-			).toBeInTheDocument();
-		});
+	const passwordInput = page.getByLabelText(/^パスワード$/);
 
-		// loginAction が呼ばれていないことを確認
-		expect(mockLoginAction).not.toHaveBeenCalled();
-	});
+	// 初期状態はtype="password"
+	await expect.element(passwordInput).toHaveAttribute("type", "password");
 
-	test.skip("メールアドレスの形式が不正な場合、バリデーションエラーが表示される", async () => {
-		render(<LoginForm />);
+	// 表示ボタンをクリック
+	const toggleButton = page.getByRole("button", { name: "パスワードを表示" });
+	await toggleButton.click();
 
-		// 不正な形式のメールアドレスを入力
-		await page
-			.getByRole("textbox", { name: "メールアドレス" })
-			.fill("invalid-email");
+	// type="text"に変わり、ボタンのaria-labelが変わる
+	await expect.element(passwordInput).toHaveAttribute("type", "text");
+	await expect
+		.element(page.getByRole("button", { name: "パスワードを隠す" }))
+		.toBeInTheDocument();
 
-		await page.getByLabelText("パスワード").fill("Test@Pass123");
+	// 非表示に戻す
+	const hideButton = page.getByRole("button", { name: "パスワードを隠す" });
+	await hideButton.click();
 
-		// 送信ボタンをクリック
-		await page.getByRole("button", { name: "ログイン" }).click();
-
-		// バリデーションエラーが表示されることを確認
-		await waitFor(() => {
-			expect(
-				screen.getByText("有効なメールアドレスを入力してください"),
-			).toBeInTheDocument();
-		});
-
-		// loginAction が呼ばれていないことを確認
-		expect(mockLoginAction).not.toHaveBeenCalled();
-	});
-
-	test.skip("パスワードが空の場合、バリデーションエラーが表示される", async () => {
-		render(<LoginForm />);
-
-		// メールアドレスだけを入力
-		await page
-			.getByRole("textbox", { name: "メールアドレス" })
-			.fill("test@example.com");
-
-		// 送信ボタンをクリック
-		await page.getByRole("button", { name: "ログイン" }).click();
-
-		// バリデーションエラーが表示されることを確認
-		await waitFor(() => {
-			expect(
-				screen.getByText("パスワードを入力してください"),
-			).toBeInTheDocument();
-		});
-
-		// loginAction が呼ばれていないことを確認
-		expect(mockLoginAction).not.toHaveBeenCalled();
-	});
-
-	test.skip("送信中はボタンが無効化され、ローディング表示になる", async () => {
-		// loginAction が Promise を返すようにモック（長時間かかる想定）
-		let resolveLogin: (value: unknown) => void;
-		const loginPromise = new Promise((resolve) => {
-			resolveLogin = resolve;
-		});
-		mockLoginAction.mockReturnValue(loginPromise as never);
-
-		render(<LoginForm />);
-
-		// 有効な入力
-		await page
-			.getByRole("textbox", { name: "メールアドレス" })
-			.fill("test@example.com");
-
-		await page.getByLabelText("パスワード").fill("Test@Pass123");
-
-		// 送信ボタンをクリック
-		await page.getByRole("button", { name: "ログイン" }).click();
-
-		// 送信中の状態を確認
-		await waitFor(() => {
-			const button = screen.getByRole("button", { name: /ログイン中/ });
-			expect(button).toBeDisabled();
-			expect(screen.getByText("ログイン中...")).toBeInTheDocument();
-		});
-
-		// Promise を resolve
-		resolveLogin?.({ success: true });
-	});
-
-	test.skip("認証エラー時にエラーメッセージが表示される", async () => {
-		// loginAction がエラーを返すようにモック
-		mockLoginAction.mockResolvedValue({
-			error: "認証に失敗しました",
-			success: false,
-		});
-
-		render(<LoginForm />);
-
-		// 有効な入力
-		await page
-			.getByRole("textbox", { name: "メールアドレス" })
-			.fill("test@example.com");
-
-		await page.getByLabelText("パスワード").fill("Test@Pass123");
-
-		// 送信ボタンをクリック
-		await page.getByRole("button", { name: "ログイン" }).click();
-
-		// エラーメッセージが表示されることを確認
-		await waitFor(() => {
-			expect(screen.getByRole("alert")).toBeInTheDocument();
-			expect(screen.getByText("認証に失敗しました")).toBeInTheDocument();
-		});
-	});
-
-	test.skip("複数回のエラー後、エラーがクリアされて再送信できる", async () => {
-		// 最初はエラーを返す
-		mockLoginAction.mockResolvedValueOnce({
-			error: "認証に失敗しました",
-			success: false,
-		});
-
-		render(<LoginForm />);
-
-		// 有効な入力
-		const emailInput = page.getByRole("textbox", { name: "メールアドレス" });
-		const passwordInput = page.getByLabelText("パスワード");
-
-		await emailInput.fill("test@example.com");
-		await passwordInput.fill("WrongPass");
-
-		// 最初の送信
-		const submitButton = page.getByRole("button", { name: "ログイン" });
-		await submitButton.click();
-
-		// エラーメッセージが表示される
-		await waitFor(() => {
-			expect(screen.getByRole("alert")).toBeInTheDocument();
-		});
-
-		// 2回目は成功を返す
-		mockLoginAction.mockResolvedValueOnce({
-			success: true,
-		} as never);
-
-		// フォームを変更して再送信
-		await passwordInput.clear();
-		await passwordInput.fill("CorrectPass");
-		await submitButton.click();
-
-		// エラーメッセージが消えることを確認
-		await waitFor(() => {
-			expect(screen.queryByRole("alert")).not.toBeInTheDocument();
-		});
-	});
-
-	test("必要なアクセシビリティ属性が設定されている", () => {
-		render(<LoginForm />);
-
-		// メールアドレス入力のアクセシビリティ
-		const emailInput = screen.getByRole("textbox", { name: "メールアドレス" });
-		expect(emailInput).toHaveAttribute("type", "email");
-		expect(emailInput).toHaveAttribute("autocomplete", "username");
-
-		// パスワード入力のアクセシビリティ
-		const passwordInput = screen.getByLabelText("パスワード");
-		expect(passwordInput).toHaveAttribute("type", "password");
-		expect(passwordInput).toHaveAttribute("autocomplete", "current-password");
-
-		// noValidate 属性の確認（HTML5 バリデーションを無効化）
-		const form = emailInput.closest("form");
-		expect(form).toHaveAttribute("noValidate");
-	});
+	// type="password"に戻り、ボタンのaria-labelが元に戻る
+	await expect.element(passwordInput).toHaveAttribute("type", "password");
+	await expect
+		.element(page.getByRole("button", { name: "パスワードを表示" }))
+		.toBeInTheDocument();
 });

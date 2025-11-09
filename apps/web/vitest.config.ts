@@ -20,9 +20,6 @@ export default defineConfig({
 			instances: [
 				{
 					browser: "chromium",
-					launchOptions: {
-						args: ["--no-sandbox", "--disable-setuid-sandbox"],
-					},
 				},
 			],
 			provider: playwright(),
