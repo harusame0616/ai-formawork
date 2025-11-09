@@ -4,9 +4,6 @@ import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
-	optimizeDeps: {
-		exclude: ["playwright", "playwright-core", "@playwright/test"],
-	},
 	plugins: [react()],
 	resolve: {
 		alias: {
@@ -26,6 +23,5 @@ export default defineConfig({
 		},
 		exclude: ["**/node_modules/**", "**/dist/**", "**/e2e/**", "**/.next/**"],
 		include: ["**/*.test.{ts,tsx}"],
-		testTimeout: 30000,
 	},
 });
