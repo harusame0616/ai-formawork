@@ -15,7 +15,7 @@ const test = base.extend<{
 	// biome-ignore lint/correctness/noEmptyPattern: Vitestのfixtureパターンで使用する標準的な記法
 	loginActionMock: async ({}, use) => {
 		const loginActionModule = await import("./login-action");
-		await use(loginActionModule.loginAction)
+		await use(loginActionModule.loginAction);
 		vi.clearAllMocks();
 	},
 });
