@@ -66,7 +66,8 @@ export default defineConfig({
 
 	/* Run your local dev server before starting the tests */
 	webServer: {
-		command: "pnpm start",
+		// biome-ignore lint/complexity/useLiteralKeys: ts(4111)
+		command: process.env["CI"] ? "pnpm start" : "pnpm dev",
 		// biome-ignore lint/complexity/useLiteralKeys: ts(4111)
 		reuseExistingServer: !process.env["CI"],
 		url: "http://localhost:3000",

@@ -15,10 +15,12 @@ import { Loader2 } from "lucide-react";
 import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { type LoginSchema, loginSchema } from "../../features/auth/schema";
+import { useIsHydrated } from "../../libs/use-is-hydrated";
 import { loginAction } from "./login-action";
 
 export function LoginForm() {
 	const [isPending, startTransition] = useTransition();
+	const { isHydrated } = useIsHydrated();
 
 	const form = useForm<LoginSchema>({
 		defaultValues: {
@@ -50,6 +52,7 @@ export function LoginForm() {
 			>
 				<FormField
 					control={form.control}
+					disabled={!isHydrated}
 					name="username"
 					render={({ field }) => (
 						<FormItem>
@@ -63,6 +66,7 @@ export function LoginForm() {
 				/>
 				<FormField
 					control={form.control}
+					disabled={!isHydrated}
 					name="password"
 					render={({ field }) => (
 						<FormItem>
@@ -83,7 +87,11 @@ export function LoginForm() {
 						{form.formState.errors.root.message}
 					</div>
 				)}
-				<Button className="w-full" disabled={isPending} type="submit">
+				<Button
+					className="w-full"
+					disabled={isPending || !isHydrated}
+					type="submit"
+				>
 					{isPending ? (
 						<>
 							<Loader2 className="mr-2 size-4 animate-spin" />
