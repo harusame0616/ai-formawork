@@ -1,5 +1,6 @@
 {
 	"$schema": "https://unpkg.com/knip@5/schema.json",
+	"ignoreBinaries": ["type:check"],
 	"ignoreDependencies": [],
 	"workspaces": {
 		"apps/web": {
@@ -8,6 +9,12 @@
 				// Next で builtin されているため不要
 				"postcss"
 			]
+		},
+		"packages/logger": {
+			// テンプレートファイルのため除外
+			"ignore": ["src/nextjs/middleware.example.ts"],
+			// Next.js 専用機能のため optional peerDependency として定義
+			"ignoreDependencies": ["next"]
 		},
 		"packages/tsconfig": {
 			// tsconfig の plugin 設定を使っている。

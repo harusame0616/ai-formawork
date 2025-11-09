@@ -34,6 +34,8 @@ jobs:
       - name: Run Claude Code Review
         id: claude-review
         uses: anthropics/claude-code-action@v1
+        env:
+          CONTEXT7_API_KEY: ${{secrets.CONTEXT7_API_KEY}}
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           prompt: |
@@ -51,6 +53,8 @@ jobs:
             必ず日本語で回答すること。
 
             Bash ツールで `gh pr comment` を使用して、レビューを PR のコメントとして残してください。
+
+            適時 Context7 を使ってレビュー対象コード内で使われている外部ライブラリのバージョンのドキュメント情報を取得して正しい情報でレビューしてください。
 
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
           # or https://docs.claude.com/en/docs/claude-code/cli-reference for available options

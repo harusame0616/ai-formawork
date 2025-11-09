@@ -6,7 +6,8 @@
 	},
 	"packageManager": "pnpm@10.12.4",
 	"scripts": {
-		"validate:check": "biome check . && knip && cspell .",
+		"test:e2e": "pnpm --filter @workspace/db db:reset && pnpm --filter web test:e2e",
+		"validate:check": "biome check . && knip && cspell . && pnpm -r type:check",
 		"validate:fix": "biome check --write . && knip --fix --allow-remove-files"
 	}
 }

@@ -1,3 +1,4 @@
+import { getLogger } from "@repo/logger/nextjs/server";
 import { db } from "@workspace/db/client";
 import { customersTable } from "@workspace/db/schema/customer";
 import { Button } from "@workspace/ui/components/button";
@@ -9,6 +10,8 @@ const TAG_CUSTOMER = "tag_customer";
 async function insertCustomer() {
 	"use server";
 
+	const logger = await getLogger("insertCustomer");
+	logger.info("test");
 	await db.insert(customersTable).values({
 		customerId: crypto.randomUUID(),
 		email: `${crypto.randomUUID()}@example.com`,
