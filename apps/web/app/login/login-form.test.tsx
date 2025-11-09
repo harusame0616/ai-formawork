@@ -79,7 +79,7 @@ test("パスワードが空の場合、バリデーションエラーが表示�
 test("送信中はボタンが無効化され、ローディング表示になる", async ({
 	loginActionMock,
 }) => {
-	loginActionMock.mockReturnValue(new Promise((r) => {}));
+	loginActionMock.mockReturnValue(new Promise(() => {}));
 
 	render(<LoginForm />);
 
