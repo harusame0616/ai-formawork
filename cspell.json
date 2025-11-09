@@ -27,6 +27,7 @@
 		"viewports",
 		"vitejs",
 		"vitest",
-		"wcag"
+		"wcag",
+		"WCAG"
 	]
 }

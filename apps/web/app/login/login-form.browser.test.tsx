@@ -154,3 +154,107 @@ test("パスワード表示切替ボタンで表示/非表示を切り替えら�
 		.element(page.getByRole("button", { name: "パスワードを表示" }))
 		.toBeInTheDocument();
 });
+
+test("メールアドレスが254文字を超える場合、バリデーションエラーが表示される", async ({
+	loginActionMock,
+}) => {
+	render(<LoginForm />);
+
+	// 255文字のメールアドレスを入力 (243 + 1(@) + 11(example.com) = 255文字)
+	const longEmail = `${"a".repeat(243)}@example.com`;
+	await page.getByRole("textbox", { name: "メールアドレス" }).fill(longEmail);
+	await page.getByLabelText(/^パスワード$/).fill("Test@Pass123");
+
+	// 送信ボタンをクリック
+	await page.getByRole("button", { name: "ログイン" }).click();
+
+	// バリデーションエラーが表示されることを確認
+	await expect
+		.element(page.getByText("メールアドレスは254文字以内で入力してください"))
+		.toBeInTheDocument();
+
+	expect(loginActionMock).not.toHaveBeenCalled();
+});
+
+test("パスワードが64文字を超える場合、バリデーションエラーが表示される", async ({
+	loginActionMock,
+}) => {
+	render(<LoginForm />);
+
+	// 65文字のパスワードを入力
+	const longPassword = "a".repeat(65);
+	await page
+		.getByRole("textbox", { name: "メールアドレス" })
+		.fill("test@example.com");
+	await page.getByLabelText(/^パスワード$/).fill(longPassword);
+
+	// 送信ボタンをクリック
+	await page.getByRole("button", { name: "ログイン" }).click();
+
+	// バリデーションエラーが表示されることを確認
+	await expect
+		.element(page.getByText("パスワードは64文字以内で入力してください"))
+		.toBeInTheDocument();
+
+	expect(loginActionMock).not.toHaveBeenCalled();
+});
+
+test("メールアドレスが254文字（境界値）の場合、送信できる", async ({
+	loginActionMock,
+}) => {
+	// 認証失敗をモック
+	loginActionMock.mockResolvedValue({
+		error: "認証に失敗しました",
+		success: false,
+	});
+
+	render(<LoginForm />);
+
+	// 254文字のメールアドレスを入力 (242 + 1(@) + 11(example.com) = 254文字)
+	const boundaryEmail = `${"a".repeat(242)}@example.com`;
+	await page
+		.getByRole("textbox", { name: "メールアドレス" })
+		.fill(boundaryEmail);
+	await page.getByLabelText(/^パスワード$/).fill("Test@Pass123");
+
+	// 送信ボタンをクリック
+	await page.getByRole("button", { name: "ログイン" }).click();
+
+	// 文字数制限のバリデーションエラーが表示されないことを確認
+	await expect
+		.element(page.getByText("メールアドレスは254文字以内で入力してください"))
+		.not.toBeInTheDocument();
+
+	// loginActionが呼ばれたことを確認（バリデーションを通過した証拠）
+	expect(loginActionMock).toHaveBeenCalled();
+});
+
+test("パスワードが64文字（境界値）の場合、送信できる", async ({
+	loginActionMock,
+}) => {
+	// 認証失敗をモック
+	loginActionMock.mockResolvedValue({
+		error: "認証に失敗しました",
+		success: false,
+	});
+
+	render(<LoginForm />);
+
+	// 64文字のパスワードを入力
+	const boundaryPassword = "a".repeat(64);
+	await page
+		.getByRole("textbox", { name: "メールアドレス" })
+		.fill("test@example.com");
+	await page.getByLabelText(/^パスワード$/).fill(boundaryPassword);
+
+	// 送信ボタンをクリック
+	await page.getByRole("button", { name: "ログイン" }).click();
+
+	// 文字数制限のバリデーションエラーが表示されないことを確認
+	await expect
+		.element(page.getByText("パスワードは64文字以内で入力してください"))
+		.not.toBeInTheDocument();
+
+	// loginActionが呼ばれたことを確認（バリデーションを通過した証拠）
+	expect(loginActionMock).toHaveBeenCalled();
+});
