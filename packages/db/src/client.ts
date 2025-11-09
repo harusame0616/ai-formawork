@@ -4,6 +4,8 @@ import postgres from "postgres";
 import { env } from "./env";
 import * as schema from "./schema";
 
+export { eq } from "drizzle-orm";
+
 const globalForDb = global as unknown as {
 	db: PostgresJsDatabase<typeof schema>;
 };
