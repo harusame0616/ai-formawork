@@ -24,6 +24,7 @@
 		"@vitest/browser-playwright": "catalog:",
 		"@vitest/ui": "catalog:",
 		"@workspace/tsconfig": "workspace:",
+		"drizzle-orm": "catalog:",
 		"pino-pretty": "catalog:",
 		"tailwindcss": "catalog:",
 		"typescript": "catalog:",
