@@ -13,16 +13,14 @@ const test = base.extend<{
 	loginActionMock: Mock;
 }>({
 	// biome-ignore lint/correctness/noEmptyPattern: Vitestのfixtureパターンで使用する標準的な記法
-	loginActionMock: async ({}, use) => {
+	loginActionMock: async ({}, use: any) => {
 		const loginActionModule = await import("./login-action");
 		await use(loginActionModule.loginAction);
 		vi.clearAllMocks();
 	},
 });
 
-test("メールアドレスが空の場合、バリデーションエラーが表示される", async ({
-	loginActionMock,
-}) => {
+test("メールアドレスが空の場合、バリデーションエラーが表示される", async () => {
 	render(<LoginForm />);
 
 	// パスワードだけを入力
@@ -36,9 +34,7 @@ test("メールアドレスが空の場合、バリデーションエラーが�
 		.toBeInTheDocument();
 });
 
-test("メールアドレスの形式が不正な場合、バリデーションエラーが表示される", async ({
-	loginActionMock,
-}) => {
+test("メールアドレスの形式が不正な場合、バリデーションエラーが表示される", async () => {
 	render(<LoginForm />);
 
 	// 不正な形式のメールアドレスを入力
@@ -57,9 +53,7 @@ test("メールアドレスの形式が不正な場合、バリデーション�
 		.toBeInTheDocument();
 });
 
-test("パスワードが空の場合、バリデーションエラーが表示される", async ({
-	loginActionMock,
-}) => {
+test("パスワードが空の場合、バリデーションエラーが表示される", async () => {
 	render(<LoginForm />);
 
 	// メールアドレスだけを入力
