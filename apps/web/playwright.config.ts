@@ -55,6 +55,9 @@ export default defineConfig({
 	// biome-ignore lint/complexity/useLiteralKeys: ts(4111)
 	retries: process.env["CI"] ? 2 : 0,
 	testDir: "./e2e",
+
+	/* Test match pattern */
+	testMatch: "**/*.e2e.test.{ts,tsx}",
 	/* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
 	use: {
 		/* Base URL to use in actions like `await page.goto('')`. */

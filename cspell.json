@@ -25,6 +25,8 @@
 		"unrs",
 		"valibot",
 		"viewports",
+		"vitejs",
+		"vitest",
 		"wcag"
 	]
 }
