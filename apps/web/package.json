@@ -33,6 +33,7 @@
 		"format": "biome format --write .",
 		"lint": "biome lint .",
 		"start": "next start",
+		"test:e2e": "playwright test",
 		"type:check": "tsc --noEmit"
 	},
 	"version": "0.1.0"
