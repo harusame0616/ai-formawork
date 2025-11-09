@@ -152,6 +152,9 @@ importers:
       '@workspace/ui':
         specifier: 'workspace:'
         version: link:../../packages/ui
+      drizzle-orm:
+        specifier: 'catalog:'
+        version: 0.44.7(postgres@3.4.5)
       lucide-react:
         specifier: 'catalog:'
         version: 0.475.0(react@19.2.0)

@@ -5,6 +5,7 @@ export const customersTable = pgTable("customers", {
 	customerId: uuid("customer_id").primaryKey().defaultRandom(),
 	email: text("email").notNull().unique(),
 	name: text("name").notNull(),
+	phoneNumber: text("phone_number"),
 	updatedAt: timestamp("updated_at")
 		.defaultNow()
 		.notNull()

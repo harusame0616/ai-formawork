@@ -6,6 +6,7 @@
 		"@repo/supabase": "workspace:",
 		"@workspace/db": "workspace:",
 		"@workspace/ui": "workspace:",
+		"drizzle-orm": "catalog:",
 		"lucide-react": "catalog:",
 		"next": "catalog:",
 		"react": "catalog:",
