@@ -1,7 +1,7 @@
-import { db } from "@workspace/db/client";
-import { customersTable } from "@workspace/db/schema/customer";
 import { test as base, expect, type Page } from "@playwright/test";
 import { createClient } from "@supabase/supabase-js";
+import { db } from "@workspace/db/client";
+import { customersTable } from "@workspace/db/schema/customer";
 
 // Supabase ローカル開発環境の設定
 const SUPABASE_URL = "http://127.0.0.1:62021";
@@ -23,35 +23,6 @@ type CustomersPageFixture = {
 };
 
 const test = base.extend<CustomersPageFixture>({
-	testUser: async (
-		// biome-ignore lint/correctness/noEmptyPattern: Playwrightのfixtureパターンで使用する標準的な記法
-		{},
-		use,
-	) => {
-		const testUser = {
-			email: "customer-test@example.com",
-			password: "Test@Pass123",
-		};
-
-		// テストユーザーを作成
-		const { data: createdUser, error } = await supabase.auth.admin.createUser({
-			email: testUser.email,
-			email_confirm: true,
-			password: testUser.password,
-		});
-
-		if (error) {
-			throw error;
-		}
-
-		await use(testUser);
-
-		// クリーンアップ
-		if (createdUser?.user?.id) {
-			await supabase.auth.admin.deleteUser(createdUser.user.id);
-		}
-	},
-
 	customersPage: async ({ page, testUser }, use) => {
 		// テスト用の顧客データを作成
 		await db.insert(customersTable).values([
@@ -80,7 +51,9 @@ const test = base.extend<CustomersPageFixture>({
 		// ログイン処理
 		await page.goto("/login");
 		await page.getByLabel("メールアドレス").fill(testUser.email);
-		await page.getByRole("textbox", { name: "パスワード" }).fill(testUser.password);
+		await page
+			.getByRole("textbox", { name: "パスワード" })
+			.fill(testUser.password);
 		await page.getByRole("button", { name: "ログイン" }).click();
 		await page.waitForURL("/");
 
@@ -93,11 +66,41 @@ const test = base.extend<CustomersPageFixture>({
 		// テストデータをクリーンアップ
 		await db.delete(customersTable);
 	},
+	testUser: async (
+		// biome-ignore lint/correctness/noEmptyPattern: Playwrightのfixtureパターンで使用する標準的な記法
+		{},
+		use,
+	) => {
+		const testUser = {
+			email: "customer-test@example.com",
+			password: "Test@Pass123",
+		};
+
+		// テストユーザーを作成
+		const { data: createdUser, error } = await supabase.auth.admin.createUser({
+			email: testUser.email,
+			email_confirm: true,
+			password: testUser.password,
+		});
+
+		if (error) {
+			throw error;
+		}
+
+		await use(testUser);
+
+		// クリーンアップ
+		if (createdUser?.user?.id) {
+			await supabase.auth.admin.deleteUser(createdUser.user.id);
+		}
+	},
 });
 
 test("顧客一覧ページが正しく表示される", async ({ customersPage }) => {
 	await test.step("顧客一覧が表示されることを確認", async () => {
-		await expect(customersPage.getByRole("heading", { name: "顧客一覧" })).toBeVisible();
+		await expect(
+			customersPage.getByRole("heading", { name: "顧客一覧" }),
+		).toBeVisible();
 		await expect(customersPage.getByText("テスト太郎")).toBeVisible();
 		await expect(customersPage.getByText("山田花子")).toBeVisible();
 		await expect(customersPage.getByText("佐藤次郎")).toBeVisible();
@@ -108,7 +111,9 @@ test("顧客一覧ページが正しく表示される", async ({ customersPage 
 		await expect(
 			customersPage.getByPlaceholder("名前、メールアドレス、電話番号で検索"),
 		).toBeVisible();
-		await expect(customersPage.getByRole("button", { name: "検索" })).toBeVisible();
+		await expect(
+			customersPage.getByRole("button", { name: "検索" }),
+		).toBeVisible();
 	});
 });
 
@@ -191,7 +196,9 @@ test("ページネーションが正しく動作する", async ({ page, testUser
 	// ログインして顧客一覧ページに遷移
 	await page.goto("/login");
 	await page.getByLabel("メールアドレス").fill(testUser.email);
-	await page.getByRole("textbox", { name: "パスワード" }).fill(testUser.password);
+	await page
+		.getByRole("textbox", { name: "パスワード" })
+		.fill(testUser.password);
 	await page.getByRole("button", { name: "ログイン" }).click();
 	await page.waitForURL("/");
 	await page.goto("/customers");
@@ -238,7 +245,9 @@ test("検索とページネーションを組み合わせて使用できる", as
 	// ログインして顧客一覧ページに遷移
 	await page.goto("/login");
 	await page.getByLabel("メールアドレス").fill(testUser.email);
-	await page.getByRole("textbox", { name: "パスワード" }).fill(testUser.password);
+	await page
+		.getByRole("textbox", { name: "パスワード" })
+		.fill(testUser.password);
 	await page.getByRole("button", { name: "ログイン" }).click();
 	await page.waitForURL("/");
 	await page.goto("/customers");

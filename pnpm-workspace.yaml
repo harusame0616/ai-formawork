@@ -42,6 +42,7 @@ catalog:
   '@vitejs/plugin-react': 5.1.0
   pino: 9.7.0
   pino-pretty: 13.1.2
+  tsx: 4.20.6
 
 catalogMode: strict
 

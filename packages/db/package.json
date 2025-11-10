@@ -8,6 +8,7 @@
 		"@types/node": "catalog:",
 		"@workspace/tsconfig": "workspace:",
 		"drizzle-kit": "catalog:",
+		"tsx": "catalog:",
 		"typescript": "catalog:"
 	},
 	"exports": {
@@ -20,7 +21,8 @@
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
 		"db:push": "drizzle-kit push",
-		"db:reset": "pnpm --filter @repo/supabase supabase:reset && pnpm db:push ",
+		"db:reset": "pnpm --filter @repo/supabase supabase:reset && pnpm db:push && pnpm db:seed",
+		"db:seed": "tsx --env-file-if-exists=.env src/seed.ts",
 		"db:studio": "drizzle-kit studio",
 		"type:check": "tsc --noEmit"
 	},

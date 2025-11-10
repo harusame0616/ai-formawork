@@ -1,48 +1,52 @@
 import { db } from "@workspace/db/client";
 import type { SelectCustomer } from "@workspace/db/schema/customer";
 import { customersTable } from "@workspace/db/schema/customer";
-import { count, sql } from "drizzle-orm";
-import type { CustomerSearchParams } from "./schema";
+import { count, desc, ilike, or } from "drizzle-orm";
+import { cacheLife, cacheTag } from "next/cache";
+import type { CustomerSearchCondition } from "./schema";
 
-export type GetCustomersResult = {
+type GetCustomersResult = {
 	customers: SelectCustomer[];
-	total: number;
 	page: number;
-	pageSize: number;
 	totalPages: number;
 };
 
 export async function getCustomers(
-	params: CustomerSearchParams,
+	params: CustomerSearchCondition,
 ): Promise<GetCustomersResult> {
-	const { keyword, page = 1, pageSize = 20 } = params;
+	"use cache";
 
-	// 検索条件の構築
+	cacheLife("permanent");
+	cacheTag("customer-crud");
+
+	const { keyword, page = 1 } = params;
+	const pageSize = 20;
+
 	const whereConditions = keyword
-		? sql`(${customersTable.name} ILIKE ${`%${keyword}%`} OR ${customersTable.email} ILIKE ${`%${keyword}%`} OR ${customersTable.phone} ILIKE ${`%${keyword}%`})`
-		: sql`1=1`;
+		? or(
+				ilike(customersTable.name, `%${keyword}%`),
+				ilike(customersTable.email, `%${keyword}%`),
+				ilike(customersTable.phone, `%${keyword}%`),
+			)
+		: undefined;
 
-	// 総件数を取得
 	const result = await db
 		.select({ count: count() })
 		.from(customersTable)
 		.where(whereConditions);
 	const total = Number(result[0]?.count) || 0;
 
-	// ページネーション付きでデータを取得
 	const customers = await db
 		.select()
 		.from(customersTable)
 		.where(whereConditions)
-		.orderBy(sql`${customersTable.createdAt} DESC`)
+		.orderBy(desc(customersTable.createdAt))
 		.limit(pageSize)
 		.offset((page - 1) * pageSize);
 
 	return {
 		customers,
 		page,
-		pageSize,
-		total,
 		totalPages: Math.ceil(total / pageSize),
 	};
 }

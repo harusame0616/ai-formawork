@@ -1,8 +1,24 @@
 import type { SelectCustomer } from "@workspace/db/schema/customer";
-import { expect, test } from "vitest";
+import { SearchPagination } from "@workspace/ui/components/search-pagination";
+import { expect, test, vi } from "vitest";
 import { page } from "vitest/browser";
 import { render } from "vitest-browser-react";
+
 import { CustomersPresenter } from "./customers-presenter";
+
+// Next.js routerをモック
+
+const pushMock = vi.hoisted(() =>
+	vi.fn().mockReturnValue(() => new URLSearchParams()),
+);
+
+vi.mock("next/navigation", () => ({
+	usePathname: vi.fn().mockReturnValue("path"),
+	useRouter: () => ({
+		push: pushMock,
+	}),
+	useSearchParams: vi.fn().mockReturnValue(new URLSearchParams()),
+}));
 
 const mockCustomers: SelectCustomer[] = [
 	{
@@ -25,13 +41,7 @@ const mockCustomers: SelectCustomer[] = [
 
 test("顧客一覧が表示される", async () => {
 	render(
-		<CustomersPresenter
-			customers={mockCustomers}
-			page={1}
-			pageSize={20}
-			total={2}
-			totalPages={1}
-		/>,
+		<CustomersPresenter customers={mockCustomers} page={1} totalPages={1} />,
 	);
 
 	await expect
@@ -51,19 +61,13 @@ test("顧客一覧が表示される", async () => {
 		.element(page.getByRole("cell", { name: "test2@example.com" }))
 		.toBeInTheDocument();
 	// 電話番号がnullの場合は"-"が表示される
-	await expect.element(page.getByText("-")).toBeInTheDocument();
+	await expect
+		.element(page.getByRole("cell", { exact: true, name: "-" }))
+		.toBeInTheDocument();
 });
 
 test("顧客が0件の場合、メッセージが表示される", async () => {
-	render(
-		<CustomersPresenter
-			customers={[]}
-			page={1}
-			pageSize={20}
-			total={0}
-			totalPages={0}
-		/>,
-	);
+	render(<CustomersPresenter customers={[]} page={1} totalPages={0} />);
 
 	await expect
 		.element(page.getByText("顧客が見つかりませんでした"))
@@ -71,24 +75,7 @@ test("顧客が0件の場合、メッセージが表示される", async () => {
 });
 
 test("ページネーションが表示される", async () => {
-	const manyCustomers = Array.from({ length: 20 }, (_, i) => ({
-		createdAt: new Date(),
-		customerId: String(i + 1),
-		email: `test${i + 1}@example.com`,
-		name: `テストユーザー${i + 1}`,
-		phone: null,
-		updatedAt: new Date(),
-	}));
-
-	render(
-		<CustomersPresenter
-			customers={manyCustomers}
-			page={1}
-			pageSize={20}
-			total={100}
-			totalPages={5}
-		/>,
-	);
+	render(<SearchPagination currentPage={1} totalPages={5} />);
 
 	// ページネーションリンクが存在することを確認
 	await expect
@@ -100,108 +87,45 @@ test("ページネーションが表示される", async () => {
 });
 
 test("現在のページがアクティブ状態で表示される", async () => {
-	const manyCustomers = Array.from({ length: 20 }, (_, i) => ({
-		createdAt: new Date(),
-		customerId: String(i + 1),
-		email: `test${i + 1}@example.com`,
-		name: `テストユーザー${i + 1}`,
-		phone: null,
-		updatedAt: new Date(),
-	}));
-
-	render(
-		<CustomersPresenter
-			customers={manyCustomers}
-			keyword="test"
-			page={2}
-			pageSize={20}
-			total={100}
-			totalPages={5}
-		/>,
-	);
+	render(<SearchPagination currentPage={2} totalPages={5} />);
 
 	const page2Link = page.getByRole("link", { name: "2" });
 	await expect.element(page2Link).toHaveAttribute("aria-current", "page");
 });
 
 test("ページネーションのリンクに正しいURLが設定される", async () => {
-	const manyCustomers = Array.from({ length: 20 }, (_, i) => ({
-		createdAt: new Date(),
-		customerId: String(i + 1),
-		email: `test${i + 1}@example.com`,
-		name: `テストユーザー${i + 1}`,
-		phone: null,
-		updatedAt: new Date(),
-	}));
-
-	render(
-		<CustomersPresenter
-			customers={manyCustomers}
-			keyword="テスト"
-			page={1}
-			pageSize={20}
-			total={100}
-			totalPages={5}
-		/>,
-	);
+	render(<SearchPagination currentPage={1} totalPages={5} />);
 
 	const page2Link = page.getByRole("link", { name: "2" });
-	await expect
-		.element(page2Link)
-		.toHaveAttribute(
-			"href",
-			"/customers?keyword=%E3%83%86%E3%82%B9%E3%83%88&page=2",
-		);
+	await expect.element(page2Link).toHaveAttribute("href", "path?page=2");
 });
 
 test("最初のページでは「前へ」ボタンが無効化される", async () => {
-	const manyCustomers = Array.from({ length: 20 }, (_, i) => ({
-		createdAt: new Date(),
-		customerId: String(i + 1),
-		email: `test${i + 1}@example.com`,
-		name: `テストユーザー${i + 1}`,
-		phone: null,
-		updatedAt: new Date(),
-	}));
+	render(<SearchPagination currentPage={1} totalPages={5} />);
 
-	render(
-		<CustomersPresenter
-			customers={manyCustomers}
-			page={1}
-			pageSize={20}
-			total={100}
-			totalPages={5}
-		/>,
-	);
-
-	// 「前へ」はリンクではなくspanとして表示される
-	const prevButton = page.getByText("前へ");
-	const element = await prevButton.element();
-	expect(element.tagName).toBe("SPAN");
+	// 「前へ」はaria-disabledとして表示される
+	const prevButton = page.getByRole("link", { name: "前へ" });
+	await expect.element(prevButton).toHaveAttribute("aria-disabled", "true");
 });
 
 test("最後のページでは「次へ」ボタンが無効化される", async () => {
-	const manyCustomers = Array.from({ length: 20 }, (_, i) => ({
-		createdAt: new Date(),
-		customerId: String(i + 1),
-		email: `test${i + 1}@example.com`,
-		name: `テストユーザー${i + 1}`,
-		phone: null,
-		updatedAt: new Date(),
-	}));
+	render(<SearchPagination currentPage={5} totalPages={5} />);
 
-	render(
-		<CustomersPresenter
-			customers={manyCustomers}
-			page={5}
-			pageSize={20}
-			total={100}
-			totalPages={5}
-		/>,
-	);
+	// 「次へ」はaria-disabledとして表示される
+	const nextButton = page.getByRole("link", { name: "次へ" });
+	await expect.element(nextButton).toHaveAttribute("aria-disabled", "true");
+});
 
-	// 「次へ」はリンクではなくspanとして表示される
-	const nextButton = page.getByText("次へ");
-	const element = await nextButton.element();
-	expect(element.tagName).toBe("SPAN");
+test("totalPagesが1以下の場合、すべてのボタンが無効化される", async () => {
+	render(<SearchPagination currentPage={1} totalPages={1} />);
+
+	// すべてのボタンが無効化される
+	const prevButton = page.getByRole("link", { name: "前へ" });
+	await expect.element(prevButton).toHaveAttribute("aria-disabled", "true");
+
+	const nextButton = page.getByRole("link", { name: "次へ" });
+	await expect.element(nextButton).toHaveAttribute("aria-disabled", "true");
+
+	const page1Link = page.getByRole("link", { name: "1" });
+	await expect.element(page1Link).toHaveAttribute("aria-disabled", "true");
 });

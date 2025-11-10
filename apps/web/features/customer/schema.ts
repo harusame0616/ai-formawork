@@ -1,9 +1,17 @@
 import * as v from "valibot";
 
-export const customerSearchSchema = v.object({
-	keyword: v.optional(v.string()),
-	page: v.optional(v.pipe(v.number(), v.minValue(1)), 1),
-	pageSize: v.optional(v.pipe(v.number(), v.minValue(1), v.maxValue(100)), 20),
+// searchParams用のschema（URLパラメータは文字列または文字列配列）
+export const customerSearchParamsSchema = v.object({
+	keyword: v.optional(v.pipe(v.string())),
+	page: v.optional(v.pipe(v.string(), v.regex(/\d+/), v.transform(Number))),
 });
 
-export type CustomerSearchParams = v.InferOutput<typeof customerSearchSchema>;
+// 内部処理用のschema（パース済みのデータ）
+const customerSearchConditionSchema = v.object({
+	keyword: v.optional(v.string()),
+	page: v.optional(v.pipe(v.number(), v.minValue(1)), 1),
+});
+
+export type CustomerSearchCondition = v.InferOutput<
+	typeof customerSearchConditionSchema
+>;

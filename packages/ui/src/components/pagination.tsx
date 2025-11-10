@@ -6,7 +6,6 @@ const Pagination = ({ className, ...props }: React.ComponentProps<"nav">) => (
 	<nav
 		aria-label="pagination"
 		className={cn("mx-auto flex w-full justify-center", className)}
-		role="navigation"
 		{...props}
 	/>
 );
@@ -17,8 +16,8 @@ const PaginationContent = React.forwardRef<
 	React.ComponentProps<"ul">
 >(({ className, ...props }, ref) => (
 	<ul
-		ref={ref}
 		className={cn("flex flex-row items-center gap-1", className)}
+		ref={ref}
 		{...props}
 	/>
 ));
@@ -28,7 +27,7 @@ const PaginationItem = React.forwardRef<
 	HTMLLIElement,
 	React.ComponentProps<"li">
 >(({ className, ...props }, ref) => (
-	<li ref={ref} className={cn("", className)} {...props} />
+	<li className={cn("", className)} ref={ref} {...props} />
 ));
 PaginationItem.displayName = "PaginationItem";
 
@@ -66,7 +65,6 @@ const PaginationPrevious = ({
 	...props
 }: React.ComponentProps<typeof PaginationLink>) => (
 	<PaginationLink
-		aria-label="前のページへ"
 		className={cn("gap-1 pl-2.5", className)}
 		size="default"
 		{...props}
@@ -82,7 +80,7 @@ const PaginationNext = ({
 	...props
 }: React.ComponentProps<typeof PaginationLink>) => (
 	<PaginationLink
-		aria-label="次のページへ"
+		aria-label="次へ"
 		className={cn("gap-1 pr-2.5", className)}
 		size="default"
 		{...props}

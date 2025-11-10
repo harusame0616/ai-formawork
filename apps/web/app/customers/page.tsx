@@ -6,17 +6,27 @@ import {
 	CardTitle,
 } from "@workspace/ui/components/card";
 import { Suspense } from "react";
-import { CustomersContainer } from "./customers-container";
+import * as v from "valibot";
+import { customerSearchParamsSchema } from "../../features/customer/schema";
+import { SuspenseOnSearch } from "../../libs/suspense-on-search";
 import { CustomerSearchForm } from "./customer-search-form";
+import { CustomersContainer } from "./customers-container";
+import { CustomersSkeleton } from "./customers-skeleton";
 
 type CustomersPageProps = {
 	searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-export default async function CustomersPage({
-	searchParams,
-}: CustomersPageProps) {
-	const params = await searchParams;
+export default function CustomersPage({ searchParams }: CustomersPageProps) {
+	const validatedCondition = searchParams.then((params) => {
+		const parsedParams = v.safeParse(customerSearchParamsSchema, params);
+		return parsedParams.success
+			? {
+					keyword: parsedParams.output.keyword,
+					page: parsedParams.output.page ?? 1,
+				}
+			: { page: 1 };
+	});
 
 	return (
 		<div className="container mx-auto p-6">
@@ -28,16 +38,12 @@ export default async function CustomersPage({
 					</CardDescription>
 				</CardHeader>
 				<CardContent className="space-y-6">
-					<CustomerSearchForm />
-					<Suspense
-						fallback={
-							<div className="text-center py-8 text-muted-foreground">
-								読み込み中...
-							</div>
-						}
-					>
-						<CustomersContainer searchParams={params} />
+					<Suspense>
+						<CustomerSearchForm />
 					</Suspense>
+					<SuspenseOnSearch fallback={<CustomersSkeleton />}>
+						<CustomersContainer condition={validatedCondition} />
+					</SuspenseOnSearch>
 				</CardContent>
 			</Card>
 		</div>

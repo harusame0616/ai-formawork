@@ -16,7 +16,7 @@ export default defineConfig({
 				test: {
 					browser: {
 						enabled: true,
-						headless: true,
+						// headless: true,
 						instances: [
 							{
 								browser: "chromium",
@@ -32,11 +32,14 @@ export default defineConfig({
 					],
 					include: ["**/*.browser.test.{ts,tsx}"],
 					name: "browser",
+					testTimeout: 1000,
 				},
 			},
 			{
 				test: {
 					env: {
+						DATABASE_URL:
+							"postgresql://postgres:postgres@127.0.0.1:62022/postgres",
 						// Supabase ローカル開発環境の設定 (packages/supabase/config.toml参照)
 						NEXT_PUBLIC_SUPABASE_ANON_KEY /* cspell:disable-next-line */:
 							"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
