@@ -1,4 +1,4 @@
-name: Medium & E2E Test
+name: E2E Test
 
 on:
   pull_request:
