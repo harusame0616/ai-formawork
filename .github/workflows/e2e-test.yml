@@ -1,4 +1,4 @@
-name: E2E Test
+name: Medium & E2E Test
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
       - main
 
 concurrency:
-  group: e2e-${{ github.ref }}
+  group: medium-e2e-${{ github.ref }}
   cancel-in-progress: true
 
 env:
@@ -19,7 +19,7 @@ env:
   DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:62022/postgres
 
 jobs:
-  e2e-test:
+  medium-e2e-test:
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -62,6 +62,9 @@ jobs:
 
       - name: テストユーザーのシード
         run: pnpm --filter @repo/supabase seed
+
+      - name: Medium テストの実行
+        run: pnpm --filter web test --project=medium --project=server
 
       - name: Next.js のビルド
         run: pnpm --filter web build

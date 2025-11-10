@@ -1,4 +1,4 @@
-name: Component Test
+name: Small & Browser Test
 
 on:
   pull_request:
@@ -7,11 +7,11 @@ on:
       - main
 
 concurrency:
-  group: component-test-${{ github.ref }}
+  group: small-browser-test-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  component-test:
+  small-browser-test:
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -31,11 +31,14 @@ jobs:
       - name: 依存関係のインストール
         run: pnpm install --frozen-lockfile
 
+      - name: Small テストの実行
+        run: pnpm --filter web test --project=small
+
       - name: Playwright ブラウザのインストール
         run: pnpm --filter web exec playwright install --with-deps chromium
 
-      - name: コンポーネントテストの実行
-        run: pnpm --filter web test
+      - name: ブラウザテストの実行
+        run: pnpm --filter web test --project=browser
 
       - name: テスト結果のアップロード
         if: failure()
