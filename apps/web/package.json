@@ -41,8 +41,9 @@
 		"lint": "biome lint .",
 		"start": "next start",
 		"test": "vitest",
+		"test:browser": "vitest --run --project browser",
 		"test:e2e": "playwright test",
-		"test:ui": "vitest --ui",
+		"test:server:small": "vitest --run --project server",
 		"type:check": "tsc --noEmit"
 	},
 	"version": "0.1.0"

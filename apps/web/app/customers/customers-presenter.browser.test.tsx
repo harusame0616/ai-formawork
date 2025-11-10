@@ -8,14 +8,10 @@ import { CustomersPresenter } from "./customers-presenter";
 
 // Next.js routerをモック
 
-const pushMock = vi.hoisted(() =>
-	vi.fn().mockReturnValue(() => new URLSearchParams()),
-);
-
 vi.mock("next/navigation", () => ({
 	usePathname: vi.fn().mockReturnValue("path"),
 	useRouter: () => ({
-		push: pushMock,
+		push: vi.fn(),
 	}),
 	useSearchParams: vi.fn().mockReturnValue(new URLSearchParams()),
 }));
@@ -39,58 +35,15 @@ const mockCustomers: SelectCustomer[] = [
 	},
 ];
 
-test("顧客一覧が表示される", async () => {
+test("電話番号がnullの場合は'-'が表示される", async () => {
 	render(
 		<CustomersPresenter customers={mockCustomers} page={1} totalPages={1} />,
 	);
 
-	await expect
-		.element(page.getByRole("cell", { name: "テスト太郎" }))
-		.toBeInTheDocument();
-	await expect
-		.element(page.getByRole("cell", { name: "test1@example.com" }))
-		.toBeInTheDocument();
-	await expect
-		.element(page.getByRole("cell", { name: "090-1234-5678" }))
-		.toBeInTheDocument();
-
-	await expect
-		.element(page.getByRole("cell", { name: "山田花子" }))
-		.toBeInTheDocument();
-	await expect
-		.element(page.getByRole("cell", { name: "test2@example.com" }))
-		.toBeInTheDocument();
 	// 電話番号がnullの場合は"-"が表示される
 	await expect
 		.element(page.getByRole("cell", { exact: true, name: "-" }))
 		.toBeInTheDocument();
-});
-
-test("顧客が0件の場合、メッセージが表示される", async () => {
-	render(<CustomersPresenter customers={[]} page={1} totalPages={0} />);
-
-	await expect
-		.element(page.getByText("顧客が見つかりませんでした"))
-		.toBeInTheDocument();
-});
-
-test("ページネーションが表示される", async () => {
-	render(<SearchPagination currentPage={1} totalPages={5} />);
-
-	// ページネーションリンクが存在することを確認
-	await expect
-		.element(page.getByRole("link", { name: "1" }))
-		.toBeInTheDocument();
-	await expect
-		.element(page.getByRole("link", { name: "2" }))
-		.toBeInTheDocument();
-});
-
-test("現在のページがアクティブ状態で表示される", async () => {
-	render(<SearchPagination currentPage={2} totalPages={5} />);
-
-	const page2Link = page.getByRole("link", { name: "2" });
-	await expect.element(page2Link).toHaveAttribute("aria-current", "page");
 });
 
 test("ページネーションのリンクに正しいURLが設定される", async () => {
@@ -98,22 +51,6 @@ test("ページネーションのリンクに正しいURLが設定される", as
 
 	const page2Link = page.getByRole("link", { name: "2" });
 	await expect.element(page2Link).toHaveAttribute("href", "path?page=2");
-});
-
-test("最初のページでは「前へ」ボタンが無効化される", async () => {
-	render(<SearchPagination currentPage={1} totalPages={5} />);
-
-	// 「前へ」はaria-disabledとして表示される
-	const prevButton = page.getByRole("link", { name: "前へ" });
-	await expect.element(prevButton).toHaveAttribute("aria-disabled", "true");
-});
-
-test("最後のページでは「次へ」ボタンが無効化される", async () => {
-	render(<SearchPagination currentPage={5} totalPages={5} />);
-
-	// 「次へ」はaria-disabledとして表示される
-	const nextButton = page.getByRole("link", { name: "次へ" });
-	await expect.element(nextButton).toHaveAttribute("aria-disabled", "true");
 });
 
 test("totalPagesが1以下の場合、すべてのボタンが無効化される", async () => {

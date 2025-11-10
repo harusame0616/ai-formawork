@@ -3,13 +3,24 @@ import type { SelectCustomer } from "@workspace/db/schema/customer";
 import { customersTable } from "@workspace/db/schema/customer";
 import { count, desc, ilike, or } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
-import type { CustomerSearchCondition } from "./schema";
+import * as v from "valibot";
+import {
+	CUSTOMER_SEARCH_KEYWORD_MAX_LENGTH,
+	type CustomerSearchCondition,
+} from "./schema";
 
 type GetCustomersResult = {
 	customers: SelectCustomer[];
 	page: number;
 	totalPages: number;
 };
+
+const getCustomersParamsSchema = v.object({
+	keyword: v.optional(
+		v.pipe(v.string(), v.maxLength(CUSTOMER_SEARCH_KEYWORD_MAX_LENGTH)),
+	),
+	page: v.optional(v.pipe(v.number(), v.minValue(1)), 1),
+});
 
 export async function getCustomers(
 	params: CustomerSearchCondition,
@@ -19,7 +30,8 @@ export async function getCustomers(
 	cacheLife("permanent");
 	cacheTag("customer-crud");
 
-	const { keyword, page = 1 } = params;
+	const validatedParams = v.parse(getCustomersParamsSchema, params);
+	const { keyword, page } = validatedParams;
 	const pageSize = 20;
 
 	const whereConditions = keyword

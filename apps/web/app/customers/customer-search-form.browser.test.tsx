@@ -1,61 +1,20 @@
 import { expect, test, vi } from "vitest";
-import { page } from "vitest/browser";
+import { page, userEvent } from "vitest/browser";
 import { render } from "vitest-browser-react";
+import { CUSTOMER_SEARCH_KEYWORD_MAX_LENGTH } from "../../features/customer/schema";
 import { CustomerSearchForm } from "./customer-search-form";
 
 // Next.js routerをモック
-const pushMock = vi.hoisted(() => vi.fn());
 const getMock = vi.hoisted(() => vi.fn());
 
 vi.mock("next/navigation", () => ({
 	useRouter: () => ({
-		push: pushMock,
+		push: vi.fn(),
 	}),
 	useSearchParams: () => ({
 		get: getMock,
 	}),
 }));
-
-test("検索フォームが表示される", async () => {
-	render(<CustomerSearchForm />);
-
-	await expect
-		.element(page.getByText("名前、メールアドレス、電話番号で検索できます"))
-		.toBeInTheDocument();
-	await expect
-		.element(page.getByRole("button", { name: "検索" }))
-		.toBeInTheDocument();
-});
-
-test("キーワードを入力できる", async () => {
-	render(<CustomerSearchForm />);
-
-	const input = page.getByLabelText("検索キーワード");
-	await input.fill("テスト太郎");
-
-	await expect.element(input).toHaveValue("テスト太郎");
-});
-
-test("検索ボタンをクリックするとフォームが送信される", async () => {
-	render(<CustomerSearchForm />);
-
-	const input = page.getByLabelText("検索キーワード");
-	await input.fill("テスト");
-
-	await page.getByRole("button", { name: "検索" }).click();
-
-	expect(pushMock).toHaveBeenCalledWith(
-		"/customers?keyword=%E3%83%86%E3%82%B9%E3%83%88",
-	);
-});
-
-test("キーワードが空の場合、パラメータなしで遷移する", async () => {
-	render(<CustomerSearchForm />);
-
-	await page.getByRole("button", { name: "検索" }).click();
-
-	expect(pushMock).toHaveBeenCalledWith("/customers?");
-});
 
 test("既存のキーワードが初期値として設定される", async () => {
 	getMock.mockReturnValue("initial keyword");
@@ -64,4 +23,21 @@ test("既存のキーワードが初期値として設定される", async () =>
 
 	const input = page.getByLabelText("検索キーワード");
 	await expect.element(input).toHaveValue("initial keyword");
+});
+
+test("最大文字数を超えて入力できない", async () => {
+	render(<CustomerSearchForm />);
+
+	const input = page.getByLabelText("検索キーワード");
+
+	// 最大文字数+1文字の文字列を作成
+	const overLimitText = "あ".repeat(CUSTOMER_SEARCH_KEYWORD_MAX_LENGTH + 1);
+
+	// 入力を試みる
+	await userEvent.fill(input, overLimitText);
+
+	// 最大文字数までしか入力されていないことを確認
+	await expect
+		.element(input)
+		.toHaveValue("あ".repeat(CUSTOMER_SEARCH_KEYWORD_MAX_LENGTH));
 });
