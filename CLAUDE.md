@@ -485,18 +485,53 @@ logger.error({ err }, "Authentication failed");
 
 ## コマンド
 
-### バリデーションチェック
+### テスト
 
-lint, format, デッドコード検出、スペルチェックを行います
-タスク完了時には必ず実施し、エラーが出ていないことを確認してください
-エラーが出ているときはバリデーション自動修正の実施や、手動での改善を行ってください
+#### ブラウザテスト（コンポーネント/UI/hooks）
+```bash
+pnpm test:browser
+```
+- Vitest Browser Mode を使用したコンポーネントテストを実行
+- `*.browser.test.{ts,tsx}` ファイルが対象
 
-`pnpm validate:check `
+#### サーバーテスト（Server Action/RSC/Route Handler）
+```bash
+pnpm test:server
+```
+- サーバーサイドのロジックをテスト
+- `*.server.test.{ts,tsx}` ファイルが対象
 
-### バリデーション自動修正
-lint, format, デッドコードの自動修正を行います。スペルチェックは手動で追加が必要です
+#### E2E テスト
+```bash
+pnpm test:e2e
+```
+- データベースをリセットしてから E2E テストを実行
+- `*.e2e.test.{ts,tsx}` ファイルが対象
+- Playwright を使用した実際のブラウザでのテスト
 
-`pnpm validate:fix`
+### バリデーション
+
+#### バリデーションチェック
+```bash
+pnpm validate:check
+```
+- lint, format, デッドコード検出、スペルチェック、型チェックを実行
+- タスク完了時には必ず実施し、エラーが出ていないことを確認すること
+- 実行内容:
+  - `biome check .` - lint と format のチェック
+  - `knip` - デッドコード検出
+  - `cspell .` - スペルチェック
+  - `pnpm -r type:check` - 全パッケージの型チェック
+
+#### バリデーション自動修正
+```bash
+pnpm validate:fix
+```
+- lint, format, デッドコードの自動修正を実行
+- スペルチェックのエラーは手動で修正が必要
+- 実行内容:
+  - `biome check --write .` - lint と format の自動修正
+  - `knip --fix --allow-remove-files` - デッドコードの自動削除
 
 ## モノレポ
 
