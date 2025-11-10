@@ -17,6 +17,6 @@ const customerSearchConditionSchema = v.object({
 	page: v.optional(v.pipe(v.number(), v.minValue(1)), 1),
 });
 
-export type CustomerSearchCondition = v.InferOutput<
+export type CustomerSearchConditionInput = v.InferInput<
 	typeof customerSearchConditionSchema
 >;

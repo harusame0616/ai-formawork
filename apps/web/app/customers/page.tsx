@@ -20,12 +20,13 @@ type CustomersPageProps = {
 export default function CustomersPage({ searchParams }: CustomersPageProps) {
 	const validatedCondition = searchParams.then((params) => {
 		const parsedParams = v.safeParse(customerSearchParamsSchema, params);
+
 		return parsedParams.success
 			? {
 					keyword: parsedParams.output.keyword,
-					page: parsedParams.output.page ?? 1,
+					page: parsedParams.output.page,
 				}
-			: { page: 1 };
+			: {};
 	});
 
 	return (

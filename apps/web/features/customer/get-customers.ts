@@ -1,12 +1,12 @@
 import { db } from "@workspace/db/client";
 import type { SelectCustomer } from "@workspace/db/schema/customer";
 import { customersTable } from "@workspace/db/schema/customer";
-import { count, desc, ilike, or } from "drizzle-orm";
+import { desc, ilike, or } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
 import * as v from "valibot";
 import {
 	CUSTOMER_SEARCH_KEYWORD_MAX_LENGTH,
-	type CustomerSearchCondition,
+	type CustomerSearchConditionInput,
 } from "./schema";
 
 type GetCustomersResult = {
@@ -23,15 +23,14 @@ const getCustomersParamsSchema = v.object({
 });
 
 export async function getCustomers(
-	params: CustomerSearchCondition,
+	params: CustomerSearchConditionInput,
 ): Promise<GetCustomersResult> {
 	"use cache";
 
 	cacheLife("permanent");
 	cacheTag("customer-crud");
 
-	const validatedParams = v.parse(getCustomersParamsSchema, params);
-	const { keyword, page } = validatedParams;
+	const { keyword, page } = v.parse(getCustomersParamsSchema, params);
 	const pageSize = 20;
 
 	const whereConditions = keyword
@@ -42,12 +41,6 @@ export async function getCustomers(
 			)
 		: undefined;
 
-	const result = await db
-		.select({ count: count() })
-		.from(customersTable)
-		.where(whereConditions);
-	const total = Number(result[0]?.count) || 0;
-
 	const customers = await db
 		.select()
 		.from(customersTable)
@@ -55,6 +48,8 @@ export async function getCustomers(
 		.orderBy(desc(customersTable.createdAt))
 		.limit(pageSize)
 		.offset((page - 1) * pageSize);
+
+	const total = await db.$count(customersTable, whereConditions);
 
 	return {
 		customers,
