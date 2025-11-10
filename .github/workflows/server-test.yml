@@ -1,4 +1,4 @@
-name: Medium & E2E Test
+name: Server Test
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
       - main
 
 concurrency:
-  group: medium-e2e-${{ github.ref }}
+  group: server-test-${{ github.ref }}
   cancel-in-progress: true
 
 env:
@@ -19,14 +19,9 @@ env:
   DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:62022/postgres
 
 jobs:
-  medium-e2e-test:
+  server-test:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-
-    strategy:
-      fail-fast: false
-      matrix:
-        browser: [chromium, webkit]
 
     steps:
       - name: リポジトリのチェックアウト
@@ -44,9 +39,6 @@ jobs:
       - name: 依存関係のインストール
         run: pnpm install --frozen-lockfile
 
-      - name: Playwright ブラウザのインストール
-        run: pnpm --filter web exec playwright install --with-deps ${{ matrix.browser }}
-
       - name: Supabase CLI のセットアップ
         uses: supabase/setup-cli@v1
         with:
@@ -60,26 +52,5 @@ jobs:
       - name: データベースマイグレーション
         run: pnpm --filter @workspace/db db:reset
 
-      - name: Next.js のビルド
-        run: pnpm --filter web build
-
-      - name: E2E テストの実行
-        run: pnpm --filter web exec playwright test --project=${{ matrix.browser }}
-        env:
-          CI: true
-
-      - name: テストレポートのアップロード
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report-${{ matrix.browser }}
-          path: apps/web/playwright-report/
-          retention-days: 7
-
-      - name: テスト結果アップロード
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-screenshots-${{ matrix.browser }}
-          path: apps/web/test-results/
-          retention-days: 7
+      - name: サーバーテストの実行
+        run: pnpm --filter web test --project=server

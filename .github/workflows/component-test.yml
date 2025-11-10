@@ -1,4 +1,4 @@
-name: Small & Browser Test
+name: Browser Test
 
 on:
   pull_request:
@@ -30,9 +30,6 @@ jobs:
 
       - name: 依存関係のインストール
         run: pnpm install --frozen-lockfile
-
-      - name: Small テストの実行
-        run: pnpm --filter web test --project=small
 
       - name: Playwright ブラウザのインストール
         run: pnpm --filter web exec playwright install --with-deps chromium
