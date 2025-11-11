@@ -1,5 +1,5 @@
-import { getCustomers } from "../../features/customer/get-customers";
-import type { CustomerSearchConditionInput } from "../../features/customer/schema";
+import { getCustomers } from "../../../features/customer/get-customers";
+import type { CustomerSearchConditionInput } from "../../../features/customer/schema";
 import { CustomersPresenter } from "./customers-presenter";
 
 type CustomersContainerProps = {

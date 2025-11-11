@@ -1,7 +1,7 @@
 import { expect, test, vi } from "vitest";
 import { page, userEvent } from "vitest/browser";
 import { render } from "vitest-browser-react";
-import { CUSTOMER_SEARCH_KEYWORD_MAX_LENGTH } from "../../features/customer/schema";
+import { CUSTOMER_SEARCH_KEYWORD_MAX_LENGTH } from "../../../features/customer/schema";
 import { CustomerSearchForm } from "./customer-search-form";
 
 // Next.js routerをモック

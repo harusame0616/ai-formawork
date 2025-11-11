@@ -17,8 +17,8 @@ import type { Route } from "next";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import * as v from "valibot";
-import { CUSTOMER_SEARCH_KEYWORD_MAX_LENGTH } from "../../features/customer/schema";
-import { useIsHydrated } from "../../libs/use-is-hydrated";
+import { CUSTOMER_SEARCH_KEYWORD_MAX_LENGTH } from "../../../features/customer/schema";
+import { useIsHydrated } from "../../../libs/use-is-hydrated";
 
 const customerSearchFormSchema = v.object({
 	keyword: v.pipe(
@@ -62,7 +62,7 @@ export function CustomerSearchForm() {
 						<FormItem>
 							<FormLabel>検索キーワード</FormLabel>
 							<FormDescription>
-								名前、メールアドレス、電話番号で検索できます（最大
+								名前、メールアドレス、電話番号（最大
 								{CUSTOMER_SEARCH_KEYWORD_MAX_LENGTH}文字）
 							</FormDescription>
 							<div className="flex gap-4 items-center">
