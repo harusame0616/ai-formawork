@@ -3,16 +3,10 @@ import { Suspense } from "react";
 import { CustomerDetailContainer } from "../../../../features/customer/detail/customer-detail-container";
 import { CustomerDetailSkeleton } from "../../../../features/customer/detail/customer-detail-skeleton";
 
-type CustomerDetailPageProps = {
-	params: Promise<{
-		customerId: string;
-	}>;
-};
-
-export default function CustomerDetailPage({
-	params,
-}: CustomerDetailPageProps) {
-	const customerIdPromise = params.then((p) => p.customerId);
+export default function CustomerDetailPage(
+	props: PageProps<"/customers/[customerId]">,
+) {
+	const customerIdPromise = props.params.then((p) => p.customerId);
 
 	return (
 		<div className="container mx-auto p-2 space-y-4">
