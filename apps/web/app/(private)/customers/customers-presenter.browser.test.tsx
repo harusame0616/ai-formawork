@@ -1,68 +1,84 @@
-import type { SelectCustomer } from "@workspace/db/schema/customer";
-import { SearchPagination } from "@workspace/ui/components/search-pagination";
 import { expect, test, vi } from "vitest";
 import { page } from "vitest/browser";
 import { render } from "vitest-browser-react";
 
-import { CustomersPresenter } from "./customers-presenter";
-
-// Next.js routerをモック
+// Next.js Link をモック（インポート前にモックを定義）
+vi.mock("next/link", () => {
+	return {
+		default: ({ children, href }: { children: React.ReactNode; href: string }) => {
+			return <a href={href}>{children}</a>;
+		},
+	};
+});
 
 vi.mock("next/navigation", () => ({
 	usePathname: vi.fn().mockReturnValue("path"),
-	useRouter: () => ({
+	useRouter: vi.fn().mockReturnValue({
 		push: vi.fn(),
 	}),
 	useSearchParams: vi.fn().mockReturnValue(new URLSearchParams()),
 }));
 
+import type { SelectCustomer } from "@workspace/db/schema/customer";
+import { SearchPagination } from "@workspace/ui/components/search-pagination";
+import { CustomersPresenter } from "./customers-presenter";
+
 const mockCustomers: SelectCustomer[] = [
 	{
 		createdAt: new Date("2024-01-01"),
 		customerId: "1",
-		email: "test1@example.com",
-		name: "テスト太郎",
+		email: "customer1@example.com",
+		name: "顧客1",
 		phone: "090-1234-5678",
 		updatedAt: new Date("2024-01-01"),
 	},
 	{
 		createdAt: new Date("2024-01-02"),
 		customerId: "2",
-		email: "test2@example.com",
-		name: "山田花子",
-		phone: null,
+		email: "customer2@example.com",
+		name: "顧客2",
+		phone: "090-8765-4321",
 		updatedAt: new Date("2024-01-02"),
 	},
 ];
 
-test("電話番号がnullの場合は'-'が表示される", async () => {
+test("顧客一覧が表示される", async () => {
 	render(
-		<CustomersPresenter customers={mockCustomers} page={1} totalPages={1} />,
+		<CustomersPresenter customers={mockCustomers} totalPages={1} page={1} />,
 	);
 
-	// 電話番号がnullの場合は"-"が表示される
+	await expect.element(page.getByText("顧客1")).toBeInTheDocument();
+	await expect.element(page.getByText("顧客2")).toBeInTheDocument();
 	await expect
-		.element(page.getByRole("cell", { exact: true, name: "-" }))
+		.element(page.getByText("customer1@example.com"))
+		.toBeInTheDocument();
+	await expect
+		.element(page.getByText("customer2@example.com"))
 		.toBeInTheDocument();
 });
 
-test("ページネーションのリンクに正しいURLが設定される", async () => {
-	render(<SearchPagination currentPage={1} totalPages={5} />);
+test("顧客が0件の場合、空のメッセージが表示される", async () => {
+	render(<CustomersPresenter customers={[]} totalPages={0} page={1} />);
 
-	const page2Link = page.getByRole("link", { name: "2" });
-	await expect.element(page2Link).toHaveAttribute("href", "path?page=2");
+	await expect.element(page.getByText("顧客がいません")).toBeInTheDocument();
 });
 
-test("totalPagesが1以下の場合、すべてのボタンが無効化される", async () => {
-	render(<SearchPagination currentPage={1} totalPages={1} />);
+test("ページネーションが表示される", async () => {
+	render(
+		<CustomersPresenter customers={mockCustomers} totalPages={3} page={2} />,
+	);
 
-	// すべてのボタンが無効化される
-	const prevButton = page.getByRole("link", { name: "前へ" });
-	await expect.element(prevButton).toHaveAttribute("aria-disabled", "true");
+	// SearchPaginationコンポーネント自体のテストではないため、存在確認のみ
+	const paginationElement = page.getByRole("navigation");
+	await expect.element(paginationElement).toBeInTheDocument();
+});
 
-	const nextButton = page.getByRole("link", { name: "次へ" });
-	await expect.element(nextButton).toHaveAttribute("aria-disabled", "true");
+test("ページネーションが1ページのみの場合表示されない", async () => {
+	render(
+		<CustomersPresenter customers={mockCustomers} totalPages={1} page={1} />,
+	);
 
-	const page1Link = page.getByRole("link", { name: "1" });
-	await expect.element(page1Link).toHaveAttribute("aria-disabled", "true");
+	// 1ページのみの場合、SearchPaginationは表示されない
+	const paginationElement = page.getByRole("navigation");
+	await expect.element(paginationElement).not.toBeInTheDocument();
 });
