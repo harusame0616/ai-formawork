@@ -13,6 +13,9 @@ export default defineConfig({
 	test: {
 		projects: [
 			{
+				define: {
+					"process.env": {},
+				},
 				optimizeDeps: {
 					// 以下のエラー対策	（cspell:disable-next-line）
 					// [vitest] Vite unexpectedly reloaded a test. This may cause tests to fail, lead to flaky behaviour or duplicated test runs.
@@ -21,12 +24,14 @@ export default defineConfig({
 						"react/jsx-dev-runtime",
 						"vitest-browser-react",
 						"next/navigation",
+						"next/link",
 						"lucide-react",
 						"react",
 						"valibot",
 						"@hookform/resolvers/valibot",
 						"react-hook-form",
 						"@radix-ui/react-slot",
+						"@radix-ui/react-dialog",
 						"class-variance-authority",
 						"clsx",
 						"tailwind-merge",
