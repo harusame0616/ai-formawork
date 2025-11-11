@@ -2,6 +2,7 @@ import { test as base, expect, type Page } from "@playwright/test";
 
 type CustomersPageFixture = {
 	customersPage: Page;
+	authenticatedPage: Page;
 	testUser: {
 		email: string;
 		password: string;
@@ -9,12 +10,7 @@ type CustomersPageFixture = {
 };
 
 const test = base.extend<CustomersPageFixture>({
-	customersPage: async ({ page }, use) => {
-		const testUser = {
-			email: "test1@example.com",
-			password: "Test@Pass123",
-		};
-
+	authenticatedPage: async ({ page, testUser }, use) => {
 		// ログイン処理
 		await page.goto("/login");
 		await page.getByLabel("メールアドレス").fill(testUser.email);
@@ -24,12 +20,48 @@ const test = base.extend<CustomersPageFixture>({
 		await page.getByRole("button", { name: "ログイン" }).click();
 		await page.waitForURL("/");
 
-		// 顧客一覧ページに遷移
-		await page.goto("/customers");
-		await page.waitForURL("/customers");
-
 		await use(page);
 	},
+	customersPage: async ({ authenticatedPage }, use) => {
+		// 顧客一覧ページに遷移
+		await authenticatedPage.goto("/customers");
+		await authenticatedPage.waitForURL("/customers");
+
+		await use(authenticatedPage);
+	},
+	testUser: [
+		{
+			email: "test1@example.com",
+			password: "Test@Pass123",
+		},
+		{ option: true },
+	],
+});
+
+test("メニューから顧客一覧ページに遷移できる", async ({
+	authenticatedPage,
+}) => {
+	await test.step("メニューボタンをクリックしてメニューを開く", async () => {
+		await authenticatedPage
+			.getByRole("button", { name: "メニューを開く" })
+			.first()
+			.click();
+		// メニュー内の顧客一覧リンクが表示されることを確認
+		await expect(
+			authenticatedPage.getByRole("link", { name: "顧客一覧" }),
+		).toBeVisible();
+	});
+
+	await test.step("顧客一覧リンクをクリック", async () => {
+		await authenticatedPage.getByRole("link", { name: "顧客一覧" }).click();
+	});
+
+	await test.step("顧客一覧ページに遷移することを確認", async () => {
+		await expect(authenticatedPage).toHaveURL("/customers");
+		await expect(
+			authenticatedPage.getByRole("heading", { name: "顧客一覧" }),
+		).toBeVisible();
+	});
 });
 
 test("顧客一覧ページが正しく表示される", async ({ customersPage }) => {

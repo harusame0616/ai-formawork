@@ -1,5 +1,6 @@
 import { Button } from "@workspace/ui/components/button";
-import { Menu, User } from "lucide-react";
+import { User } from "lucide-react";
+import { NavigationMenu } from "./_components/navigation-menu";
 
 export default function PrivateLayout({
 	children,
@@ -9,10 +10,7 @@ export default function PrivateLayout({
 	return (
 		<div className="flex h-screen flex-col">
 			<header className="border-b flex h-16 items-center gap-4 px-4">
-				<Button size="icon" variant="ghost">
-					<Menu className="size-6" />
-					<span className="sr-only">メニューを開く</span>
-				</Button>
+				<NavigationMenu />
 				<span className="text-lg font-semibold flex-1">
 					FORMAWORK - CRM for 看護
 				</span>
