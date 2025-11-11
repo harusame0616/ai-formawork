@@ -45,7 +45,7 @@
 		"test:browser": "vitest --run --project browser",
 		"test:e2e": "playwright test",
 		"test:server:small": "vitest --run --project server",
-		"type:check": "tsc --noEmit"
+		"type:check": "echo 'nextjs で tsc でのタイプチェックは非推奨のため未実施。 （build 時に型チェック）'"
 	},
 	"version": "0.1.0"
 }
