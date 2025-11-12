@@ -72,6 +72,9 @@ test("名前で検索できる", async ({ customersPage }) => {
 	await test.step("検索結果を確認", async () => {
 		// 表示されている全てのデータが検索キーワードを含んでいることを確認
 		const rows = customersPage.locator("table tbody tr");
+
+		// テーブルの再レンダリング前に行数がカウントされてしまうことがあるので暫定対応
+		await customersPage.waitForTimeout(200);
 		const count = await rows.count();
 		for (let i = 0; i < count; i++) {
 			const row = rows.nth(i);
@@ -94,6 +97,8 @@ test("メールアドレスで検索できる", async ({ customersPage }) => {
 	await test.step("検索結果を確認", async () => {
 		// 表示されている全てのデータが検索キーワードを含んでいることを確認
 		const rows = customersPage.locator("table tbody tr");
+		// テーブルの再レンダリング前に行数がカウントされてしまうことがあるので暫定対応
+		await customersPage.waitForTimeout(200);
 		const count = await rows.count();
 		for (let i = 0; i < count; i++) {
 			const row = rows.nth(i);
@@ -116,6 +121,8 @@ test("電話番号で検索できる", async ({ customersPage }) => {
 	await test.step("検索結果を確認", async () => {
 		// 表示されている全てのデータが検索キーワードを含んでいることを確認
 		const rows = customersPage.locator("table tbody tr");
+		// テーブルの再レンダリング前に行数がカウントされてしまうことがあるので暫定対応
+		await customersPage.waitForTimeout(200);
 		const count = await rows.count();
 		for (let i = 0; i < count; i++) {
 			const row = rows.nth(i);
@@ -187,8 +194,7 @@ test("検索とページネーションを組み合わせて使用できる", as
 		// 表示されている全てのデータが検索キーワードを含んでいることを確認
 		const rows = customersPage.locator("table tbody tr");
 		await expect(rows).toHaveCount(20);
-		const count = await rows.count();
-		for (let i = 0; i < count; i++) {
+		for (let i = 0; i < 20; i++) {
 			const row = rows.nth(i);
 			const text = await row.textContent();
 			expect(text).toContain(searchKeyword);
@@ -206,6 +212,8 @@ test("検索とページネーションを組み合わせて使用できる", as
 
 		// 表示されている全てのデータが検索キーワードを含んでいることを確認
 		const rows = customersPage.locator("table tbody tr");
+		// テーブルの再レンダリング前に行数がカウントされてしまうことがあるので暫定対応
+		await customersPage.waitForTimeout(200);
 		const count = await rows.count();
 		for (let i = 0; i < count; i++) {
 			const row = rows.nth(i);

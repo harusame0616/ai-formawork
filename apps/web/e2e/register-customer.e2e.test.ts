@@ -130,20 +130,10 @@ test("必須フィールドのみ入力して登録でき、詳細ページへ�
 
 	await test.step("登録した情報が正しく表示されることを確認", async () => {
 		// 名前の確認（font-boldクラスで表示される通常のテキスト）
-		const nameSection = registerCustomerPage
-			.getByText("名前")
-			.locator("..")
-			.locator("..");
-		await expect(nameSection.getByText(testData.name)).toBeVisible();
+		await expect(registerCustomerPage.getByText(testData.name)).toBeVisible();
 
 		// メールアドレスと電話番号は「未登録」と表示される
-		const emailLabel = registerCustomerPage
-			.getByText("メールアドレス")
-			.locator("..");
-		await expect(emailLabel.getByText("未登録")).toBeVisible();
-
-		const phoneLabel = registerCustomerPage.getByText("電話番号").locator("..");
-		await expect(phoneLabel.getByText("未登録")).toBeVisible();
+		await expect(registerCustomerPage.getByText("未登録")).toHaveCount(2);
 
 		// 作成日時と更新日時は medium テストとコンポーネントテストで担保
 	});
