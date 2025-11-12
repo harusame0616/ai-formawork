@@ -136,7 +136,7 @@ test("正しくないメールアドレスとパスワードを入力すると�
 	});
 
 	await test.step("エラーメッセージが表示されることを確認", async () => {
-		await expect(loginPage.getByRole("alert")).toBeVisible();
+		await expect(loginPage.getByRole("main").getByRole("alert")).toBeVisible();
 	});
 });
 

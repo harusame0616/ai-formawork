@@ -9,7 +9,7 @@ import { LoginForm } from "./login-form";
 
 export default function LoginPage() {
 	return (
-		<div className="flex min-h-screen items-center justify-center p-4">
+		<main className="flex min-h-screen items-center justify-center p-4">
 			<Card className="w-full max-w-sm">
 				<CardHeader>
 					<CardTitle className="text-2xl">ログイン</CardTitle>
@@ -19,6 +19,6 @@ export default function LoginPage() {
 					<LoginForm />
 				</CardContent>
 			</Card>
-		</div>
+		</main>
 	);
 }

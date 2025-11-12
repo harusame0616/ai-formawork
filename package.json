@@ -8,7 +8,7 @@
 	"scripts": {
 		"dev": "pnpm --filter @workspace/supabase supabase:start && pnpm --filter web dev",
 		"test:browser": "pnpm --filter web test:browser",
-		"test:e2e": "pnpm --filter @workspace/db db:reset && pnpm --filter web test:e2e",
+		"test:e2e": "pnpm --filter web test:e2e",
 		"test:server": "pnpm --filter web test:server",
 		"validate:check": "biome check . && knip && cspell . && pnpm -r type:check",
 		"validate:fix": "biome check --write . && knip --fix --allow-remove-files"

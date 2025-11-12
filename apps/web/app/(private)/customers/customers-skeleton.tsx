@@ -24,7 +24,8 @@ function SkeletonBox({ className = "" }: { className?: string }) {
 export function CustomersSkeleton() {
 	return (
 		<div className="space-y-4">
-			<Table>
+			<div className="sr-only">読み込み中</div>
+			<Table aria-hidden>
 				<TableHeader>
 					<TableRow>
 						<TableHead>名前</TableHead>

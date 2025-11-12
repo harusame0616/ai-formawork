@@ -26,6 +26,9 @@ const test = base.extend<CustomersPageFixture>({
 		// 顧客一覧ページに遷移
 		await authenticatedPage.goto("/customers");
 		await authenticatedPage.waitForURL("/customers");
+		await expect(
+			authenticatedPage.getByRole("main").getByText("読み込み中"),
+		).toBeHidden();
 
 		await use(authenticatedPage);
 	},
@@ -66,15 +69,14 @@ test("名前で検索できる", async ({ customersPage }) => {
 		await customersPage.getByLabel("検索キーワード").fill(searchKeyword);
 		await customersPage.getByRole("button", { name: "検索" }).click();
 		await customersPage.waitForURL("**/customers?keyword=*");
-		await expect(customersPage.getByText("読み込み中")).toBeHidden();
+		await expect(
+			customersPage.getByRole("main").getByText("読み込み中"),
+		).toBeHidden();
 	});
 
 	await test.step("検索結果を確認", async () => {
 		// 表示されている全てのデータが検索キーワードを含んでいることを確認
 		const rows = customersPage.locator("table tbody tr");
-
-		// テーブルの再レンダリング前に行数がカウントされてしまうことがあるので暫定対応
-		await customersPage.waitForTimeout(200);
 		const count = await rows.count();
 		for (let i = 0; i < count; i++) {
 			const row = rows.nth(i);
@@ -91,14 +93,14 @@ test("メールアドレスで検索できる", async ({ customersPage }) => {
 		await customersPage.getByLabel("検索キーワード").fill(searchKeyword);
 		await customersPage.getByRole("button", { name: "検索" }).click();
 		await customersPage.waitForURL("**/customers?keyword=*");
-		await expect(customersPage.getByText("読み込み中")).toBeHidden();
+		await expect(
+			customersPage.getByRole("main").getByText("読み込み中"),
+		).toBeHidden();
 	});
 
 	await test.step("検索結果を確認", async () => {
 		// 表示されている全てのデータが検索キーワードを含んでいることを確認
 		const rows = customersPage.locator("table tbody tr");
-		// テーブルの再レンダリング前に行数がカウントされてしまうことがあるので暫定対応
-		await customersPage.waitForTimeout(200);
 		const count = await rows.count();
 		for (let i = 0; i < count; i++) {
 			const row = rows.nth(i);
@@ -115,14 +117,14 @@ test("電話番号で検索できる", async ({ customersPage }) => {
 		await customersPage.getByLabel("検索キーワード").fill(searchKeyword);
 		await customersPage.getByRole("button", { name: "検索" }).click();
 		await customersPage.waitForURL("**/customers?keyword=*");
-		await expect(customersPage.getByText("読み込み中")).toBeHidden();
+		await expect(
+			customersPage.getByRole("main").getByText("読み込み中"),
+		).toBeHidden();
 	});
 
 	await test.step("検索結果を確認", async () => {
 		// 表示されている全てのデータが検索キーワードを含んでいることを確認
 		const rows = customersPage.locator("table tbody tr");
-		// テーブルの再レンダリング前に行数がカウントされてしまうことがあるので暫定対応
-		await customersPage.waitForTimeout(200);
 		const count = await rows.count();
 		for (let i = 0; i < count; i++) {
 			const row = rows.nth(i);
@@ -139,7 +141,9 @@ test("該当する顧客がいない場合、メッセージが表示される",
 		await customersPage.getByLabel("検索キーワード").fill("存在しない顧客");
 		await customersPage.getByRole("button", { name: "検索" }).click();
 		await customersPage.waitForURL("**/customers?keyword=*");
-		await expect(customersPage.getByText("読み込み中")).toBeHidden();
+		await expect(
+			customersPage.getByRole("main").getByText("読み込み中"),
+		).toBeHidden();
 	});
 
 	await test.step("メッセージを確認", async () => {
@@ -151,7 +155,9 @@ test("該当する顧客がいない場合、メッセージが表示される",
 
 test("ページネーションが正しく動作する", async ({ customersPage }) => {
 	await test.step("1ページ目に20件表示されることを確認", async () => {
-		await expect(customersPage.getByText("読み込み中")).toBeHidden();
+		await expect(
+			customersPage.getByRole("main").getByText("読み込み中"),
+		).toBeHidden();
 		// seedデータは20件以上あるため、他のテストで変更があったとしても 20 件はあることを前提とする
 		const rows = customersPage.locator("table tbody tr");
 		await expect(rows).toHaveCount(20);
@@ -189,7 +195,9 @@ test("検索とページネーションを組み合わせて使用できる", as
 
 	await test.step("1ページ目の検索結果を確認", async () => {
 		// Skeletonではなく実際のデータが表示されるまで待つ
-		await expect(customersPage.getByText("読み込み中")).toBeHidden();
+		await expect(
+			customersPage.getByRole("main").getByText("読み込み中"),
+		).toBeHidden();
 
 		// 表示されている全てのデータが検索キーワードを含んでいることを確認
 		const rows = customersPage.locator("table tbody tr");
@@ -208,12 +216,12 @@ test("検索とページネーションを組み合わせて使用できる", as
 
 	await test.step("2ページ目の検索結果を確認", async () => {
 		// Skeletonではなく実際のデータが表示されるまで待つ
-		await expect(customersPage.getByText("読み込み中")).toBeHidden();
+		await expect(
+			customersPage.getByRole("main").getByText("読み込み中"),
+		).toBeHidden();
 
 		// 表示されている全てのデータが検索キーワードを含んでいることを確認
 		const rows = customersPage.locator("table tbody tr");
-		// テーブルの再レンダリング前に行数がカウントされてしまうことがあるので暫定対応
-		await customersPage.waitForTimeout(200);
 		const count = await rows.count();
 		for (let i = 0; i < count; i++) {
 			const row = rows.nth(i);
