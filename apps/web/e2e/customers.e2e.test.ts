@@ -173,15 +173,14 @@ test("ページネーションが正しく動作する", async ({ customersPage 
 		await expect(rows).toHaveCount(20);
 	});
 
-	await test.step("ページネーションリンクをクリック", async () => {
-		await customersPage.getByRole("link", { name: "2" }).click();
-		await customersPage.waitForURL("**/customers?page=2");
+	await test.step("2ページ目をクリック", async () => {
+		await customersPage.getByRole("link", { name: /^2$/ }).click();
 	});
 
-	await test.step("2ページ目に残りのデータが表示されることを確認", async () => {
-		// seedデータは25件なので、2ページ目に5件表示される
-		const rows = customersPage.locator("table tbody tr");
-		await expect(rows).toHaveCount(5);
+	await test.step("2ページ目に遷移することを確認", async () => {
+		// データは作成系のテストによって変わってしまうので URL が正しいことのみチェック
+		// 正しいデータが取得できるかは server の medium テストで担保
+		await expect(customersPage).toHaveURL("/customers?page=2");
 	});
 
 	await test.step("「前へ」ボタンで1ページ目に戻れることを確認", async () => {
@@ -206,11 +205,11 @@ test("検索とページネーションを組み合わせて使用できる", as
 
 	await test.step("1ページ目の検索結果を確認", async () => {
 		// Skeletonではなく実際のデータが表示されるまで待つ
-		// (Skeletonは5行、実データは20行なので行数で判定)
-		const rows = customersPage.locator("table tbody tr");
-		await expect(rows).toHaveCount(20);
+		await expect(customersPage.getByText("読み込み中")).toBeHidden();
 
 		// 表示されている全てのデータが検索キーワードを含んでいることを確認
+		const rows = customersPage.locator("table tbody tr");
+		await expect(rows).toHaveCount(20);
 		const count = await rows.count();
 		for (let i = 0; i < count; i++) {
 			const row = rows.nth(i);
@@ -220,17 +219,16 @@ test("検索とページネーションを組み合わせて使用できる", as
 	});
 
 	await test.step("検索結果の2ページ目に遷移", async () => {
-		await customersPage.getByRole("link", { name: "2" }).click();
-		await customersPage.waitForURL("**/customers?keyword=*&page=2");
+		await customersPage.getByRole("link", { name: /^2$/ }).click();
+		await customersPage.waitForURL("/customers?keyword=example.com&page=2");
 	});
 
 	await test.step("2ページ目の検索結果を確認", async () => {
 		// Skeletonではなく実際のデータが表示されるまで待つ
-		// (2ページ目は5行)
-		const rows = customersPage.locator("table tbody tr");
-		await expect(rows).toHaveCount(5);
+		await expect(customersPage.getByText("読み込み中")).toBeHidden();
 
 		// 表示されている全てのデータが検索キーワードを含んでいることを確認
+		const rows = customersPage.locator("table tbody tr");
 		const count = await rows.count();
 		for (let i = 0; i < count; i++) {
 			const row = rows.nth(i);

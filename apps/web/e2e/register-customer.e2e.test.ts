@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { test as base, expect, type Page } from "@playwright/test";
 
 type RegisterCustomerPageFixture = {
@@ -32,7 +33,7 @@ const test = base.extend<RegisterCustomerPageFixture>({
 	},
 });
 
-test("全フィールドを境界値一杯で入力して顧客を登録し、詳細ページへ遷移する", async ({
+test("全フィールドを境界値一杯で入力して顧客を登録し、詳細ページへ遷移し、一覧画面で検索できる", async ({
 	registerCustomerPage,
 }) => {
 	// 境界値一杯のテストデータ
@@ -40,8 +41,8 @@ test("全フィールドを境界値一杯で入力して顧客を登録し、�
 		// メールアドレス: 254文字（最大値）
 		// ローカル部分64文字 + @ + ドメイン部分189文字 = 254文字
 		email: `${"a".repeat(64)}@${"example-".repeat(22)}example12.com`,
-		// 名前: 24文字（最大値）
-		name: "あいうえおかきくけこさしすせそたちつてとなにぬね",
+		// 名前: 24文字（最大値） - UUIDの先頭24文字
+		name: randomUUID().slice(0, 24),
 		// 電話番号: ハイフン込みで入力（ハイフンを除いて20文字分の数字）
 		phone: "012-3456-7890-123456789",
 	};
@@ -90,14 +91,32 @@ test("全フィールドを境界値一杯で入力して顧客を登録し、�
 
 		// 作成日時と更新日時は medium テストとコンポーネントテストで担保
 	});
+
+	// キャッシュがクリアできているかの観点のため、一覧画面で表示されていることを確認
+	await test.step("一覧ページに遷移", async () => {
+		await registerCustomerPage.goto("/customers");
+		await registerCustomerPage.waitForURL("/customers");
+	});
+
+	await test.step("登録した顧客を検索", async () => {
+		await registerCustomerPage.getByLabel("検索キーワード").fill(testData.name);
+		await registerCustomerPage.getByRole("button", { name: "検索" }).click();
+		await registerCustomerPage.waitForURL("**/customers?keyword=*");
+	});
+
+	await test.step("検索結果に登録した顧客が表示されることを確認", async () => {
+		await expect(
+			registerCustomerPage.getByRole("link", { name: testData.name }),
+		).toBeVisible();
+	});
 });
 
 test("必須フィールドのみ入力して登録でき、詳細ページへ遷移する", async ({
 	registerCustomerPage,
 }) => {
-	const uniqueId = Date.now();
 	const testData = {
-		name: `必須のみ登録テスト_${uniqueId}`,
+		// 名前: UUIDの先頭24文字（最大値以内）
+		name: randomUUID().slice(0, 24),
 	};
 
 	await test.step("必須フィールド（名前）のみ入力", async () => {
