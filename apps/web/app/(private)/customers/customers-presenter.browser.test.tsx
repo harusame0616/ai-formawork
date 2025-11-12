@@ -2,22 +2,6 @@ import { expect, test, vi } from "vitest";
 import { page } from "vitest/browser";
 import { render } from "vitest-browser-react";
 
-// Next.js Link をモック（インポート前にモックを定義）
-vi.mock("next/link", () => {
-	const React = require("react");
-	return {
-		default: React.forwardRef(function Link(
-			props: { children: React.ReactNode; href: string },
-			ref: React.Ref<HTMLAnchorElement>,
-		) {
-			return React.createElement(
-				"a",
-				{ href: props.href, ref },
-				props.children,
-			);
-		}),
-	};
-});
 
 vi.mock("next/navigation", () => ({
 	usePathname: vi.fn().mockReturnValue("path"),

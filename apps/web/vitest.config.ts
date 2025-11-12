@@ -10,34 +10,31 @@ export default defineConfig({
 			"@": path.resolve(__dirname, "./"),
 		},
 	},
+	// 以下のエラー対策	（cspell:disable-next-line）
+	// [vitest] Vite unexpectedly reloaded a test. This may cause tests to fail, lead to flaky behaviour or duplicated test runs.
+	// For a stable experience, please add mentioned dependencies to your config's `optimizeDeps.include` field manually.
+	optimizeDeps: {
+		include: [
+			"react/jsx-dev-runtime",
+			"vitest-browser-react",
+			"next/navigation",
+			"next/link",
+			"lucide-react",
+			"react",
+			"valibot",
+			"@hookform/resolvers/valibot",
+			"react-hook-form",
+			"@radix-ui/react-slot",
+			"@radix-ui/react-dialog",
+			"@supabase/ssr",
+			"class-variance-authority",
+			"clsx",
+			"tailwind-merge",
+		],
+	},
 	test: {
 		projects: [
 			{
-				define: {
-					"process.env": {},
-				},
-				optimizeDeps: {
-					// 以下のエラー対策	（cspell:disable-next-line）
-					// [vitest] Vite unexpectedly reloaded a test. This may cause tests to fail, lead to flaky behaviour or duplicated test runs.
-					// For a stable experience, please add mentioned dependencies to your config's `optimizeDeps.include` field manually.
-					include: [
-						"react/jsx-dev-runtime",
-						"vitest-browser-react",
-						"next/navigation",
-						"next/link",
-						"lucide-react",
-						"react",
-						"valibot",
-						"@hookform/resolvers/valibot",
-						"react-hook-form",
-						"@radix-ui/react-slot",
-						"@radix-ui/react-dialog",
-						"@supabase/ssr",
-						"class-variance-authority",
-						"clsx",
-						"tailwind-merge",
-					],
-				},
 				test: {
 					browser: {
 						enabled: true,
