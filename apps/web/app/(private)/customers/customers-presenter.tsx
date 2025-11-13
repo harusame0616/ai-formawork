@@ -47,7 +47,7 @@ export function CustomersPresenter({
 							<TableCell>
 								<Link
 									className="text-primary underline"
-									href={`/customers/${customer.customerId}`}
+									href={`/customers/${customer.customerId}/basic`}
 								>
 									{customer.name}
 								</Link>

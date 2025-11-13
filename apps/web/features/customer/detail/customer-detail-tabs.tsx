@@ -4,11 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { use } from "react";
 
-type Tab = {
-	href: string;
-	label: string;
-};
-
 type CustomerDetailTabsProps = {
 	customerIdPromise: Promise<string>;
 };
@@ -19,7 +14,7 @@ export function CustomerDetailTabs({
 	const pathname = usePathname();
 	const customerId = use(customerIdPromise);
 
-	const tabs: Tab[] = [
+	const tabs = [
 		{
 			href: `/customers/${customerId}/basic`,
 			label: "基本情報",
@@ -28,7 +23,7 @@ export function CustomerDetailTabs({
 			href: `/customers/${customerId}/reports`,
 			label: "レポート",
 		},
-	];
+	] as const;
 
 	return (
 		<div className="border-b">
@@ -43,6 +38,7 @@ export function CustomerDetailTabs({
 									: "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
 							}`}
 							href={tab.href}
+							// href={`/customers/treststsfasdf/basic`}
 							key={tab.href}
 						>
 							{tab.label}
