@@ -38,7 +38,6 @@ export function CustomerDetailTabs({
 									: "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
 							}`}
 							href={tab.href}
-							// href={`/customers/treststsfasdf/basic`}
 							key={tab.href}
 						>
 							{tab.label}
