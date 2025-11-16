@@ -1,18 +1,25 @@
+import { Tabs, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
+
 export function CustomerDetailTabsSkeleton() {
-	const tabs = ["基本情報", "レポート"];
+	const tabs = [
+		{ label: "基本情報", value: "basic" },
+		{ label: "ノート", value: "notes" },
+	] as const;
 
 	return (
-		<div className="border-b">
-			<nav className="flex space-x-8">
-				{tabs.map((label) => (
-					<div
-						className="py-4 px-1 border-b-2 border-transparent font-medium text-sm text-muted-foreground opacity-50 pointer-events-none"
-						key={label}
+		<Tabs className="w-full" value="basic">
+			<TabsList className="grid grid-cols-2 bg-muted-foreground/10 w-full">
+				{tabs.map((tab) => (
+					<TabsTrigger
+						className="pointer-events-none opacity-50"
+						disabled
+						key={tab.value}
+						value={tab.value}
 					>
-						{label}
-					</div>
+						{tab.label}
+					</TabsTrigger>
 				))}
-			</nav>
-		</div>
+			</TabsList>
+		</Tabs>
 	);
 }
