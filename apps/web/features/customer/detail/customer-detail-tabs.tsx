@@ -1,6 +1,7 @@
 "use client";
 
 import { Tabs, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
+import type { Route } from "next";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { use } from "react";
@@ -38,7 +39,7 @@ export function CustomerDetailTabs({
 					<TabsTrigger asChild key={tab.value} value={tab.value}>
 						<Link
 							aria-current={activeTab === tab.value ? "page" : undefined}
-							href={tab.href}
+							href={tab.href as Route}
 						>
 							{tab.label}
 						</Link>
