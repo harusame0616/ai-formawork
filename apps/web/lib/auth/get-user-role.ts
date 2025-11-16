@@ -1,4 +1,4 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
+import { createClient } from "@repo/supabase/nextjs/server";
 
 const UserRole = {
 	Admin: "admin",
@@ -7,7 +7,9 @@ const UserRole = {
 
 type UserRole = (typeof UserRole)[keyof typeof UserRole];
 
-export async function getUserRole(supabase: SupabaseClient): Promise<UserRole> {
+export async function getUserRole(): Promise<UserRole> {
+	const supabase = await createClient();
+
 	const {
 		data: { user },
 	} = await supabase.auth.getUser();

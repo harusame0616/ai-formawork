@@ -1,8 +1,8 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
+import { createClient } from "@repo/supabase/nextjs/server";
 
-export async function getUserStaffId(
-	supabase: SupabaseClient,
-): Promise<string | null> {
+export async function getUserStaffId(): Promise<string | null> {
+	const supabase = await createClient();
+
 	const {
 		data: { user },
 	} = await supabase.auth.getUser();

@@ -8,13 +8,19 @@ import {
 	type SelectCustomerNoteImage,
 } from "@workspace/db/schema/customer-note";
 import { staffsTable } from "@workspace/db/schema/staff";
-import { and, desc, eq, gte, inArray, lt, or, sql } from "drizzle-orm";
+import {
+	and,
+	count,
+	desc,
+	eq,
+	gte,
+	ilike,
+	lt,
+	or,
+	type SQL,
+	sql,
+} from "drizzle-orm";
 import { cacheTag } from "next/cache";
-
-type NoteAuthor = {
-	staffId: string;
-	name: string;
-};
 
 export type CustomerNoteSearchCondition = {
 	customerId: string;
@@ -26,6 +32,7 @@ export type CustomerNoteSearchCondition = {
 
 export type CustomerNoteWithImages = SelectCustomerNote & {
 	images: SelectCustomerNoteImage[];
+	staffName: string | null;
 };
 
 const NOTES_PER_PAGE = 20;
@@ -37,7 +44,6 @@ export async function getCustomerNotes(
 	totalCount: number;
 	currentPage: number;
 	totalPages: number;
-	authors: NoteAuthor[];
 }> {
 	cacheTag("customer-notes");
 
@@ -57,95 +63,73 @@ export async function getCustomerNotes(
 
 	// キーワード検索（本文 OR 記入者の名前）
 	if (condition.keyword) {
-		// キーワードに一致する名前を持つスタッフIDを取得
-		const matchedStaffs = await db
-			.select({ id: staffsTable.id })
-			.from(staffsTable)
-			.where(
-				sql`lower(${staffsTable.name}) LIKE lower(${`%${condition.keyword}%`})`,
-			);
+		// JOINしたstaffsテーブルで直接検索（事前クエリ不要）
+		// 2つの引数を渡しているためundefinedにはならない
+		const keywordFilter = or(
+			// 本文検索
+			ilike(customerNotesTable.content, `%${condition.keyword}%`),
+			// スタッフ名検索
+			ilike(staffsTable.name, `%${condition.keyword}%`),
+		) as SQL<unknown>;
 
-		const matchedStaffIds = matchedStaffs.map((staff) => staff.id);
-
-		// 本文検索とスタッフ名検索のOR条件
-		const keywordFilters = [];
-
-		// 本文検索
-		keywordFilters.push(
-			sql`lower(${customerNotesTable.content}) LIKE lower(${`%${condition.keyword}%`})`,
-		);
-
-		// スタッフ名検索（該当スタッフが存在する場合）
-		if (matchedStaffIds.length > 0) {
-			keywordFilters.push(inArray(customerNotesTable.staffId, matchedStaffIds));
-		}
-
-		filters.push(or(...keywordFilters));
+		filters.push(keywordFilter);
 	}
 
-	// ノートを取得（新しい順、ページング）
-	const notes = await db
-		.select()
+	// ノート、スタッフ情報、画像を一括取得（LEFT JOIN + json_agg）
+	const notesWithImages = await db
+		.select({
+			content: customerNotesTable.content,
+			createdAt: customerNotesTable.createdAt,
+			customerId: customerNotesTable.customerId,
+			id: customerNotesTable.id,
+			images: sql<SelectCustomerNoteImage[]>`COALESCE(json_agg(
+				json_build_object(
+					'id', ${customerNoteImagesTable.id},
+					'customerNoteId', ${customerNoteImagesTable.customerNoteId},
+					'imageUrl', ${customerNoteImagesTable.imageUrl},
+					'fileName', ${customerNoteImagesTable.fileName},
+					'fileSize', ${customerNoteImagesTable.fileSize},
+					'alternativeText', ${customerNoteImagesTable.alternativeText},
+					'displayOrder', ${customerNoteImagesTable.displayOrder},
+					'createdAt', ${customerNoteImagesTable.createdAt}
+				) ORDER BY ${customerNoteImagesTable.displayOrder}
+			) FILTER (WHERE ${customerNoteImagesTable.id} IS NOT NULL), '[]')`,
+			staffId: customerNotesTable.staffId,
+			staffName: staffsTable.name,
+			updatedAt: customerNotesTable.updatedAt,
+		})
 		.from(customerNotesTable)
+		.leftJoin(staffsTable, eq(customerNotesTable.staffId, staffsTable.id))
+		.leftJoin(
+			customerNoteImagesTable,
+			eq(customerNotesTable.id, customerNoteImagesTable.customerNoteId),
+		)
 		.where(and(...filters))
+		.groupBy(
+			customerNotesTable.id,
+			customerNotesTable.content,
+			customerNotesTable.customerId,
+			customerNotesTable.staffId,
+			customerNotesTable.createdAt,
+			customerNotesTable.updatedAt,
+			staffsTable.name,
+		)
 		.orderBy(desc(customerNotesTable.createdAt))
 		.limit(NOTES_PER_PAGE)
 		.offset(offset);
 
-	// 取得したノートのIDリストを作成
-	const noteIds = notes.map((note) => note.id);
-
-	// ノートに紐づく画像を一括取得
-	const images =
-		noteIds.length > 0
-			? await db
-					.select()
-					.from(customerNoteImagesTable)
-					.where(inArray(customerNoteImagesTable.customerNoteId, noteIds))
-					.orderBy(customerNoteImagesTable.displayOrder)
-			: [];
-
-	// 画像をノートごとにグループ化
-	const imagesByNoteId = images.reduce(
-		(acc, image) => {
-			if (!acc[image.customerNoteId]) {
-				acc[image.customerNoteId] = [];
-			}
-			acc[image.customerNoteId]?.push(image);
-			return acc;
-		},
-		{} as Record<string, SelectCustomerNoteImage[]>,
-	);
-
-	// ノートと画像を結合
-	const notesWithImages: CustomerNoteWithImages[] = notes.map((note) => ({
-		...note,
-		images: imagesByNoteId[note.id] ?? [],
-	}));
-
-	// 総件数を取得
 	const totalCountResult = await db
-		.select({ count: sql<number>`count(*)::int` })
+		.select({
+			count: count(),
+		})
 		.from(customerNotesTable)
+		.leftJoin(staffsTable, eq(customerNotesTable.staffId, staffsTable.id))
 		.where(and(...filters));
 
 	const totalCount = totalCountResult[0]?.count ?? 0;
 	const totalPages = Math.ceil(totalCount / NOTES_PER_PAGE);
 
-	// ノートの作成者情報を取得
-	const staffIds = [...new Set(notes.map((note) => note.staffId))];
-	const staffs = await db
-		.select()
-		.from(staffsTable)
-		.where(inArray(staffsTable.id, staffIds));
-
-	const authors: NoteAuthor[] = staffs.map((staff) => ({
-		name: staff.name,
-		staffId: staff.id,
-	}));
-
 	return {
-		authors,
 		currentPage: page,
 		notes: notesWithImages,
 		totalCount,

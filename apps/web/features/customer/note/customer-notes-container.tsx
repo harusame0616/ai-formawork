@@ -1,4 +1,3 @@
-import { createClient } from "@repo/supabase/nextjs/server";
 import { getUserRole, UserRole } from "../../../lib/auth/get-user-role";
 import { getUserStaffId } from "../../../lib/auth/get-user-staff-id";
 import { CustomerNotesPresenter } from "./customer-notes-presenter";
@@ -37,29 +36,24 @@ export async function CustomerNotesContainer({
 		page: searchCondition.page,
 	};
 
-	// データを並列取得
-	const [{ notes, totalCount, currentPage, totalPages, authors }, supabase] =
-		await Promise.all([getCustomerNotes(condition), createClient()]);
-
-	// 現在のユーザーとロールを取得
-	const [currentStaffId, userRole] = await Promise.all([
-		getUserStaffId(supabase),
-		getUserRole(supabase),
+	const [
+		{ notes, totalCount, currentPage, totalPages },
+		currentUserStaffId,
+		currentUserRole,
+	] = await Promise.all([
+		getCustomerNotes(condition),
+		getUserStaffId(),
+		getUserRole(),
 	]);
 
-	// 各ノートの編集・削除権限を判定
 	const notesWithPermissions = notes.map((note) => {
-		const isOwner = currentStaffId === note.staffId;
-		const isAdmin = userRole === UserRole.Admin;
-		const canEdit = isOwner || isAdmin;
-
-		// 記入者の名前を取得
-		const author = authors.find((a) => a.staffId === note.staffId);
+		const isOwner = currentUserStaffId === note.staffId;
+		const isAdmin = currentUserRole === UserRole.Admin;
 
 		return {
 			...note,
-			authorName: author?.name ?? "不明",
-			canEdit,
+			authorName: note.staffName ?? "",
+			canEdit: isOwner || isAdmin,
 		};
 	});
 
