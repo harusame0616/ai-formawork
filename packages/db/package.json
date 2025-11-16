@@ -13,7 +13,9 @@
 	},
 	"exports": {
 		"./client": "./src/client.ts",
-		"./schema/customer": "./src/schema/customer.ts"
+		"./schema/customer": "./src/schema/customer.ts",
+		"./schema/customer-note": "./src/schema/customer-note.ts",
+		"./schema/staff": "./src/schema/staff.ts"
 	},
 	"name": "@workspace/db",
 	"private": true,

@@ -1,9 +1,24 @@
 import { createClient } from "@supabase/supabase-js";
 
 const usersFixture = [
-	{ email: "test1@example.com", password: "Test@Pass123" },
-	{ email: "test2@example.com", password: "Secure@456" },
-	{ email: "admin@example.com", password: "Admin@789!" },
+	{
+		email: "test1@example.com",
+		password: "Test@Pass123",
+		role: "user",
+		staffId: "00000000-0000-0000-0000-000000000001",
+	},
+	{
+		email: "test2@example.com",
+		password: "Secure@456",
+		role: "user",
+		staffId: "00000000-0000-0000-0000-000000000002",
+	},
+	{
+		email: "admin@example.com",
+		password: "Admin@789!",
+		role: "admin",
+		staffId: "00000000-0000-0000-0000-000000000003",
+	},
 ];
 
 async function seedUsers() {
@@ -30,6 +45,7 @@ async function seedUsers() {
 	for (const user of usersFixture) {
 		try {
 			const { data, error } = await supabase.auth.admin.createUser({
+				app_metadata: { role: user.role, staffId: user.staffId },
 				email: user.email,
 				email_confirm: true,
 				password: user.password,

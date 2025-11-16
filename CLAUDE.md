@@ -46,9 +46,20 @@
 名前は直感的でわかりやすく、同じ概念には一貫した命名を使用すること。
 
 - **ファイル名**: kebab（例: `user-profile.tsx`）
+  - **一貫性の原則**: 同じ概念やエンティティを指す場合は、ファイル名に関わらず常に同じ表現を使用すること
+  - **単数形・複数形の使い分け**: 複数を表す場合は複数形、単数を表す場合は単数形を適切に使い分けること
+  - 例: 顧客ノートに関連するファイル
+    - ✅ 良い例:
+      - `customer-notes-container.tsx` - 複数のノートを扱う
+      - `customer-notes-presenter.tsx` - 複数のノートを表示
+      - `customer-notes-search-form.tsx` - 複数のノートを検索
+      - `customer-note-card.tsx` - 単一のノートカード（単数形が適切）
+    - ❌ 悪い例:
+      - `customer-notes-container.tsx`、`note-search-form.tsx`（`customer-notes` と `note` で表現が不統一。`customer-notes-search-form.tsx` とすべき）
+  - この原則はファイル名だけでなく、変数名、関数名、型名などコード全体に適用すること
 - **関数名**: camel（例: `createUser`）
 - **変数名**: camel（例: `fooBar`）
-- **コンポーネント名: pascal（例：LoginButton）
+- **コンポーネント名**: pascal（例：LoginButton）
 - **Object Literal**: pascal（例: `const UserStatus = { Active: 'active', Inactive: 'inactive' } as const`）
 
 ## ユーザー体験
@@ -62,6 +73,17 @@
 - エラーメッセージは統一されたフォーマットで、ユーザーフレンドリーであること
 - アクセシビリティ標準（WCAG 2.1 レベル AA）を満たすこと
 - ナビゲーションは直感的で、ユーザーが迷わない設計にすること
+- **フォームの説明**: `placeholder` の使用を避け、必要な情報は Label の下に説明テキストとして記載すること
+  - `placeholder` はフィールドが空でない場合に見えなくなるため、重要な情報の提供には不適切
+  - 説明テキストは `<p className="text-sm text-muted-foreground">` を使用して Label の直下に配置する
+  - 例:
+    ```tsx
+    <Label htmlFor="keyword">キーワード検索</Label>
+    <p className="text-sm text-muted-foreground">
+      本文または記入者の名前で検索できます
+    </p>
+    <Input id="keyword" type="text" value={keyword} />
+    ```
 - **楽観的更新 (Optimistic Updates)**: 可能な場合はユーザーアクションに対して即座にフィードバックを提供すること
   - サーバーレスポンスを待たずに UI を更新し、体感速度を向上
   - 失敗時のロールバック処理を適切に実装すること
@@ -123,6 +145,101 @@ function Foo({ id }: { id: string }) {
 }
 ```
 
+### Suspense とローディング状態
+
+**Container 配置時の必須対応:**
+
+- Container コンポーネント（async component）を配置する際は、**Page コンポーネント側で必ず** `Suspense` でラップすること
+- Container 自体に Suspense を配置してはいけない（Page で配置する）
+  - **例外**: Container 内で別の Container や非同期コンポーネントをネストする場合は、Container 内で Suspense を配置すること
+- `fallback` には専用のスケルトンコンポーネントを指定すること
+- スケルトンはロード後のデザインと一致させ、CLS（Cumulative Layout Shift）を防ぐこと
+
+**スケルトンの種類:**
+
+- **通常のコンテンツ**: `Skeleton` コンポーネントを使用してロード後のレイアウトと同じ構造を作成
+- **フォームコンポーネント**: 入力フィールドを `disabled` にした実際のフォームコンポーネントを配置
+
+**命名規則:**
+
+- Next.js の組み込み型や標準 API と紛らわしい名前は避けること
+  - 例: `searchParams` は Next.js の searchParams（`string | string[] | undefined` の型）や URLSearchParams を連想させるため、パース済みのオブジェクトには使用しない
+  - パース済みや変換済みのデータには、その性質を明確に表す名前を使用すること
+  - 例: `searchParams` → `searchCondition`、`rawData` → `parsedData` など
+
+**実装例:**
+
+```tsx
+// Page コンポーネント（Suspense を配置）
+export default async function Page({
+  params,
+  searchParams
+}: PageProps<"/foo/[id]">) {
+  const idPromise = params.then(({ id }) => id);
+  const searchConditionPromise = searchParams.then((sp) =>
+    parse(searchConditionSchema, sp)
+  );
+
+  return (
+    <Suspense fallback={<FooSkeleton />}>
+      <FooContainer
+        idPromise={idPromise}
+        searchConditionPromise={searchConditionPromise}
+      />
+    </Suspense>
+  );
+}
+
+// Container コンポーネント（Suspense は含めない）
+async function FooContainer({
+  idPromise,
+  searchConditionPromise
+}: FooContainerProps) {
+  const id = await idPromise;
+  const searchCondition = await searchConditionPromise;
+  const data = await getData(id, searchCondition);
+
+  return <FooPresenter data={data} />;
+}
+
+// スケルトンコンポーネント（ロード後と完全に一致するレイアウト）
+function FooSkeleton() {
+  return (
+    <Card>
+      <CardHeader>
+        <Skeleton className="h-6 w-32" />
+      </CardHeader>
+      <CardContent>
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-3/4" />
+      </CardContent>
+    </Card>
+  );
+}
+
+// フォームの場合
+function FooFormSkeleton() {
+  return <FooForm disabled />;  // 実際のフォームを disabled で表示
+}
+
+// Container 内で別の非同期コンポーネントをネストする場合（例外）
+async function ParentContainer({ idPromise }: ParentContainerProps) {
+  const id = await idPromise;
+  const parentData = await getParentData(id);
+
+  return (
+    <div>
+      <ParentPresenter data={parentData} />
+
+      {/* Container 内で別の非同期コンポーネントをネストする場合は Suspense を配置 */}
+      <Suspense fallback={<ChildSkeleton />}>
+        <ChildContainer idPromise={Promise.resolve(id)} />
+      </Suspense>
+    </div>
+  );
+}
+```
+
 ### Page と Layout の型定義
 
 Page と Layout では Next.js が提供する型ヘルパーを使用すること。
@@ -175,6 +292,106 @@ async function Page({ searchParams }: PageProps<"/customers">) {
 - これにより以下の問題を回避する:
   - ハイドレーション前の入力内容がクリアされる
   - イベントリスナーが正しく設定される前の操作により動作が失敗する
+
+### フォーム実装
+
+**必須要件:**
+
+フォームは必ず shadcn/ui の Form コンポーネント、react-hook-form、valibot を使用して実装すること。
+
+**使用するライブラリとコンポーネント:**
+
+- **shadcn/ui Form コンポーネント**: `Form`, `FormField`, `FormItem`, `FormLabel`, `FormDescription`, `FormControl`
+- **react-hook-form**: `useForm` フック、フォーム状態管理
+- **valibot**: スキーマ定義とバリデーション（`@hookform/resolvers/valibot` の `valibotResolver` を使用）
+
+**重要な原則:**
+
+- `placeholder` 属性の使用を避け、`FormDescription` で説明を記載すること
+  - `placeholder` は入力中に見えなくなるため、重要な情報の提供には不適切
+  - `FormDescription` は常に表示され、ユーザーに継続的なガイダンスを提供する
+
+**実装例:**
+
+```tsx
+"use client";
+
+import { valibotResolver } from "@hookform/resolvers/valibot";
+import * as v from "valibot";
+import { Button } from "@workspace/ui/components/button";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "@workspace/ui/components/form";
+import { Input } from "@workspace/ui/components/input";
+import { useForm } from "react-hook-form";
+
+// valibot でスキーマを定義
+const formSchema = v.object({
+  email: v.pipe(v.string(), v.email()),
+  name: v.string(),
+  age: v.optional(v.pipe(v.string(), v.transform(Number))),
+});
+
+type FormValues = v.InferOutput<typeof formSchema>;
+
+export function ExampleForm() {
+  const form = useForm<FormValues>({
+    defaultValues: {
+      email: "",
+      name: "",
+      age: "",
+    },
+    resolver: valibotResolver(formSchema),
+  });
+
+  function onSubmit(values: FormValues) {
+    console.log(values);
+  }
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>メールアドレス</FormLabel>
+              <FormDescription>
+                ログインに使用するメールアドレスを入力してください
+              </FormDescription>
+              <FormControl>
+                <Input type="email" {...field} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>名前</FormLabel>
+              <FormDescription>フルネームで入力してください</FormDescription>
+              <FormControl>
+                <Input type="text" {...field} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <Button type="submit">送信</Button>
+      </form>
+    </Form>
+  );
+}
+```
 
 ### Cache Component のキャッシュ戦略
 

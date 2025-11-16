@@ -6,6 +6,9 @@
 	},
 	"packageManager": "pnpm@10.12.4",
 	"scripts": {
+		"db:push": "pnpm --filter @workspace/db db:push",
+		"db:reset": "pnpm --filter @workspace/db db:reset",
+		"db:seed": "pnpm --filter @workspace/db db:seed",
 		"dev": "pnpm --filter @workspace/supabase supabase:start && pnpm --filter web dev",
 		"test:browser": "pnpm --filter web test:browser",
 		"test:e2e": "pnpm --filter web test:e2e",

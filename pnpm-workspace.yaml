@@ -5,7 +5,7 @@ packages:
 catalog:
   react: 19.2.0
   react-dom: 19.2.0
-  next: 16.0.1
+  next: 16.0.3
   tailwindcss: 4.1.16
   '@tailwindcss/postcss': 4.1.16
   '@radix-ui/react-slot': 1.2.3
@@ -47,6 +47,13 @@ catalog:
   uuid: ^13.0.0
   '@types/uuid': ^11.0.0
   '@radix-ui/react-tabs': ^1.1.13
+  '@radix-ui/react-select': ^2.2.6
+  cmdk: ^1.1.1
+  '@radix-ui/react-popover': ^1.1.15
+  zod: ^4.1.12
+  '@radix-ui/react-collapsible': ^1.1.12
+  embla-carousel-react: 8.6.0
+  vaul: ^1.1.2
 
 catalogMode: strict
 

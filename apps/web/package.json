@@ -37,7 +37,7 @@
 	"scripts": {
 		"build": "next build",
 		"check": "biome check --write .",
-		"dev": "next dev | pino-pretty -m message -i application,environment,service,ipAddress,requestId,userId,userAgent,deploymentId,gitCommitSha",
+		"dev": "TZ=Etc/UTC next dev | pino-pretty -m message -i application,environment,service,ipAddress,requestId,userId,userAgent,deploymentId,gitCommitSha",
 		"format": "biome format --write .",
 		"lint": "biome lint .",
 		"start": "next start",

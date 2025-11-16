@@ -9,6 +9,14 @@ const nextConfig: NextConfig = {
 			stale: Number.MAX_VALUE,
 		},
 	},
+	images: {
+		remotePatterns: [
+			{
+				hostname: "placehold.co",
+				protocol: "https",
+			},
+		],
+	},
 	typedRoutes: true,
 };
 
