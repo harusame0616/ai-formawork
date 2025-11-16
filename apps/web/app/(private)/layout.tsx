@@ -8,7 +8,7 @@ export default function PrivateLayout({
 	children: React.ReactNode;
 }) {
 	return (
-		<div className="flex h-screen flex-col">
+		<div className="grid grid-rows-[auto_1fr] h-dvh">
 			<header className="border-b flex h-16 items-center gap-4 px-4">
 				<NavigationMenu />
 				<span className="text-lg font-semibold flex-1">
