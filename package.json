@@ -7,6 +7,8 @@
 	"packageManager": "pnpm@10.12.4",
 	"scripts": {
 		"build": "pnpm --filter @workspace/supabase supabase:start && pnpm --filter web build",
+		"db:generate": "pnpm --filter @workspace/db db:generate",
+		"db:migrate": "pnpm --filter @workspace/db db:migrate",
 		"db:push": "pnpm --filter @workspace/db db:push",
 		"db:reset": "pnpm --filter @workspace/db db:reset",
 		"db:seed": "pnpm --filter @workspace/db db:seed",
