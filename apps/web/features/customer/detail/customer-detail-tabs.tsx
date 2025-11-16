@@ -22,9 +22,9 @@ export function CustomerDetailTabs({
 			value: "basic",
 		},
 		{
-			href: `/customers/${customerId}/reports`,
-			label: "レポート",
-			value: "reports",
+			href: `/customers/${customerId}/notes`,
+			label: "ノート",
+			value: "notes",
 		},
 	] as const;
 
