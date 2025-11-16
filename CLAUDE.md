@@ -545,8 +545,27 @@ logger.error({ err }, "Authentication failed");
 ### 開発
 
 #### 開発サーバー起動
+
+デプロイ先が Vercel でタイムゾーンが UTC 固定のため、UTC で起動する
+
 ```bash
 pnpm dev
+```
+
+#### ビルド
+
+デプロイ先が Vercel でタイムゾーンが UTC 固定のため、UTC でビルドする
+
+```bash
+pnpm build
+```
+
+#### 本番サーバー起動
+
+デプロイ先が Vercel でタイムゾーンが UTC 固定のため、UTC で起動する
+
+```bash
+pnpm start
 ```
 
 ### テスト
