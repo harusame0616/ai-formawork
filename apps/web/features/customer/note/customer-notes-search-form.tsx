@@ -86,7 +86,7 @@ export function CustomerNotesSearchForm(props: CustomerNotesSearchFormProps) {
 		});
 	}
 
-	const isDisabled = props.disabled || isHydrated;
+	const isDisabled = props.disabled || !isHydrated;
 
 	return (
 		<Collapsible disabled={isDisabled} onOpenChange={setIsOpen} open={isOpen}>
