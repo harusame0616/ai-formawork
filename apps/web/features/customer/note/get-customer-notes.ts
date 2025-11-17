@@ -52,7 +52,9 @@ export async function getCustomerNotes(
 	const page = condition.page ?? 1;
 	const offset = (page - 1) * NOTES_PER_PAGE;
 
-	const filters = [eq(customerNotesTable.customerId, condition.customerId)];
+	const filters: (SQL<unknown> | undefined)[] = [
+		eq(customerNotesTable.customerId, condition.customerId),
+	];
 
 	if (condition.dateFrom) {
 		filters.push(gte(customerNotesTable.createdAt, condition.dateFrom));
@@ -63,12 +65,12 @@ export async function getCustomerNotes(
 	}
 
 	if (condition.keyword) {
-		const keywordFilter = or(
-			ilike(customerNotesTable.content, `%${condition.keyword}%`),
-			ilike(staffsTable.name, `%${condition.keyword}%`),
-		) as SQL<unknown>;
-
-		filters.push(keywordFilter);
+		filters.push(
+			or(
+				ilike(customerNotesTable.content, `%${condition.keyword}%`),
+				ilike(staffsTable.name, `%${condition.keyword}%`),
+			),
+		);
 	}
 
 	const notesWithImages = await db
