@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { DateTime } from "../../../components/date-time";
+import { DateTime } from "../../../assets/components/date-time";
 
 type Customer = {
 	createdAt: Date;

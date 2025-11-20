@@ -1,7 +1,7 @@
 import { Button } from "@workspace/ui/components/button";
 import { Card, CardContent, CardHeader } from "@workspace/ui/components/card";
 import { CalendarClock, Edit, Trash2, UserPen } from "lucide-react";
-import { DateTime } from "../../../components/date-time";
+import { DateTime } from "../../../assets/components/date-time";
 import { CustomerNoteImageGallery } from "./customer-note-image-gallery";
 import type { CustomerNoteWithImages } from "./get-customer-notes";
 

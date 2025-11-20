@@ -12,6 +12,7 @@
 		"typescript": "catalog:"
 	},
 	"exports": {
+		"./admin": "./src/admin.ts",
 		"./config": "./src/config.ts",
 		"./nextjs/proxy": "./src/nextjs/proxy.ts",
 		"./nextjs/server": "./src/nextjs/server.ts"

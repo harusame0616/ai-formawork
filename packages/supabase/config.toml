@@ -107,11 +107,11 @@ file_size_limit = "50MiB"
 # enabled = true
 
 # Configure local storage buckets
-[storage.buckets.service-note-images]
+[storage.buckets.customer-note-attachments]
 public = false
 file_size_limit = "10MiB"
 allowed_mime_types = ["image/*"]
-objects_path = "./storage/service-note-images"
+objects_path = "./storage/customer-note-attachments"
 
 [auth]
 enabled = true
