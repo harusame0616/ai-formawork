@@ -1,8 +1,8 @@
 import {
-	bigint,
 	index,
 	integer,
 	pgTable,
+	primaryKey,
 	text,
 	timestamp,
 	uuid,
@@ -39,21 +39,15 @@ export const customerNotesTable = pgTable(
 export const customerNoteImagesTable = pgTable(
 	"customer_note_images",
 	{
-		alternativeText: text("alternative_text"),
 		createdAt: timestamp("created_at").defaultNow().notNull(),
 		customerNoteId: uuid("customer_note_id")
 			.notNull()
 			.references(() => customerNotesTable.id, { onDelete: "cascade" }),
 		displayOrder: integer("display_order").notNull(),
-		fileName: text("file_name").notNull(),
-		fileSize: bigint("file_size", { mode: "number" }).notNull(),
-		id: uuid("id").primaryKey().defaultRandom(),
-		imageUrl: text("image_url").notNull(),
+		path: text("path").notNull(),
 	},
 	(table) => ({
-		customerNoteIdIdx: index("idx_customer_note_images_customer_note_id").on(
-			table.customerNoteId,
-		),
+		pk: primaryKey({ columns: [table.customerNoteId, table.displayOrder] }),
 	}),
 );
 

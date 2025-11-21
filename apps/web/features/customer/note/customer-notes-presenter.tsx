@@ -34,16 +34,17 @@ export function CustomerNotesPresenter({
 				</p>
 			</div>
 
-			<div className="space-y-4">
+			<ul className="space-y-4">
 				{notes.map((note) => (
-					<CustomerNoteCard
-						authorName={note.authorName}
-						canEdit={note.canEdit}
-						key={note.id}
-						note={note}
-					/>
+					<li key={note.id}>
+						<CustomerNoteCard
+							authorName={note.authorName}
+							canEdit={note.canEdit}
+							note={note}
+						/>
+					</li>
 				))}
-			</div>
+			</ul>
 
 			<SearchPagination currentPage={currentPage} totalPages={totalPages} />
 		</div>

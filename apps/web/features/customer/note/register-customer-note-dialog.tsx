@@ -25,7 +25,9 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import * as v from "valibot";
+import { CustomerNoteImageInput } from "./customer-note-image-input";
 import { registerCustomerNoteAction } from "./register-customer-note-action";
+import { useImageUpload } from "./use-image-upload";
 
 const formSchema = v.object({
 	content: v.pipe(
@@ -49,6 +51,15 @@ export function RegisterCustomerNoteDialog({
 	const [isPending, startTransition] = useTransition();
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+	const {
+		addImages,
+		clearAll: clearImages,
+		images,
+		isUploading,
+		removeImage,
+		uploadAll,
+	} = useImageUpload();
+
 	const form = useForm<FormValues>({
 		defaultValues: {
 			content: "",
@@ -60,9 +71,21 @@ export function RegisterCustomerNoteDialog({
 		setErrorMessage(null);
 
 		startTransition(async () => {
+			// 画像がある場合は先にアップロード
+			let uploadImages: { permanentPath: string; temporaryPath: string }[] = [];
+			if (images.length > 0) {
+				const uploadResult = await uploadAll(customerId);
+				if (!uploadResult.success) {
+					setErrorMessage("画像のアップロードに失敗しました");
+					return;
+				}
+				uploadImages = uploadResult.uploadImages;
+			}
+
 			const result = await registerCustomerNoteAction({
 				content: values.content,
 				customerId,
+				uploadImages,
 			});
 
 			if (!result.success) {
@@ -71,6 +94,7 @@ export function RegisterCustomerNoteDialog({
 			}
 
 			form.reset();
+			clearImages();
 			setErrorMessage(null);
 			setOpen(false);
 			router.refresh();
@@ -80,16 +104,19 @@ export function RegisterCustomerNoteDialog({
 	function handleOpenChange(open: boolean) {
 		if (!open) {
 			form.reset();
+			clearImages();
 			setErrorMessage(null);
 		}
 		setOpen(open);
 	}
 
+	const isProcessing = isPending || isUploading;
+
 	return (
 		<Dialog onOpenChange={handleOpenChange} open={open}>
 			<DialogTrigger asChild>
 				<Button>
-					<Plus className="h-4 w-4 mr-2" />
+					<Plus className="mr-2 h-4 w-4" />
 					ノートを追加
 				</Button>
 			</DialogTrigger>
@@ -101,7 +128,7 @@ export function RegisterCustomerNoteDialog({
 				<Form {...form}>
 					<form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
 						{errorMessage && (
-							<div className="flex items-center gap-2 p-3 text-sm text-destructive bg-destructive/10 rounded-md">
+							<div className="bg-destructive/10 text-destructive flex items-center gap-2 rounded-md p-3 text-sm">
 								<AlertCircle className="h-4 w-4 shrink-0" />
 								<p>{errorMessage}</p>
 							</div>
@@ -120,7 +147,7 @@ export function RegisterCustomerNoteDialog({
 										<Textarea
 											{...field}
 											className="max-h-32"
-											disabled={isPending}
+											disabled={isProcessing}
 											maxLength={4096}
 										/>
 									</FormControl>
@@ -129,9 +156,22 @@ export function RegisterCustomerNoteDialog({
 							)}
 						/>
 
+						<div>
+							<FormLabel>画像</FormLabel>
+							<FormDescription className="mb-2">
+								ノートに添付する画像を選択できます
+							</FormDescription>
+							<CustomerNoteImageInput
+								disabled={isProcessing}
+								images={images}
+								onAddImages={addImages}
+								onRemoveImage={removeImage}
+							/>
+						</div>
+
 						<DialogFooter>
 							<Button
-								disabled={isPending}
+								disabled={isProcessing}
 								onClick={() => handleOpenChange(false)}
 								type="button"
 								variant="outline"
@@ -140,12 +180,12 @@ export function RegisterCustomerNoteDialog({
 							</Button>
 							<Button
 								className="min-w-[120]"
-								disabled={isPending}
+								disabled={isProcessing}
 								type="submit"
 							>
-								{isPending ? (
+								{isProcessing ? (
 									<>
-										登録中
+										{isUploading ? "アップロード中" : "登録中"}
 										<Loader2 className="ml-2 size-4 animate-spin" />
 									</>
 								) : (

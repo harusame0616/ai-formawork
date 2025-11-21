@@ -1,6 +1,5 @@
 "use client";
 
-import type { SelectCustomerNoteImage } from "@workspace/db/schema/customer-note";
 import {
 	Carousel,
 	type CarouselApi,
@@ -18,9 +17,11 @@ import {
 import { X } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import NoImage from "../../../assets/no-image.png";
+import type { CustomerNoteImageWithUrl } from "./get-customer-notes";
 
 type CustomerNoteImageGalleryProps = {
-	images: SelectCustomerNoteImage[];
+	images: CustomerNoteImageWithUrl[];
 };
 
 export function CustomerNoteImageGallery({
@@ -54,26 +55,29 @@ export function CustomerNoteImageGallery({
 		}
 	}, [api, open, initialIndex]);
 
-	if (images.length === 0) {
+	// URLがない画像や空の画像配列は表示しない
+	const validImages = images.filter((image) => image.url);
+
+	if (validImages.length === 0) {
 		return null;
 	}
 
 	return (
 		<>
-			<div className="flex gap-2 flex-wrap">
-				{images.map((image, index) => (
+			<div className="flex flex-wrap gap-2">
+				{validImages.map((image, index) => (
 					<button
-						className="relative h-[120px] w-[120px] overflow-hidden rounded-lg border hover:opacity-80 transition-opacity"
-						key={image.id}
+						className="relative h-[120px] w-[120px] overflow-hidden rounded-lg border transition-opacity hover:opacity-80"
+						key={`${image.customerNoteId}-${image.displayOrder}`}
 						onClick={() => handleImageClick(index)}
 						type="button"
 					>
 						<Image
-							alt={image.alternativeText ?? image.fileName}
+							alt={`添付画像サムネイル-${index + 1}`}
 							className="object-cover"
 							fill
 							sizes="120px"
-							src={image.imageUrl}
+							src={image.url || NoImage.src}
 						/>
 					</button>
 				))}
@@ -81,11 +85,9 @@ export function CustomerNoteImageGallery({
 
 			<Drawer onOpenChange={setOpen} open={open}>
 				<DrawerContent className="h-[90vh]">
-					<DrawerTitle className="sr-only">
-						{images[current]?.fileName}
-					</DrawerTitle>
+					<DrawerTitle className="sr-only">ノート画像</DrawerTitle>
 
-					<DrawerClose className="absolute right-4 top-4 z-10 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+					<DrawerClose className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-4 right-4 z-10 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:pointer-events-none">
 						<X className="h-6 w-6" />
 						<span className="sr-only">閉じる</span>
 					</DrawerClose>
@@ -97,16 +99,17 @@ export function CustomerNoteImageGallery({
 							setApi={setApi}
 						>
 							<CarouselContent>
-								{images.map((image) => (
-									<CarouselItem key={image.id}>
-										<div className="relative aspect-video w-full overflow-hidden rounded-lg bg-muted">
+								{validImages.map((image) => (
+									<CarouselItem
+										key={`${image.customerNoteId}-${image.displayOrder}`}
+									>
+										<div className="bg-muted relative aspect-video w-full overflow-hidden rounded-lg">
 											<Image
-												alt={image.alternativeText ?? image.fileName}
+												alt={`添付-${image.displayOrder + 1}`}
 												className="object-contain"
 												fill
-												priority
 												sizes="(max-width: 1024px) 100vw, 1024px"
-												src={image.imageUrl}
+												src={image.url ?? NoImage.src}
 											/>
 										</div>
 									</CarouselItem>
@@ -118,10 +121,7 @@ export function CustomerNoteImageGallery({
 
 						<div className="mt-4 text-center">
 							<p className="text-sm font-medium">
-								{current + 1} / {images.length}
-							</p>
-							<p className="text-sm text-muted-foreground">
-								{images[current]?.fileName}
+								{current + 1} / {validImages.length}
 							</p>
 						</div>
 					</div>

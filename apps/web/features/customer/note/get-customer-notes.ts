@@ -5,7 +5,6 @@ import {
 	customerNoteImagesTable,
 	customerNotesTable,
 	type SelectCustomerNote,
-	type SelectCustomerNoteImage,
 } from "@workspace/db/schema/customer-note";
 import { staffsTable } from "@workspace/db/schema/staff";
 import {
@@ -22,6 +21,7 @@ import {
 } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
 import { CustomerTag } from "../tag";
+import { getCustomerNoteImageUrl } from "./get-customer-note-image-url";
 
 export type CustomerNoteSearchCondition = {
 	customerId: string;
@@ -31,9 +31,24 @@ export type CustomerNoteSearchCondition = {
 	page?: number;
 };
 
+export type CustomerNoteImageWithUrl = {
+	customerNoteId: string;
+	path: string;
+	displayOrder: number;
+	createdAt: Date;
+	url: string | null;
+};
+
 export type CustomerNoteWithImages = SelectCustomerNote & {
-	images: SelectCustomerNoteImage[];
+	images: CustomerNoteImageWithUrl[];
 	staffName: string | null;
+};
+
+type RawCustomerNoteImage = {
+	customerNoteId: string;
+	path: string;
+	displayOrder: number;
+	createdAt: string;
 };
 
 const NOTES_PER_PAGE = 20;
@@ -79,18 +94,14 @@ export async function getCustomerNotes(
 			createdAt: customerNotesTable.createdAt,
 			customerId: customerNotesTable.customerId,
 			id: customerNotesTable.id,
-			images: sql<SelectCustomerNoteImage[]>`COALESCE(json_agg(
+			images: sql<RawCustomerNoteImage[]>`COALESCE(json_agg(
 				json_build_object(
-					'id', ${customerNoteImagesTable.id},
 					'customerNoteId', ${customerNoteImagesTable.customerNoteId},
-					'imageUrl', ${customerNoteImagesTable.imageUrl},
-					'fileName', ${customerNoteImagesTable.fileName},
-					'fileSize', ${customerNoteImagesTable.fileSize},
-					'alternativeText', ${customerNoteImagesTable.alternativeText},
+					'path', ${customerNoteImagesTable.path},
 					'displayOrder', ${customerNoteImagesTable.displayOrder},
 					'createdAt', ${customerNoteImagesTable.createdAt}
 				) ORDER BY ${customerNoteImagesTable.displayOrder}
-			) FILTER (WHERE ${customerNoteImagesTable.id} IS NOT NULL), '[]')`,
+			) FILTER (WHERE ${customerNoteImagesTable.customerNoteId} IS NOT NULL), '[]')`,
 			staffId: customerNotesTable.staffId,
 			staffName: staffsTable.name,
 			updatedAt: customerNotesTable.updatedAt,
@@ -115,6 +126,26 @@ export async function getCustomerNotes(
 		.limit(NOTES_PER_PAGE)
 		.offset(offset);
 
+	// 画像に signed URL を付与
+	const notesWithSignedUrls: CustomerNoteWithImages[] = await Promise.all(
+		notesWithImages.map(async (note) => {
+			const imagesWithUrls = await Promise.all(
+				note.images.map(async (image) => ({
+					createdAt: new Date(image.createdAt),
+					customerNoteId: image.customerNoteId,
+					displayOrder: image.displayOrder,
+					path: image.path,
+					url: await getCustomerNoteImageUrl(image.path),
+				})),
+			);
+
+			return {
+				...note,
+				images: imagesWithUrls,
+			};
+		}),
+	);
+
 	const totalCountResult = await db
 		.select({
 			count: count(),
@@ -128,7 +159,7 @@ export async function getCustomerNotes(
 
 	return {
 		currentPage: page,
-		notes: notesWithImages,
+		notes: notesWithSignedUrls,
 		totalCount,
 		totalPages,
 	};
