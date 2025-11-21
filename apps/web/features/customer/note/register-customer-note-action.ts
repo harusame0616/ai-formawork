@@ -76,48 +76,58 @@ export async function registerCustomerNoteAction(
 	}
 
 	try {
-		// 顧客ノートの登録
 		const noteId = randomUUID();
-		await db.insert(customerNotesTable).values({
-			content,
-			customerId,
-			id: noteId,
-			staffId,
-		});
+		const supabase = createAdminClient();
 
-		// 画像がある場合は移動とDB保存
-		if (uploadImages.length > 0) {
-			const supabase = createAdminClient();
+		await db.transaction(async (tx) => {
+			// 顧客ノートの登録
+			await tx.insert(customerNotesTable).values({
+				content,
+				customerId,
+				id: noteId,
+				staffId,
+			});
 
-			for (let i = 0; i < uploadImages.length; i++) {
-				const uploadImage = uploadImages[i];
-				if (!uploadImage) continue;
+			// 画像がある場合は並列で移動してまとめてDB保存
+			if (uploadImages.length > 0) {
+				// 全ての画像を並列で移動
+				const moveResults = await Promise.all(
+					uploadImages.map(async (uploadImage, i) => {
+						const { permanentPath, temporaryPath } = uploadImage;
 
-				const { permanentPath, temporaryPath } = uploadImage;
+						const { error: moveError } = await supabase.storage
+							.from(BUCKET_NAME)
+							.move(temporaryPath, permanentPath);
 
-				// ファイルを移動
-				const { error: moveError } = await supabase.storage
-					.from(BUCKET_NAME)
-					.move(temporaryPath, permanentPath);
+						if (moveError) {
+							logger.error("Failed to move image file", {
+								displayOrder: i,
+								err: moveError,
+								permanentPath,
+								temporaryPath,
+							});
+							throw new Error(
+								`Failed to move image file: ${moveError.message}`,
+							);
+						}
 
-				if (moveError) {
-					logger.error("Failed to move image file", {
-						err: moveError,
-						permanentPath,
-						temporaryPath,
-					});
-					// 画像の移動に失敗しても続行（ノートは登録済み）
-					continue;
-				}
+						return {
+							displayOrder: i,
+							path: permanentPath,
+						};
+					}),
+				);
 
-				// DBに画像情報を保存
-				await db.insert(customerNoteImagesTable).values({
-					customerNoteId: noteId,
-					displayOrder: i,
-					path: permanentPath,
-				});
+				// 全ての画像情報をまとめてDB保存
+				await tx.insert(customerNoteImagesTable).values(
+					moveResults.map((result) => ({
+						customerNoteId: noteId,
+						displayOrder: result.displayOrder,
+						path: result.path,
+					})),
+				);
 			}
-		}
+		});
 
 		logger.info("Customer note registered successfully", {
 			action: "register-customer-note",
