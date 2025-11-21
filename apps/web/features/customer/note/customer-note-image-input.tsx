@@ -38,7 +38,7 @@ export function CustomerNoteImageInput({
 	);
 
 	const handleDrop = useCallback(
-		(event: React.DragEvent<HTMLDivElement>) => {
+		(event: React.DragEvent<HTMLButtonElement>) => {
 			event.preventDefault();
 			const files = event.dataTransfer.files;
 			if (files) {
@@ -49,7 +49,7 @@ export function CustomerNoteImageInput({
 	);
 
 	const handleDragOver = useCallback(
-		(event: React.DragEvent<HTMLDivElement>) => {
+		(event: React.DragEvent<HTMLButtonElement>) => {
 			event.preventDefault();
 		},
 		[],

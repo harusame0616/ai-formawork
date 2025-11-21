@@ -1,5 +1,6 @@
 "use server";
 
+import { randomUUID } from "node:crypto";
 import { fail, type Result, succeed } from "@harusame0616/result";
 import { EventType } from "@repo/logger/event-types";
 import { getLogger } from "@repo/logger/nextjs/server";
@@ -76,16 +77,13 @@ export async function registerCustomerNoteAction(
 
 	try {
 		// 顧客ノートの登録
-		const [insertedNote] = await db
-			.insert(customerNotesTable)
-			.values({
-				content,
-				customerId,
-				staffId,
-			})
-			.returning({ id: customerNotesTable.id });
-
-		const noteId = insertedNote.id;
+		const noteId = randomUUID();
+		await db.insert(customerNotesTable).values({
+			content,
+			customerId,
+			id: noteId,
+			staffId,
+		});
 
 		// 画像がある場合は移動とDB保存
 		if (uploadImages.length > 0) {
