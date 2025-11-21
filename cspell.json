@@ -4,7 +4,8 @@
 		"**/*tsconfig.tsbuildinfo",
 		"pnpm-lock.yaml",
 		"packages/supabase/config.toml",
-		"**/playwright-report/**"
+		"**/playwright-report/**",
+		"packages/db/drizzle/meta/_journal.json"
 	],
 	"language": "en",
 	"version": "0.2",
