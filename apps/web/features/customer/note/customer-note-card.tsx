@@ -1,8 +1,9 @@
 import { Button } from "@workspace/ui/components/button";
 import { Card, CardContent, CardHeader } from "@workspace/ui/components/card";
-import { CalendarClock, Edit, Trash2, UserPen } from "lucide-react";
+import { CalendarClock, Edit, UserPen } from "lucide-react";
 import { DateTime } from "../../../components/date-time";
 import { CustomerNoteImageGallery } from "./customer-note-image-gallery";
+import { DeleteCustomerNoteDialog } from "./delete-customer-note-dialog";
 import type { CustomerNoteWithImages } from "./get-customer-notes";
 
 type CustomerNoteCardProps = {
@@ -36,10 +37,7 @@ export function CustomerNoteCard({
 							<Edit className="h-4 w-4 mr-1" />
 							編集
 						</Button>
-						<Button size="sm" type="button" variant="outline">
-							<Trash2 className="h-4 w-4 mr-1" />
-							削除
-						</Button>
+						<DeleteCustomerNoteDialog noteId={note.id} />
 					</div>
 				)}
 			</CardHeader>

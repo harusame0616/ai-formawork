@@ -24,8 +24,9 @@ export function LoginForm() {
 
 	const form = useForm<LoginSchema>({
 		defaultValues: {
-			password: "",
-			username: "",
+			// デモ環境用のデモユーザー
+			password: "Admin@789!",
+			username: "admin@example.com",
 		},
 		resolver: valibotResolver(loginSchema),
 	});
