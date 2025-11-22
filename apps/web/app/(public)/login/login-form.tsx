@@ -24,9 +24,11 @@ export function LoginForm() {
 
 	const form = useForm<LoginSchema>({
 		defaultValues: {
-			// デモ環境用のデモユーザー
-			password: "Admin@789!",
-			username: "admin@example.com",
+			// デモ用に環境変数で初期値を設定できるようにする
+			// biome-ignore lint/complexity/useLiteralKeys: ts(4111)
+			password: process.env["NEXT_PUBLIC_DEFAULT_PASSWORD"] || "",
+			// biome-ignore lint/complexity/useLiteralKeys: ts(4111)
+			username: process.env["NEXT_PUBLIC_DEFAULT_USERNAME"] || "",
 		},
 		resolver: valibotResolver(loginSchema),
 	});
