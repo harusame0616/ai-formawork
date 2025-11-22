@@ -1,11 +1,11 @@
 import { createClient } from "@repo/supabase/nextjs/server";
 
-const UserRole = {
+export const UserRole = {
 	Admin: "admin",
 	User: "user",
 } as const;
 
-type UserRole = (typeof UserRole)[keyof typeof UserRole];
+export type UserRole = (typeof UserRole)[keyof typeof UserRole];
 
 export async function getUserRole(): Promise<UserRole> {
 	const supabase = await createClient();
@@ -31,5 +31,3 @@ export async function getUserRole(): Promise<UserRole> {
 			throw new Error("不明なロールです。");
 	}
 }
-
-export { UserRole };
