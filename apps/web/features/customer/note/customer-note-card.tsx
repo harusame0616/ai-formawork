@@ -1,9 +1,9 @@
-import { Button } from "@workspace/ui/components/button";
 import { Card, CardContent, CardHeader } from "@workspace/ui/components/card";
-import { CalendarClock, Edit, UserPen } from "lucide-react";
+import { CalendarClock, UserPen } from "lucide-react";
 import { DateTime } from "../../../components/date-time";
 import { CustomerNoteImageGallery } from "./customer-note-image-gallery";
 import { DeleteCustomerNoteDialog } from "./delete-customer-note-dialog";
+import { EditCustomerNoteDialog } from "./edit-customer-note-dialog";
 import type { CustomerNoteWithImages } from "./get-customer-notes";
 
 type CustomerNoteCardProps = {
@@ -33,10 +33,16 @@ export function CustomerNoteCard({
 
 				{canEdit && (
 					<div className="flex gap-2">
-						<Button size="sm" type="button" variant="outline">
-							<Edit className="h-4 w-4 mr-1" />
-							編集
-						</Button>
+						<EditCustomerNoteDialog
+							customerId={note.customerId}
+							initialContent={note.content}
+							initialImages={note.images}
+							// 古い state が残ってしまい、編集後に再度ダイアログを開いたときに新しい状態にならないため、
+							// updatedAt をキーにして変更があった際にコンポーネントを再マウントさせる
+							// updatedAt.getTime() は UNIX タイムスタンプでタイムゾーン非依存のためハイドレーションエラーなし
+							key={note.updatedAt.getTime()}
+							noteId={note.id}
+						/>
 						<DeleteCustomerNoteDialog noteId={note.id} />
 					</div>
 				)}

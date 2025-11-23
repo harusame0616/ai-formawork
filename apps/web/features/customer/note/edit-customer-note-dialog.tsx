@@ -20,13 +20,15 @@ import {
 	FormMessage,
 } from "@workspace/ui/components/form";
 import { Textarea } from "@workspace/ui/components/textarea";
-import { AlertCircle, Loader2, Plus } from "lucide-react";
+import { AlertCircle, Edit, Loader2, X } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import * as v from "valibot";
 import { CustomerNoteImageInput } from "./customer-note-image-input";
-import { registerCustomerNoteAction } from "./register-customer-note-action";
+import { editCustomerNoteAction } from "./edit-customer-note-action";
+import type { CustomerNoteImageWithUrl } from "./get-customer-notes";
 import { useImageUpload } from "./use-image-upload";
 
 const formSchema = v.object({
@@ -39,19 +41,30 @@ const formSchema = v.object({
 
 type FormValues = v.InferOutput<typeof formSchema>;
 
-type RegisterCustomerNoteDialogProps = {
+type EditCustomerNoteDialogProps = {
 	customerId: string;
+	noteId: string;
+	initialContent: string;
+	initialImages: CustomerNoteImageWithUrl[];
 };
 
-export function RegisterCustomerNoteDialog({
+export function EditCustomerNoteDialog({
 	customerId,
-}: RegisterCustomerNoteDialogProps) {
+	noteId,
+	initialContent,
+	initialImages,
+}: EditCustomerNoteDialogProps) {
 	const router = useRouter();
 	const [open, setOpen] = useState(false);
 	const [isPending, startTransition] = useTransition();
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const [imageErrorMessage, setImageErrorMessage] = useState<string | null>(
 		null,
+	);
+
+	// 既存画像の管理（削除されていない画像のパスを保持）
+	const [keepImagePaths, setKeepImagePaths] = useState<string[]>(
+		initialImages.map((img) => img.path),
 	);
 
 	const {
@@ -63,11 +76,13 @@ export function RegisterCustomerNoteDialog({
 		uploadAll,
 	} = useImageUpload();
 
-	// 画像枚数チェック付きの追加関数
+	// 既存画像数を考慮した画像追加関数
 	const addImages = (files: File[]) => {
 		const MAX_IMAGES = 5;
+		const existingImagesCount = keepImagePaths.length;
 		const currentImagesCount = images.length;
-		const availableSlots = MAX_IMAGES - currentImagesCount;
+		const totalCount = existingImagesCount + currentImagesCount;
+		const availableSlots = MAX_IMAGES - totalCount;
 
 		if (availableSlots <= 0) {
 			setImageErrorMessage("画像は最大5枚までです");
@@ -87,17 +102,22 @@ export function RegisterCustomerNoteDialog({
 		addImagesOriginal(files);
 	};
 
-	function handleRemoveImage(id: string) {
-		removeImage(id);
-		setImageErrorMessage(null);
-	}
-
 	const form = useForm<FormValues>({
 		defaultValues: {
-			content: "",
+			content: initialContent,
 		},
 		resolver: valibotResolver(formSchema),
 	});
+
+	function handleRemoveExistingImage(path: string) {
+		setKeepImagePaths((prev) => prev.filter((p) => p !== path));
+		setImageErrorMessage(null);
+	}
+
+	function handleRemoveNewImage(id: string) {
+		removeImage(id);
+		setImageErrorMessage(null);
+	}
 
 	function onSubmit(values: FormValues) {
 		setErrorMessage(null);
@@ -114,9 +134,10 @@ export function RegisterCustomerNoteDialog({
 				uploadImages = uploadResult.uploadImages;
 			}
 
-			const result = await registerCustomerNoteAction({
+			const result = await editCustomerNoteAction({
 				content: values.content,
-				customerId,
+				keepImagePaths,
+				noteId,
 				uploadImages,
 			});
 
@@ -125,7 +146,6 @@ export function RegisterCustomerNoteDialog({
 				return;
 			}
 
-			form.reset();
 			clearImages();
 			setErrorMessage(null);
 			setOpen(false);
@@ -135,27 +155,35 @@ export function RegisterCustomerNoteDialog({
 
 	function handleOpenChange(open: boolean) {
 		if (!open) {
-			form.reset();
+			form.reset({
+				content: initialContent,
+			});
 			clearImages();
+			setKeepImagePaths(initialImages.map((img) => img.path));
 			setErrorMessage(null);
 			setImageErrorMessage(null);
 		}
 		setOpen(open);
 	}
 
+	// 削除されていない既存画像を取得
+	const existingImages = initialImages.filter((img) =>
+		keepImagePaths.includes(img.path),
+	);
+
 	const isProcessing = isPending || isUploading;
 
 	return (
 		<Dialog onOpenChange={handleOpenChange} open={open}>
 			<DialogTrigger asChild>
-				<Button>
-					<Plus className="mr-2 h-4 w-4" />
-					ノートを追加
+				<Button size="sm" type="button" variant="outline">
+					<Edit className="h-4 w-4 mr-1" />
+					編集
 				</Button>
 			</DialogTrigger>
 			<DialogContent>
 				<DialogHeader>
-					<DialogTitle>ノートを追加</DialogTitle>
+					<DialogTitle>ノートを編集</DialogTitle>
 				</DialogHeader>
 
 				<Form {...form}>
@@ -192,7 +220,7 @@ export function RegisterCustomerNoteDialog({
 						<div>
 							<FormLabel>画像</FormLabel>
 							<FormDescription className="mb-2">
-								ノートに添付する画像を選択できます（最大5枚）
+								既存の画像を削除したり、新しい画像を追加できます（最大5枚）
 							</FormDescription>
 
 							{imageErrorMessage && (
@@ -202,12 +230,63 @@ export function RegisterCustomerNoteDialog({
 								</div>
 							)}
 
-							<CustomerNoteImageInput
-								disabled={isProcessing}
-								images={images}
-								onAddImages={addImages}
-								onRemoveImage={handleRemoveImage}
-							/>
+							<div className="space-y-3">
+								{/* 既存画像の表示 */}
+								{existingImages.length > 0 && (
+									<div>
+										<p className="text-sm text-muted-foreground mb-2">
+											既存の画像
+										</p>
+										<div className="grid grid-cols-5 gap-2">
+											{existingImages.map((image) => (
+												<div
+													className="relative aspect-square"
+													key={image.path}
+												>
+													{image.url && (
+														<Image
+															alt="既存の画像"
+															className="rounded-md border object-cover"
+															fill
+															sizes="80px"
+															src={image.url}
+														/>
+													)}
+													{/* 削除ボタン */}
+													{!isProcessing && (
+														<Button
+															className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0"
+															onClick={() =>
+																handleRemoveExistingImage(image.path)
+															}
+															size="icon"
+															type="button"
+															variant="destructive"
+														>
+															<X className="h-3 w-3" />
+														</Button>
+													)}
+												</div>
+											))}
+										</div>
+									</div>
+								)}
+
+								{/* 新規画像の追加 */}
+								<div>
+									{images.length > 0 && (
+										<p className="text-sm text-muted-foreground mb-2">
+											新しい画像
+										</p>
+									)}
+									<CustomerNoteImageInput
+										disabled={isProcessing}
+										images={images}
+										onAddImages={addImages}
+										onRemoveImage={handleRemoveNewImage}
+									/>
+								</div>
+							</div>
 						</div>
 
 						<DialogFooter>
@@ -220,17 +299,17 @@ export function RegisterCustomerNoteDialog({
 								キャンセル
 							</Button>
 							<Button
-								className="min-w-[120]"
+								className="min-w-[120px]"
 								disabled={isProcessing}
 								type="submit"
 							>
 								{isProcessing ? (
 									<>
-										{isUploading ? "アップロード中" : "登録中"}
+										{isUploading ? "アップロード中" : "更新中"}
 										<Loader2 className="ml-2 size-4 animate-spin" />
 									</>
 								) : (
-									"登録"
+									"更新"
 								)}
 							</Button>
 						</DialogFooter>
