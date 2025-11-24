@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { CustomerEditFormContainer } from "../../../../../features/customer/detail/edit/customer-edit-form-container";
 import { CustomerEditFormSkeleton } from "../../../../../features/customer/detail/edit/customer-edit-form-skeleton";
 
-export default async function CustomerEditPage({
+export default function Page({
 	params,
 }: PageProps<"/customers/[customerId]/edit">) {
 	const customerIdPromise = params.then(({ customerId }) => customerId);
