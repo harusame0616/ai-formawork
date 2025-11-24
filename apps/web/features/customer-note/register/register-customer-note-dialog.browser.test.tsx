@@ -19,7 +19,7 @@ const test = base.extend<{
 		use: any,
 	) => {
 		const registerCustomerNoteActionModule = await import(
-			"../register-customer-note-action"
+			"./register-customer-note-action"
 		);
 		const mock = vi.mocked(
 			registerCustomerNoteActionModule.registerCustomerNoteAction,

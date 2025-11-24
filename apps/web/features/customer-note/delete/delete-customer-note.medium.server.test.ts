@@ -1,6 +1,6 @@
 import { expect, test, vi } from "vitest";
-import { UserRole } from "../../auth/get-user-role";
-import { deleteCustomerNote } from "../delete-customer-note";
+import { UserRole } from "../../auth/user-role";
+import { deleteCustomerNote } from "./delete-customer-note";
 
 // Loggerをモック
 vi.mock("@repo/logger/nextjs/server", () => ({
