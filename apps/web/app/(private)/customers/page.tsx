@@ -6,7 +6,7 @@ import { CustomerSearchForm } from "@/features/customer/list/customer-search-for
 import { CustomersContainer } from "@/features/customer/list/customers-container";
 import { CustomersSkeleton } from "@/features/customer/list/customers-skeleton";
 import { customerSearchParamsSchema } from "@/features/customer/schema";
-import { SuspenseOnSearch } from "../../../libs/suspense-on-search";
+import { SuspenseOnSearch } from "@/libs/suspense-on-search";
 
 type CustomersPageProps = {
 	searchParams: Promise<Record<string, string | string[] | undefined>>;

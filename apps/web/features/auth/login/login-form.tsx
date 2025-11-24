@@ -15,7 +15,7 @@ import { Loader2 } from "lucide-react";
 import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { type LoginSchema, loginSchema } from "@/features/auth/schema";
-import { useIsHydrated } from "../../../libs/use-is-hydrated";
+import { useIsHydrated } from "@/libs/use-is-hydrated";
 import { loginAction } from "./login-action";
 
 export function LoginForm() {

@@ -28,7 +28,7 @@ import { useRouter } from "next/navigation";
 import { use, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as v from "valibot";
-import { useIsHydrated } from "../../../libs/use-is-hydrated";
+import { useIsHydrated } from "@/libs/use-is-hydrated";
 
 const searchFormSchema = v.object({
 	dateFrom: v.optional(v.string()),

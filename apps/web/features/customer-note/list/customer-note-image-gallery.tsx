@@ -17,7 +17,7 @@ import {
 import { X } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import NoImage from "../../../assets/no-image.png";
+import NoImage from "@/assets/no-image.png";
 import type { CustomerNoteImageWithUrl } from "./get-customer-notes";
 
 type CustomerNoteImageGalleryProps = {

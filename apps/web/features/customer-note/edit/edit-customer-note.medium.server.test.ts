@@ -1,5 +1,5 @@
 import { expect, test, vi } from "vitest";
-import { UserRole } from "../../auth/get-user-role";
+import { UserRole } from "@/features/auth/get-user-role";
 import { editCustomerNote } from "./edit-customer-note";
 
 // Loggerをモック
@@ -19,6 +19,7 @@ test("管理者ではない別ユーザーが他人のノートを編集しよ�
 	const result = await editCustomerNote({
 		content: "編集後の内容",
 		customerNoteId: noteId,
+		keepImagePaths: [],
 		uploadImages: [],
 		user: {
 			role: UserRole.User,

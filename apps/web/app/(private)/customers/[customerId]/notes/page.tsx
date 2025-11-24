@@ -2,7 +2,7 @@ import * as v from "valibot";
 import { CustomerNotesContainer } from "@/features/customer-note/list/customer-notes-container";
 import { CustomerNotesSearchForm } from "@/features/customer-note/list/customer-notes-search-form";
 import { CustomerNotesSkeleton } from "@/features/customer-note/list/customer-notes-skeleton";
-import { SuspenseOnSearch } from "../../../../../libs/suspense-on-search";
+import { SuspenseOnSearch } from "@/libs/suspense-on-search";
 
 const searchParamsSchema = v.object({
 	dateFrom: v.optional(v.string()),

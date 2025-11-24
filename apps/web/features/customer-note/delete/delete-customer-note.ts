@@ -8,7 +8,7 @@ import {
 	customerNotesTable,
 } from "@workspace/db/schema/customer-note";
 import { eq } from "drizzle-orm";
-import { UserRole } from "../../auth/get-user-role";
+import { UserRole } from "@/features/auth/get-user-role";
 
 const FORBIDDEN_ERROR_MESSAGE = "この操作を実行する権限がありません" as const;
 const NOTE_NOT_FOUND_ERROR_MESSAGE =
