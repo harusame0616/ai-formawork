@@ -2,7 +2,7 @@ import { Skeleton } from "@workspace/ui/components/skeleton";
 import Link from "next/link";
 import { Suspense } from "react";
 
-export default async function CustomerBasicActionPage({
+export default function Page({
 	params,
 }: PageProps<"/customers/[customerId]/basic">) {
 	const customerIdPromise = params.then(({ customerId }) => customerId);
