@@ -15,35 +15,73 @@ import { Input } from "@workspace/ui/components/input";
 import { OptionalBadge } from "@workspace/ui/components/optional-badge";
 import { RequiredBadge } from "@workspace/ui/components/required-badge";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { useIsHydrated } from "../../../libs/use-is-hydrated";
+import { editCustomerAction } from "../detail/edit/edit-customer-action";
 import { type RegisterCustomerInput, registerCustomerSchema } from "../schema";
 import { registerCustomerAction } from "./register-customer-action";
 
-export function EditCustomerForm() {
+type EditCustomerFormProps = {
+	customerId?: string;
+	initialValues?: {
+		name: string;
+		email: string | null;
+		phone: string | null;
+	};
+};
+
+export function EditCustomerForm(
+	props?: EditCustomerFormProps & { disabled?: boolean },
+) {
+	const router = useRouter();
 	const [isPending, startTransition] = useTransition();
 	const { isHydrated } = useIsHydrated();
 
+	const defaultValues = props?.initialValues
+		? {
+				email: props.initialValues.email ?? "",
+				name: props.initialValues.name,
+				phone: props.initialValues.phone ?? "",
+			}
+		: {
+				email: "",
+				name: "",
+				phone: "",
+			};
+
 	const form = useForm<RegisterCustomerInput>({
-		defaultValues: {
-			email: "",
-			name: "",
-			phone: "",
-		},
+		defaultValues,
 		resolver: valibotResolver(registerCustomerSchema),
 	});
 
 	function onSubmit(values: RegisterCustomerInput) {
 		form.clearErrors("root");
 		startTransition(async () => {
-			const result = await registerCustomerAction(values);
-			if (!result.success) {
-				form.setError("root", {
-					message: result.error,
+			if (!props?.customerId) {
+				const result = await registerCustomerAction(values);
+				if (!result.success) {
+					form.setError("root", {
+						message: result.error,
+					});
+				}
+				// 成功時はredirect()によって自動的にリダイレクトされる
+			} else {
+				const result = await editCustomerAction({
+					customerId: props.customerId,
+					email: values.email || null,
+					name: values.name,
+					phone: values.phone || null,
 				});
+				if (!result.success) {
+					form.setError("root", {
+						message: result.error,
+					});
+					return;
+				}
+				router.push(`/customers/${props.customerId}/basic`);
 			}
-			// 成功時はredirect()によって自動的にリダイレクトされる
 		});
 	}
 
@@ -56,7 +94,7 @@ export function EditCustomerForm() {
 			>
 				<FormField
 					control={form.control}
-					disabled={!isHydrated}
+					disabled={!isHydrated || props?.disabled}
 					name="name"
 					render={({ field }) => (
 						<FormItem>
@@ -79,7 +117,7 @@ export function EditCustomerForm() {
 				/>
 				<FormField
 					control={form.control}
-					disabled={!isHydrated}
+					disabled={!isHydrated || props?.disabled}
 					name="email"
 					render={({ field }) => (
 						<FormItem>
@@ -102,7 +140,7 @@ export function EditCustomerForm() {
 				/>
 				<FormField
 					control={form.control}
-					disabled={!isHydrated}
+					disabled={!isHydrated || props?.disabled}
 					name="phone"
 					render={({ field }) => (
 						<FormItem>
@@ -130,20 +168,47 @@ export function EditCustomerForm() {
 						{form.formState.errors.root.message}
 					</div>
 				)}
-				<Button
-					className="w-full"
-					disabled={isPending || !isHydrated}
-					type="submit"
-				>
-					{isPending ? (
-						<>
-							<Loader2 className="mr-2 size-4 animate-spin" />
-							登録中...
-						</>
+				<div className="flex gap-2">
+					<Button
+						disabled={isPending || !isHydrated || props?.disabled}
+						onClick={() => router.back()}
+						type="button"
+						variant="outline"
+					>
+						キャンセル
+					</Button>
+					{props?.customerId ? (
+						<Button
+							className="min-w-[120px]"
+							disabled={isPending || !isHydrated || props.disabled}
+							type="submit"
+						>
+							{isPending ? (
+								<>
+									編集中
+									<Loader2 className="ml-2 size-4 animate-spin" />
+								</>
+							) : (
+								"編集する"
+							)}
+						</Button>
 					) : (
-						"登録する"
+						<Button
+							className="min-w-[120px]"
+							disabled={isPending || !isHydrated || props?.disabled}
+							type="submit"
+						>
+							{isPending ? (
+								<>
+									<Loader2 className="mr-2 size-4 animate-spin" />
+									登録中...
+								</>
+							) : (
+								"登録する"
+							)}
+						</Button>
 					)}
-				</Button>
+				</div>
 			</form>
 		</Form>
 	);
