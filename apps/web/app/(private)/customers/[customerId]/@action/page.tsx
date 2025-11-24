@@ -2,9 +2,7 @@ import { Skeleton } from "@workspace/ui/components/skeleton";
 import Link from "next/link";
 import { Suspense } from "react";
 
-export default function Page({
-	params,
-}: PageProps<"/customers/[customerId]/basic">) {
+export default function Page({ params }: PageProps<"/customers/[customerId]">) {
 	const customerIdPromise = params.then(({ customerId }) => customerId);
 
 	return (

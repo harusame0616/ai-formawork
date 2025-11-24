@@ -18,7 +18,7 @@ export function CustomerDetailTabs({
 
 	const tabs = [
 		{
-			href: `/customers/${customerId}/basic`,
+			href: `/customers/${customerId}`,
 			label: "基本情報",
 			value: "basic",
 		},

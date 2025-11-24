@@ -72,7 +72,7 @@ test("必須フィールドを全て入力して編集できる", async ({ page,
 	});
 
 	await test.step("顧客詳細ページにリダイレクトされる", async () => {
-		await page.waitForURL(`/customers/${customer.customerId}/basic`);
+		await page.waitForURL(`/customers/${customer.customerId}`);
 	});
 
 	await test.step("編集内容が反映されていることを確認", async () => {
@@ -118,7 +118,7 @@ test("必須フィールド以外を空で編集できる", async ({ page, custo
 	});
 
 	await test.step("顧客詳細ページにリダイレクトされる", async () => {
-		await page.waitForURL(`/customers/${customer.customerId}/basic`);
+		await page.waitForURL(`/customers/${customer.customerId}`);
 	});
 
 	await test.step("メールアドレスと電話番号が「未登録」と表示されることを確認", async () => {

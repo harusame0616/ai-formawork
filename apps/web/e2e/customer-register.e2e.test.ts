@@ -62,7 +62,7 @@ test("全フィールドを境界値一杯で入力して顧客を登録し、�
 	});
 
 	await test.step("詳細ページに遷移することを確認", async () => {
-		await registerCustomerPage.waitForURL("**/customers/*/basic");
+		await registerCustomerPage.waitForURL("**/customers/*");
 	});
 
 	await test.step("登録した情報が正しく表示されることを確認", async () => {
@@ -125,7 +125,7 @@ test("必須フィールドのみ入力して登録でき、詳細ページへ�
 	});
 
 	await test.step("詳細ページに遷移することを確認", async () => {
-		await registerCustomerPage.waitForURL("**/customers/*/basic");
+		await registerCustomerPage.waitForURL("**/customers/*");
 	});
 
 	await test.step("登録した情報が正しく表示されることを確認", async () => {

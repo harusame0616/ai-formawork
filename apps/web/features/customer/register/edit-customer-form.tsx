@@ -80,7 +80,7 @@ export function EditCustomerForm(
 					});
 					return;
 				}
-				router.push(`/customers/${props.customerId}/basic`);
+				router.push(`/customers/${props.customerId}`);
 			}
 		});
 	}
