@@ -4,12 +4,11 @@ import { page } from "vitest/browser";
 import { render } from "vitest-browser-react";
 import { EditCustomerForm } from "./edit-customer-form";
 
-// registerCustomerAction をモック
 vi.mock("./register-customer-action", () => ({
 	registerCustomerAction: vi.fn(),
 }));
 
-vi.mock("../detail/edit/edit-customer-action", () => ({
+vi.mock("../edit/edit-customer-action", () => ({
 	editCustomerAction: vi.fn(),
 }));
 

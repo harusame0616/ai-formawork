@@ -1,5 +1,5 @@
 import { Card } from "@workspace/ui/components/card";
-import { EditCustomerForm } from "../../../../features/customer/register/edit-customer-form";
+import { EditCustomerForm } from "@/features/customer/register/edit-customer-form";
 
 export default function NewCustomerPage() {
 	return (

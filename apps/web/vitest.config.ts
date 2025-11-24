@@ -6,14 +6,16 @@ import { defineProject } from "vitest/config";
 export default defineProject({
 	plugins: [react()],
 	resolve: {
-		alias: {
-			"@": path.resolve(__dirname, "./"),
-		},
 		dedupe: ["react", "react-dom"],
 	},
 	test: {
 		projects: [
 			{
+				resolve: {
+					alias: {
+						"@": path.resolve(__dirname, "./"),
+					},
+				},
 				test: {
 					browser: {
 						enabled: true,
@@ -74,6 +76,11 @@ export default defineProject({
 				},
 			},
 			{
+				resolve: {
+					alias: {
+						"@": path.resolve(__dirname, "./"),
+					},
+				},
 				test: {
 					env: {
 						DATABASE_URL:

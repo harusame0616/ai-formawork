@@ -8,7 +8,7 @@ import { customersTable } from "@workspace/db/schema/customer";
 import { updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import * as v from "valibot";
-import { generateUniqueId } from "../../../libs/generate-unique-id";
+import { generateUniqueId } from "@/libs/generate-unique-id";
 import { type RegisterCustomerInput, registerCustomerSchema } from "../schema";
 import { CustomerTag, tagByCustomerId } from "../tag";
 

@@ -1,7 +1,7 @@
 import { Button } from "@workspace/ui/components/button";
 import { Plus } from "lucide-react";
 import { Suspense } from "react";
-import { RegisterCustomerNoteDialogContainer } from "../../../../../../features/customer/note/register-customer-note-dialog-container";
+import { RegisterCustomerNoteDialogContainer } from "@/features/customer-note/register/register-customer-note-dialog-container";
 
 export default async function CustomerNoteActionPage({
 	params,

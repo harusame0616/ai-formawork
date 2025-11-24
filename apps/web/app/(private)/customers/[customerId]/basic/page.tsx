@@ -1,7 +1,7 @@
 import { Card } from "@workspace/ui/components/card";
 import { Suspense } from "react";
-import { CustomerBasicInfoContainer } from "../../../../../features/customer/detail/customer-basic-info-container";
-import { CustomerBasicInfoSkeleton } from "../../../../../features/customer/detail/customer-basic-info-skeleton";
+import { CustomerBasicInfoContainer } from "@/features/customer/detail/customer-basic-info-container";
+import { CustomerBasicInfoSkeleton } from "@/features/customer/detail/customer-basic-info-skeleton";
 
 export default function Page({
 	params,

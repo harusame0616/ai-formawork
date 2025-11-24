@@ -1,5 +1,11 @@
 {
 	"$schema": "https://json.schemastore.org/tsconfig",
+	"compilerOptions": {
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["./*"]
+		}
+	},
 	"display": "web",
 	"exclude": ["node_modules"],
 	"extends": "@workspace/tsconfig/nextjs.json",

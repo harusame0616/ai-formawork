@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
 import { Suspense } from "react";
-import { CustomerDetailTabs } from "../../../../features/customer/detail/customer-detail-tabs";
-import { CustomerDetailTabsSkeleton } from "../../../../features/customer/detail/customer-detail-tabs-skeleton";
-import { CustomerInfoContainer } from "../../../../features/customer/detail/customer-info-container";
-import { CustomerInfoSkeleton } from "../../../../features/customer/detail/customer-info-skeleton";
+import { CustomerDetailTabs } from "@/features/customer/detail/customer-detail-tabs";
+import { CustomerDetailTabsSkeleton } from "@/features/customer/detail/customer-detail-tabs-skeleton";
+import { CustomerInfoContainer } from "@/features/customer/detail/customer-info-container";
+import { CustomerInfoSkeleton } from "@/features/customer/detail/customer-info-skeleton";
 
 type CustomerDetailLayoutProps = LayoutProps<"/customers/[customerId]"> & {
 	action: ReactNode;
