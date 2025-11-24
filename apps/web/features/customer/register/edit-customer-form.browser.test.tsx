@@ -9,6 +9,10 @@ vi.mock("./register-customer-action", () => ({
 	registerCustomerAction: vi.fn(),
 }));
 
+vi.mock("../detail/edit/edit-customer-action", () => ({
+	editCustomerAction: vi.fn(),
+}));
+
 const test = base.extend<{
 	registerCustomerActionMock: Mock;
 }>({
