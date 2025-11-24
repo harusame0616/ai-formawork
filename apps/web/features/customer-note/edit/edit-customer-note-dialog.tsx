@@ -26,10 +26,10 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import * as v from "valibot";
-import { CustomerNoteImageInput } from "./customer-note-image-input";
+import { CustomerNoteImageInput } from "../list/customer-note-image-input";
 import { editCustomerNoteAction } from "./edit-customer-note-action";
-import type { CustomerNoteImageWithUrl } from "./get-customer-notes";
-import { useImageUpload } from "./use-image-upload";
+import type { CustomerNoteImageWithUrl } from "../list/get-customer-notes";
+import { useImageUpload } from "../register/use-image-upload";
 
 const formSchema = v.object({
 	content: v.pipe(

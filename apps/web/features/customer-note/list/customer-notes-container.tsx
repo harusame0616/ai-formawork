@@ -1,6 +1,6 @@
 import { getUserRole, UserRole } from "../../auth/get-user-role";
 import { getUserStaffId } from "../../auth/get-user-staff-id";
-import { CustomerNotesPresenter } from "../customer-notes-presenter";
+import { CustomerNotesPresenter } from "./customer-notes-presenter";
 import {
 	type CustomerNoteSearchCondition,
 	getCustomerNotes,

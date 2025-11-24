@@ -7,8 +7,8 @@ import { updateTag } from "next/cache";
 import * as v from "valibot";
 import { getUserRole } from "../../auth/get-user-role";
 import { getUserStaffId } from "../../auth/get-user-staff-id";
-import { deleteCustomerNote } from "../delete-customer-note";
-import { CustomerTag } from "../tag";
+import { deleteCustomerNote } from "./delete-customer-note";
+import { CustomerTag } from "../../customer/tag";
 
 const INVALID_INPUT_ERROR_MESSAGE = "入力内容に誤りがあります" as const;
 const UNAUTHORIZED_ERROR_MESSAGE = "認証に失敗しました" as const;

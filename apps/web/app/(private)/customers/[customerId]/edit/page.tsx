@@ -1,7 +1,7 @@
 import { Card } from "@workspace/ui/components/card";
 import { Suspense } from "react";
-import { CustomerEditFormContainer } from "../../../../../features/customer/detail/edit/customer-edit-form-container";
-import { CustomerEditFormSkeleton } from "../../../../../features/customer/detail/edit/customer-edit-form-skeleton";
+import { CustomerEditFormContainer } from "../../../../../features/customer/edit/customer-edit-form-container";
+import { CustomerEditFormSkeleton } from "../../../../../features/customer/edit/customer-edit-form-skeleton";
 
 export default function Page({
 	params,

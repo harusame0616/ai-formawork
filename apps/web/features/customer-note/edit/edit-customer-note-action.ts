@@ -7,7 +7,7 @@ import { updateTag } from "next/cache";
 import * as v from "valibot";
 import { getUserRole } from "../../auth/get-user-role";
 import { getUserStaffId } from "../../auth/get-user-staff-id";
-import { CustomerTag } from "../tag";
+import { CustomerTag } from "../../customer/tag";
 import { editCustomerNote } from "./edit-customer-note";
 
 const INVALID_INPUT_ERROR_MESSAGE = "入力内容に誤りがあります" as const;

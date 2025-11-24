@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader } from "@workspace/ui/components/card";
 import { CalendarClock, UserPen } from "lucide-react";
 import { DateTime } from "../../../components/date-time";
 import { DeleteCustomerNoteDialog } from "../delete/delete-customer-note-dialog";
-import { EditCustomerNoteDialog } from "../edit-customer-note-dialog";
+import { EditCustomerNoteDialog } from "../edit/edit-customer-note-dialog";
 import { CustomerNoteImageGallery } from "./customer-note-image-gallery";
 import type { CustomerNoteWithImages } from "./get-customer-notes";
 

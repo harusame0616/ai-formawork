@@ -5,7 +5,7 @@ import { EventType } from "@repo/logger/event-types";
 import { getLogger } from "@repo/logger/nextjs/server";
 import { createAdminClient } from "@repo/supabase/admin";
 import * as v from "valibot";
-import { getUserStaffId } from "../../../../lib/auth/get-user-staff-id";
+import { getUserStaffId } from "../../auth/get-user-staff-id";
 
 const UNAUTHORIZED_ERROR_MESSAGE = "認証に失敗しました" as const;
 const INVALID_INPUT_ERROR_MESSAGE = "入力内容に誤りがあります" as const;

@@ -20,7 +20,7 @@ import {
 	sql,
 } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
-import { CustomerTag } from "../tag";
+import { CustomerTag } from "../../customer/tag";
 import { getCustomerNoteImageUrl } from "./get-customer-note-image-url";
 
 export type CustomerNoteSearchCondition = {

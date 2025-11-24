@@ -5,8 +5,8 @@ import { EventType } from "@repo/logger/event-types";
 import { getLogger } from "@repo/logger/nextjs/server";
 import { updateTag } from "next/cache";
 import * as v from "valibot";
-import { getUserStaffId } from "../../../../lib/auth/get-user-staff-id";
-import { tagByCustomerId } from "../../tag";
+import { getUserStaffId } from "../../auth/get-user-staff-id";
+import { tagByCustomerId } from "../tag";
 import { editCustomer } from "./edit-customer";
 
 const INVALID_INPUT_ERROR_MESSAGE = "入力内容に誤りがあります" as const;
