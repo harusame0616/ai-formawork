@@ -22,7 +22,7 @@ type DeleteCustomerDialogProps = {
 export function DeleteCustomerDialog({
 	customerId,
 }: DeleteCustomerDialogProps) {
-	const router = useRouter();
+	const _router = useRouter();
 	const [open, setOpen] = useState(false);
 	const [isPending, startTransition] = useTransition();
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -39,7 +39,6 @@ export function DeleteCustomerDialog({
 			}
 
 			setErrorMessage(null);
-			router.replace("/customers");
 		});
 	}
 
