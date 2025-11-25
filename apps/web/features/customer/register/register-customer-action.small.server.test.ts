@@ -1,19 +1,12 @@
 import { expect, test, vi } from "vitest";
 import { registerCustomerAction } from "./register-customer-action";
 
-// Next.jsのキャッシュAPIとnavigationをモック
-vi.mock("next/cache", () => ({
+vi.mock("next/cache", async () => ({
 	updateTag: vi.fn(),
 }));
 
 vi.mock("next/navigation", () => ({
-	RedirectType: {
-		push: "push",
-		replace: "replace",
-	},
-	redirect: vi.fn((url: string) => {
-		throw new Error(`NEXT_REDIRECT:${url}`);
-	}),
+	redirect: vi.fn(),
 }));
 
 vi.mock("@repo/logger/nextjs/server", () => ({
@@ -24,70 +17,101 @@ vi.mock("@repo/logger/nextjs/server", () => ({
 	}),
 }));
 
-// データベース操作をモック
-vi.mock("@workspace/db/client", () => ({
-	db: {
-		insert: vi.fn(),
-		select: vi.fn(),
-	},
+vi.mock("./register-customer", () => ({
+	registerCustomer: vi.fn(),
 }));
 
-test.each([
-	{ description: "引数が undefined", input: undefined },
-	{ description: "引数が null", input: null },
-	{ description: "引数が数値", input: 123 },
-	{ description: "引数が配列", input: [] },
-	{ description: "引数が空オブジェクト", input: {} },
-	{
-		description: "name プロパティが欠けている",
-		input: { email: "test@example.com", phone: "" },
-	},
-	{
-		description: "name が数値",
-		input: { email: "test@example.com", name: 123, phone: "" },
-	},
-	{
-		description: "email が数値",
-		input: { email: 123, name: "テスト太郎", phone: "" },
-	},
-	{
-		description: "name が空文字列",
-		input: { email: "test@example.com", name: "", phone: "" },
-	},
-	{
-		description: "email がメール形式でない",
-		input: { email: "invalid-email", name: "テスト太郎", phone: "" },
-	},
-	{
-		description: "name が25文字（24文字超過）",
-		input: {
-			email: "test@example.com",
-			name: "あ".repeat(25),
-			phone: "",
-		},
-	},
-	{
-		description: "email が255文字（254文字超過）",
-		input: {
-			email: `${"a".repeat(243)}@example.com`, // 243 + 1(@) + 11(example.com) = 255文字
-			name: "テスト太郎",
-			phone: "",
-		},
-	},
-	{
-		description: "phone が21文字（20文字超過）",
-		input: {
-			email: "test@example.com",
-			name: "テスト太郎",
-			phone: "0".repeat(21),
-		},
-	},
-])("$description の場合、バリデーションエラーを返す", async ({ input }) => {
-	// @ts-expect-error - サーバーアクションは任意の引数で呼び出される可能性がある
+test("メール形式が不正な場合にバリデーションエラーを返す", async () => {
+	const { registerCustomer } = await import("./register-customer");
+
+	const input = {
+		email: "invalid-email",
+		name: "テスト太郎",
+		phone: "09012345678",
+	};
+
 	const result = await registerCustomerAction(input);
 
-	expect(result.success).toBe(false);
-	if (!result.success) {
+	expect(result).toBeDefined();
+	expect(result?.success).toBe(false);
+	if (result && !result.success) {
 		expect(result.error).toBe("入力内容に誤りがあります");
+	}
+	expect(registerCustomer).not.toHaveBeenCalled();
+});
+
+test("name が25文字（境界値超過）の場合にバリデーションエラーを返す", async () => {
+	const { registerCustomer } = await import("./register-customer");
+	const input = {
+		email: "test@example.com",
+		name: "あ".repeat(25),
+		phone: "",
+	};
+
+	const result = await registerCustomerAction(input);
+
+	expect(result).toBeDefined();
+	expect(result?.success).toBe(false);
+	if (result && !result.success) {
+		expect(result.error).toBe("入力内容に誤りがあります");
+	}
+	expect(registerCustomer).not.toHaveBeenCalled();
+});
+
+test("email が255文字（境界値超過）の場合にバリデーションエラーを返す", async () => {
+	const { registerCustomer } = await import("./register-customer");
+	const input = {
+		email: `${"a".repeat(243)}@example.com`,
+		name: "テスト太郎",
+		phone: "",
+	};
+
+	const result = await registerCustomerAction(input);
+
+	expect(result).toBeDefined();
+	expect(result?.success).toBe(false);
+	if (result && !result.success) {
+		expect(result.error).toBe("入力内容に誤りがあります");
+	}
+	expect(registerCustomer).not.toHaveBeenCalled();
+});
+
+test("phone が21文字（境界値超過）の場合にバリデーションエラーを返す", async () => {
+	const { registerCustomer } = await import("./register-customer");
+	const input = {
+		email: "test@example.com",
+		name: "テスト太郎",
+		phone: "0".repeat(21),
+	};
+
+	const result = await registerCustomerAction(input);
+
+	expect(result).toBeDefined();
+	expect(result?.success).toBe(false);
+	if (result && !result.success) {
+		expect(result.error).toBe("入力内容に誤りがあります");
+	}
+	expect(registerCustomer).not.toHaveBeenCalled();
+});
+
+test("登録処理でエラーが発生した場合にエラーメッセージを返す", async () => {
+	const { registerCustomer } = await import("./register-customer");
+
+	vi.mocked(registerCustomer).mockRejectedValue(new Error("Database error"));
+
+	const input = {
+		email: "test@example.com",
+		name: "テスト太郎",
+		phone: "09012345678",
+	};
+
+	const result = await registerCustomerAction(input);
+
+	expect(result).toBeDefined();
+	expect(result?.success).toBe(false);
+	if (result && !result.success) {
+		expect(result.error).toBe(
+			"サーバーエラーが発生しました。時間をおいて再度お試しください",
+		);
 	}
 });

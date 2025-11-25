@@ -1,9 +1,10 @@
 "use server";
 
-import { fail, type Result, succeed } from "@harusame0616/result";
+import { fail, type Result } from "@harusame0616/result";
 import { EventType } from "@repo/logger/event-types";
 import { getLogger } from "@repo/logger/nextjs/server";
 import { updateTag } from "next/cache";
+import { RedirectType, redirect } from "next/navigation";
 import * as v from "valibot";
 import { getUserRole } from "@/features/auth/get-user-role";
 import { getUserStaffId } from "@/features/auth/get-user-staff-id";
@@ -82,5 +83,5 @@ export async function deleteCustomerAction(
 	updateTag(CustomerTag.crud);
 	updateTag(CustomerTag.NoteCrud(customerId));
 
-	return succeed();
+	redirect("/customers", RedirectType.replace);
 }

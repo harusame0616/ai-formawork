@@ -1,4 +1,3 @@
-import type { SelectCustomer } from "@workspace/db/schema/customer";
 import { SearchPagination } from "@workspace/ui/components/search-pagination";
 import {
 	Table,
@@ -9,9 +8,10 @@ import {
 	TableRow,
 } from "@workspace/ui/components/table";
 import Link from "next/link";
+import type { CustomersListItem } from "./schema";
 
 type CustomersPresenterProps = {
-	customers: SelectCustomer[];
+	customers: CustomersListItem[];
 	page: number;
 	totalPages: number;
 };

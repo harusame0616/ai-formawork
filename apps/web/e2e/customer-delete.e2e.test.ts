@@ -78,11 +78,10 @@ test("管理者が顧客を削除できる", async ({ adminUserPage: page, custo
 			.getByRole("dialog")
 			.getByRole("button", { name: "削除" })
 			.click();
+		await page.waitForURL("/customers");
 	});
 
 	await test.step("削除された顧客を検索してもヒットしないことを確認", async () => {
-		await page.waitForURL("/customers");
-
 		await page.getByLabel("検索キーワード").fill(customer.name);
 		await page.getByRole("button", { name: "検索" }).click();
 

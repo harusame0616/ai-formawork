@@ -13,43 +13,37 @@ import {
 } from "@workspace/ui/components/form";
 import { Input } from "@workspace/ui/components/input";
 import { Search } from "lucide-react";
-import type { Route } from "next";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import * as v from "valibot";
 import { useIsHydrated } from "@/libs/use-is-hydrated";
-import { CUSTOMER_SEARCH_KEYWORD_MAX_LENGTH } from "../schema";
+import {
+	CUSTOMER_SEARCH_KEYWORD_MAX_LENGTH,
+	customersConditionSchema,
+} from "./schema";
 
-const customerSearchFormSchema = v.object({
-	keyword: v.pipe(
-		v.string(),
-		v.maxLength(
-			CUSTOMER_SEARCH_KEYWORD_MAX_LENGTH,
-			`検索キーワードは${CUSTOMER_SEARCH_KEYWORD_MAX_LENGTH}文字以内で入力してください`,
-		),
-	),
-});
+export const formSchema = v.omit(customersConditionSchema, ["page"]);
 
-type CustomerSearchFormValues = v.InferOutput<typeof customerSearchFormSchema>;
-
-export function CustomerSearchForm() {
+export function CustomerSearchForm({
+	condition,
+}: {
+	condition: v.InferInput<typeof formSchema>;
+}) {
 	const router = useRouter();
-	const searchParams = useSearchParams();
 	const { isHydrated } = useIsHydrated();
 
-	const form = useForm<CustomerSearchFormValues>({
-		defaultValues: {
-			keyword: searchParams.get("keyword") || "",
-		},
-		resolver: valibotResolver(customerSearchFormSchema),
+	const form = useForm<v.InferInput<typeof formSchema>>({
+		defaultValues: { keyword: condition.keyword },
+		resolver: valibotResolver(formSchema),
 	});
 
-	function onSubmit(values: CustomerSearchFormValues) {
+	function onSubmit({ keyword }: v.InferOutput<typeof formSchema>) {
 		const params = new URLSearchParams();
-		if (values.keyword) {
-			params.set("keyword", values.keyword);
+		if (keyword) {
+			params.set("keyword", keyword);
 		}
-		router.push(`/customers?${params}` as Route);
+
+		router.push(`/customers?${params}`);
 	}
 
 	return (

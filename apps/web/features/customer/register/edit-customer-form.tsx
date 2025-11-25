@@ -16,74 +16,61 @@ import { OptionalBadge } from "@workspace/ui/components/optional-badge";
 import { RequiredBadge } from "@workspace/ui/components/required-badge";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { editCustomerAction } from "@/features/customer/edit/edit-customer-action";
 import { useIsHydrated } from "@/libs/use-is-hydrated";
-import { type RegisterCustomerInput, registerCustomerSchema } from "../schema";
+import type { EditCustomerParams } from "../edit/schema";
 import { registerCustomerAction } from "./register-customer-action";
+import { type RegisterCustomerParams, registerCustomerSchema } from "./schema";
 
 type EditCustomerFormProps = {
 	customerId?: string;
-	initialValues?: {
-		name: string;
-		email: string | null;
-		phone: string | null;
-	};
+	initialValues?: Omit<EditCustomerParams, "customerId">;
 };
 
 export function EditCustomerForm(
 	props?: EditCustomerFormProps & { disabled?: boolean },
 ) {
 	const router = useRouter();
-	const [isPending, startTransition] = useTransition();
 	const { isHydrated } = useIsHydrated();
 
-	const defaultValues = props?.initialValues
-		? {
-				email: props.initialValues.email ?? "",
-				name: props.initialValues.name,
-				phone: props.initialValues.phone ?? "",
-			}
-		: {
-				email: "",
-				name: "",
-				phone: "",
-			};
-
-	const form = useForm<RegisterCustomerInput>({
-		defaultValues,
+	const form = useForm<RegisterCustomerParams>({
+		defaultValues: props?.initialValues
+			? props.initialValues
+			: {
+					email: "",
+					name: "",
+					phone: "",
+				},
 		resolver: valibotResolver(registerCustomerSchema),
 	});
 
-	function onSubmit(values: RegisterCustomerInput) {
+	async function onSubmit(values: RegisterCustomerParams) {
 		form.clearErrors("root");
-		startTransition(async () => {
-			if (!props?.customerId) {
-				const result = await registerCustomerAction(values);
-				if (!result.success) {
-					form.setError("root", {
-						message: result.error,
-					});
-				}
-				// 成功時はredirect()によって自動的にリダイレクトされる
-			} else {
-				const result = await editCustomerAction({
+
+		const result = props?.customerId
+			? await editCustomerAction({
 					customerId: props.customerId,
-					email: values.email || null,
+					email: values.email,
 					name: values.name,
-					phone: values.phone || null,
-				});
-				if (!result.success) {
-					form.setError("root", {
-						message: result.error,
-					});
-					return;
-				}
-				router.push(`/customers/${props.customerId}`);
-			}
-		});
+					phone: values.phone,
+				})
+			: await registerCustomerAction(values);
+
+		if (result.success) {
+			router.push(`/customers/${result.data.customerId}`);
+		} else {
+			form.setError("root", {
+				message: result?.error || "エラーが発生しました",
+			});
+		}
 	}
+
+	const disabled = !!(
+		form.formState.isSubmitting ||
+		!isHydrated ||
+		props?.disabled
+	);
 
 	return (
 		<Form {...form}>
@@ -94,7 +81,6 @@ export function EditCustomerForm(
 			>
 				<FormField
 					control={form.control}
-					disabled={!isHydrated || props?.disabled}
 					name="name"
 					render={({ field }) => (
 						<FormItem>
@@ -107,6 +93,7 @@ export function EditCustomerForm(
 								<Input
 									autoComplete="name"
 									className="max-w-xs"
+									disabled={disabled}
 									type="text"
 									{...field}
 								/>
@@ -117,7 +104,6 @@ export function EditCustomerForm(
 				/>
 				<FormField
 					control={form.control}
-					disabled={!isHydrated || props?.disabled}
 					name="email"
 					render={({ field }) => (
 						<FormItem>
@@ -130,6 +116,7 @@ export function EditCustomerForm(
 								<Input
 									autoComplete="email"
 									className="max-w-sm"
+									disabled={disabled}
 									type="email"
 									{...field}
 								/>
@@ -140,7 +127,6 @@ export function EditCustomerForm(
 				/>
 				<FormField
 					control={form.control}
-					disabled={!isHydrated || props?.disabled}
 					name="phone"
 					render={({ field }) => (
 						<FormItem>
@@ -155,6 +141,7 @@ export function EditCustomerForm(
 								<Input
 									autoComplete="tel"
 									className="w-40"
+									disabled={disabled}
 									type="tel"
 									{...field}
 								/>
@@ -170,7 +157,7 @@ export function EditCustomerForm(
 				)}
 				<div className="flex gap-2">
 					<Button
-						disabled={isPending || !isHydrated || props?.disabled}
+						disabled={disabled}
 						onClick={() => router.back()}
 						type="button"
 						variant="outline"
@@ -178,12 +165,8 @@ export function EditCustomerForm(
 						キャンセル
 					</Button>
 					{props?.customerId ? (
-						<Button
-							className="min-w-[120px]"
-							disabled={isPending || !isHydrated || props.disabled}
-							type="submit"
-						>
-							{isPending ? (
+						<Button className="min-w-[120px]" disabled={disabled} type="submit">
+							{form.formState.isSubmitting ? (
 								<>
 									編集中
 									<Loader2 className="ml-2 size-4 animate-spin" />
@@ -193,12 +176,8 @@ export function EditCustomerForm(
 							)}
 						</Button>
 					) : (
-						<Button
-							className="min-w-[120px]"
-							disabled={isPending || !isHydrated || props?.disabled}
-							type="submit"
-						>
-							{isPending ? (
+						<Button className="min-w-[120px]" disabled={disabled} type="submit">
+							{form.formState.isSubmitting ? (
 								<>
 									<Loader2 className="mr-2 size-4 animate-spin" />
 									登録中...
