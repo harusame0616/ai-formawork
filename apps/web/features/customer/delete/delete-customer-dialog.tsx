@@ -40,8 +40,7 @@ export function DeleteCustomerDialog({
 
 			setErrorMessage(null);
 			setOpen(false);
-			router.push("/customers");
-			router.refresh();
+			router.replace("/customers");
 		});
 	}
 
