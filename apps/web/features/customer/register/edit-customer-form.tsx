@@ -46,7 +46,6 @@ export function EditCustomerForm(
 	});
 
 	async function onSubmit(values: RegisterCustomerParams) {
-		console.log({ values });
 		form.clearErrors("root");
 
 		const result = props?.customerId
