@@ -78,7 +78,7 @@ test("管理者が顧客を削除できる", async ({ adminUserPage: page, custo
 			.getByRole("dialog")
 			.getByRole("button", { name: "削除" })
 			.click();
-		await expect(page.getByRole("dialog")).toBeHidden();
+		await page.waitForURL("/customers");
 	});
 
 	await test.step("削除された顧客を検索してもヒットしないことを確認", async () => {
