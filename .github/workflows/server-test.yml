@@ -47,11 +47,9 @@ jobs:
 
       - name: Supabase の起動
         run: |
-          cd packages/supabase
-          supabase start
-
+          pnpm --filter @repo/supabase supabase:start && pnpm --filter @repo/supabase supabase:seed
       - name: データベースマイグレーション
-        run: pnpm --filter @workspace/db db:reset
+        run: pnpm --filter @workspace/db db:migrate && pnpm --filter @workspace/db db:seed
 
       - name: サーバーテストの実行
         run: pnpm --filter web test --project=server

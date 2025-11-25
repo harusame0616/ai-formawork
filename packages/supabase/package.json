@@ -21,8 +21,8 @@
 	"packageManager": "pnpm@10.12.4",
 	"private": true,
 	"scripts": {
-		"seed": "tsx --env-file-if-exists=.env src/seed.ts",
-		"supabase:reset": "supabase db reset && pnpm seed",
+		"supabase:reset": "supabase db reset && pnpm supabase:seed",
+		"supabase:seed": "tsx --env-file-if-exists=.env src/seed.ts",
 		"supabase:start": "supabase start",
 		"type:check": "tsc --noEmit"
 	},

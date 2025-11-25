@@ -10,7 +10,6 @@ concurrency:
   group: e2e-test-${{ github.ref }}
   cancel-in-progress: true
 
-
 env:
   APP_NAME: FORMAWORK
   SERVICE_NAME: web
@@ -20,7 +19,6 @@ env:
   NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:62021
   NEXT_PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
   DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:62022/postgres
-
 
 jobs:
   medium-e2e-test:
@@ -58,11 +56,9 @@ jobs:
 
       - name: Supabase の起動
         run: |
-          cd packages/supabase
-          supabase start
-
+          pnpm --filter @repo/supabase supabase:start && pnpm --filter @repo/supabase supabase:seed
       - name: データベースマイグレーション
-        run: pnpm --filter @workspace/db db:reset
+        run: pnpm --filter @workspace/db db:migrate && pnpm --filter @workspace/db db:seed
 
       - name: Next.js のビルド
         run: pnpm --filter web build
