@@ -41,6 +41,7 @@
 		"vitejs",
 		"vitest",
 		"wcag",
-		"WCAG"
+		"WCAG",
+		"Vali"
 	]
 }

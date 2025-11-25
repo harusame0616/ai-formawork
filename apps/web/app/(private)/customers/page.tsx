@@ -1,28 +1,16 @@
 import { Card } from "@workspace/ui/components/card";
 import Link from "next/link";
-import { Suspense } from "react";
-import * as v from "valibot";
-import { CustomerSearchForm } from "@/features/customer/list/customer-search-form";
+import { CustomerSearchFormContainer } from "@/features/customer/list/customer-search-form-container";
+import { CustomerSearchForm } from "@/features/customer/list/customer-search-form-presenter";
 import { CustomersContainer } from "@/features/customer/list/customers-container";
 import { CustomersSkeleton } from "@/features/customer/list/customers-skeleton";
-import { customerSearchParamsSchema } from "@/features/customer/schema";
+import { parseCustomersConditionSearchParams } from "@/features/customer/list/schema";
 import { SuspenseOnSearch } from "@/libs/suspense-on-search";
 
-type CustomersPageProps = {
-	searchParams: Promise<Record<string, string | string[] | undefined>>;
-};
-
-export default function CustomersPage({ searchParams }: CustomersPageProps) {
-	const validatedCondition = searchParams.then((params) => {
-		const parsedParams = v.safeParse(customerSearchParamsSchema, params);
-
-		return parsedParams.success
-			? {
-					keyword: parsedParams.output.keyword,
-					page: parsedParams.output.page,
-				}
-			: {};
-	});
+export default function Page({ searchParams }: PageProps<"/customers">) {
+	const validatedCondition = searchParams.then(
+		(params) => parseCustomersConditionSearchParams(params).data,
+	);
 
 	return (
 		<div className="container mx-auto p-2 space-y-4">
@@ -33,9 +21,11 @@ export default function CustomersPage({ searchParams }: CustomersPageProps) {
 				</Link>
 			</div>
 			<Card className="p-4 w-full">
-				<Suspense>
-					<CustomerSearchForm />
-				</Suspense>
+				<SuspenseOnSearch
+					fallback={<CustomerSearchForm condition={{ keyword: "" }} />}
+				>
+					<CustomerSearchFormContainer conditionPromise={validatedCondition} />
+				</SuspenseOnSearch>
 			</Card>
 			<Card className="py-2 w-full">
 				<SuspenseOnSearch fallback={<CustomersSkeleton />}>

@@ -1,16 +1,24 @@
-import type { CustomerSearchConditionInput } from "../schema";
 import { CustomersPresenter } from "./customers-presenter";
 import { getCustomers } from "./get-customers";
-
-type CustomersContainerProps = {
-	condition: Promise<CustomerSearchConditionInput>;
-};
+import type { CustomersCondition } from "./schema";
 
 export async function CustomersContainer({
 	condition,
-}: CustomersContainerProps) {
-	const params = await condition;
-	const result = await getCustomers(params);
+}: {
+	condition: Promise<CustomersCondition>;
+}) {
+	const { customers, page, totalPages } = await getCustomers(await condition);
 
-	return <CustomersPresenter {...result} />;
+	return (
+		<CustomersPresenter
+			customers={customers.map(({ customerId, name, phone, email }) => ({
+				customerId,
+				email,
+				name,
+				phone,
+			}))}
+			page={page}
+			totalPages={totalPages}
+		/>
+	);
 }

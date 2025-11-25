@@ -23,7 +23,7 @@ const customerSeeds = [
 		customerId: "00000000-0000-0000-0000-000000000003",
 		email: "test3@example.com",
 		name: "佐藤次郎",
-		phone: null,
+		phone: "090-1111-2222",
 	},
 	{
 		customerId: "00000000-0000-0000-0000-000000000004",
@@ -53,7 +53,7 @@ const customerSeeds = [
 		customerId: "00000000-0000-0000-0000-000000000008",
 		email: "kobayashi@example.com",
 		name: "小林健太",
-		phone: null,
+		phone: "090-2222-3333",
 	},
 	{
 		customerId: "00000000-0000-0000-0000-000000000009",
@@ -77,7 +77,7 @@ const customerSeeds = [
 		customerId: "00000000-0000-0000-0000-000000000012",
 		email: "yamamoto@example.com",
 		name: "山本太一",
-		phone: null,
+		phone: "090-3333-4444",
 	},
 	{
 		customerId: "00000000-0000-0000-0000-000000000013",
@@ -107,7 +107,7 @@ const customerSeeds = [
 		customerId: "00000000-0000-0000-0000-000000000017",
 		email: "matsumoto@example.com",
 		name: "松本あゆみ",
-		phone: null,
+		phone: "090-4444-5555",
 	},
 	{
 		customerId: "00000000-0000-0000-0000-000000000018",
@@ -137,7 +137,7 @@ const customerSeeds = [
 		customerId: "00000000-0000-0000-0000-000000000022",
 		email: "endo@example.com",
 		name: "遠藤亮介",
-		phone: null,
+		phone: "090-5555-6666",
 	},
 	{
 		customerId: "00000000-0000-0000-0000-000000000023",

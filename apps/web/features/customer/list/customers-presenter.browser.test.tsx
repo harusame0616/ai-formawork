@@ -1,8 +1,8 @@
-import type { SelectCustomer } from "@workspace/db/schema/customer";
 import { expect, test, vi } from "vitest";
 import { page } from "vitest/browser";
 import { render } from "vitest-browser-react";
 import { CustomersPresenter } from "./customers-presenter";
+import type { CustomersListItem } from "./schema";
 
 vi.mock("next/navigation", () => ({
 	usePathname: vi.fn().mockReturnValue("path"),
@@ -12,22 +12,18 @@ vi.mock("next/navigation", () => ({
 	useSearchParams: vi.fn().mockReturnValue(new URLSearchParams()),
 }));
 
-const mockCustomers: SelectCustomer[] = [
+const mockCustomers: CustomersListItem[] = [
 	{
-		createdAt: new Date("2024-01-01"),
 		customerId: "1",
 		email: "customer1@example.com",
 		name: "顧客1",
 		phone: "090-1234-5678",
-		updatedAt: new Date("2024-01-01"),
 	},
 	{
-		createdAt: new Date("2024-01-02"),
 		customerId: "2",
 		email: "customer2@example.com",
 		name: "顧客2",
 		phone: "090-8765-4321",
-		updatedAt: new Date("2024-01-02"),
 	},
 ];
 
