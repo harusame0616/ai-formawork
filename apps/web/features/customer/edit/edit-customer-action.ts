@@ -1,10 +1,9 @@
 "use server";
 
-import { fail, type Result } from "@harusame0616/result";
+import { fail, type Result, succeed } from "@harusame0616/result";
 import { EventType } from "@repo/logger/event-types";
 import { getLogger } from "@repo/logger/nextjs/server";
 import { updateTag } from "next/cache";
-import { redirect } from "next/navigation";
 import { getUserStaffId } from "@/features/auth/get-user-staff-id";
 import { tagByCustomerId } from "@/features/customer/tag";
 import { type EditCustomerErrorMessage, editCustomer } from "./edit-customer";
@@ -23,7 +22,7 @@ type EditCustomerActionErrorMessage =
 
 export async function editCustomerAction(
 	params: EditCustomerParams,
-): Promise<Result<undefined, EditCustomerActionErrorMessage>> {
+): Promise<Result<{ customerId: string }, EditCustomerActionErrorMessage>> {
 	const logger = await getLogger("editCustomerAction");
 	logger.info("editCustomerAction を実行", {
 		params,
@@ -53,6 +52,7 @@ export async function editCustomerAction(
 		}
 
 		updateTag(tagByCustomerId(parsedParams.data.customerId));
+		return succeed({ customerId: parsedParams.data.customerId });
 	} catch (error) {
 		logger.error("顧客編集中に予期しないエラーが発生", {
 			action: "edit-customer",
@@ -61,6 +61,4 @@ export async function editCustomerAction(
 
 		return fail(INTERNAL_SERVER_ERROR_MESSAGE);
 	}
-
-	redirect(`/customers/${params.customerId}`);
 }
