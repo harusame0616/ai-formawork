@@ -17,7 +17,7 @@ export const customersConditionSchema = v.object({
 
 const customersConditionSearchParamsSchema = v.object({
 	keyword: v.optional(keywordSchema, ""),
-	page: v.optional(pageSchema, 1),
+	page: v.optional(v.pipe(v.string(), v.transform(Number), pageSchema), "1"),
 });
 
 export type CustomersConditionSearchParams = v.InferOutput<
