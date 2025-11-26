@@ -8,14 +8,14 @@ import type { EditCustomerParams } from "./schema";
 const CUSTOMER_NOT_FOUND_ERROR_MESSAGE =
 	"指定された顧客が見つかりません" as const;
 
-export type EditCustomerErrorMessage = typeof CUSTOMER_NOT_FOUND_ERROR_MESSAGE;
-
 export async function editCustomer({
 	customerId,
 	email,
 	name,
 	phone,
-}: EditCustomerParams): Promise<Result<undefined, EditCustomerErrorMessage>> {
+}: EditCustomerParams): Promise<
+	Result<undefined, typeof CUSTOMER_NOT_FOUND_ERROR_MESSAGE>
+> {
 	const logger = await getLogger("editCustomer");
 
 	const customer = await db.query.customersTable.findFirst({
