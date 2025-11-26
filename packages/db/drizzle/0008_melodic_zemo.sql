@@ -1,0 +1,1 @@
+ALTER TABLE "staffs" ADD COLUMN "email" text NOT NULL;

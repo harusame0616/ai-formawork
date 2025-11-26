@@ -162,14 +162,17 @@ const customerSeeds = [
 // スタッフのseedデータ
 const staffSeeds = [
 	{
+		email: "tanaka@staff.example.com",
 		id: "00000000-0000-0000-0000-000000000001",
 		name: "田中 太郎",
 	},
 	{
+		email: "yamada@staff.example.com",
 		id: "00000000-0000-0000-0000-000000000002",
 		name: "山田 花子",
 	},
 	{
+		email: "sato@staff.example.com",
 		id: "00000000-0000-0000-0000-000000000003",
 		name: "佐藤 次郎",
 	},

@@ -38,6 +38,15 @@ export function NavigationMenu() {
 								顧客一覧
 							</Link>
 						</li>
+						<li>
+							<Link
+								className="block rounded-md px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900"
+								href="/staffs"
+								onClick={() => setOpen(false)}
+							>
+								スタッフ一覧
+							</Link>
+						</li>
 					</ul>
 				</nav>
 			</SheetContent>
