@@ -21,6 +21,7 @@ import {
 } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
 import { CustomerTag } from "@/features/customer/tag";
+import { StaffTag } from "@/features/staff/tag";
 import { getCustomerNoteImageUrl } from "./get-customer-note-image-url";
 
 export type CustomerNoteSearchCondition = {
@@ -61,7 +62,7 @@ export async function getCustomerNotes(
 	currentPage: number;
 	totalPages: number;
 }> {
-	cacheTag(CustomerTag.NoteCrud(condition.customerId));
+	cacheTag(CustomerTag.NoteCrud(condition.customerId), StaffTag.Delete);
 	cacheLife("permanent");
 
 	const page = condition.page ?? 1;

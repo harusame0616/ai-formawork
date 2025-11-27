@@ -7,6 +7,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@workspace/ui/components/table";
+import Link from "next/link";
 import type { StaffsListItem } from "./schema";
 
 type StaffsPresenterProps = {
@@ -42,7 +43,14 @@ export function StaffsPresenter({
 				<TableBody>
 					{staffs.map((staff) => (
 						<TableRow key={staff.id}>
-							<TableCell>{staff.name}</TableCell>
+							<TableCell>
+								<Link
+									className="text-primary underline"
+									href={`/staffs/${staff.id}`}
+								>
+									{staff.name}
+								</Link>
+							</TableCell>
 							<TableCell>{staff.email}</TableCell>
 						</TableRow>
 					))}
