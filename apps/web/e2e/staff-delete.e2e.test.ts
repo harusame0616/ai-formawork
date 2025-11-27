@@ -69,9 +69,10 @@ test("管理者がスタッフを削除できる", async ({
 
 		await page.getByLabel("名前").fill(testStaff.name);
 		await page.getByLabel("メールアドレス").fill(testStaff.email);
-		await page.getByLabel("パスワード").fill(testStaff.password);
-		await page.getByLabel("ロール").click();
-		await page.getByRole("option", { name: "一般" }).click();
+		await page
+			.getByRole("textbox", { name: "パスワード" })
+			.fill(testStaff.password);
+		await page.getByRole("radio", { name: "一般" }).click();
 
 		await page.getByRole("button", { name: "登録" }).click();
 
