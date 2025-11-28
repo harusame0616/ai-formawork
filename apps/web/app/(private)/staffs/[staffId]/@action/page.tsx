@@ -15,15 +15,15 @@ export default function Page({ params }: PageProps<"/staffs/[staffId]">) {
 }
 
 async function Action({ staffIdPromise }: { staffIdPromise: Promise<string> }) {
-	const staffId = await staffIdPromise;
-	const userRole = await getUserRole();
-	const currentUserStaffId = await getUserStaffId();
-	const isAdmin = userRole === UserRole.Admin;
-	const isSelf = staffId === currentUserStaffId;
+	const [staffId, userRole, currentUserStaffId] = await Promise.all([
+		staffIdPromise,
+		getUserRole(),
+		getUserStaffId(),
+	]);
 
-	return (
-		<div className="flex items-center gap-2">
-			{isAdmin && !isSelf && <DeleteStaffDialog staffId={staffId} />}
-		</div>
-	);
+	if (userRole !== UserRole.Admin || staffId === currentUserStaffId) {
+		return null;
+	}
+
+	return <DeleteStaffDialog staffId={staffId} />;
 }
