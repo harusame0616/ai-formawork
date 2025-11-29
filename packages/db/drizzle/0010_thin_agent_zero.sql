@@ -1,0 +1,1 @@
+ALTER TABLE "staffs" DROP COLUMN "email";

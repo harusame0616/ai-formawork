@@ -2,7 +2,6 @@ import { fail, type Result, succeed } from "@harusame0616/result";
 import { createAdminClient } from "@repo/supabase/admin";
 import { db } from "@workspace/db/client";
 import { staffsTable } from "@workspace/db/schema/staff";
-import { eq } from "drizzle-orm";
 import { v7 as uuidv7 } from "uuid";
 import type { RegisterStaffParams } from "./schema";
 
@@ -12,37 +11,36 @@ export async function registerStaff({
 	password,
 	role,
 }: RegisterStaffParams): Promise<Result<{ staffId: string }, string>> {
-	const existingStaff = await db
-		.select({ id: staffsTable.id })
-		.from(staffsTable)
-		.where(eq(staffsTable.email, email))
-		.limit(1);
-
-	if (existingStaff.length > 0) {
-		return fail("このメールアドレスは既に登録されています");
-	}
-
 	const supabase = createAdminClient();
 	const staffId = uuidv7();
+	const authUserId = uuidv7();
 
-	return await db.transaction(async (tx) => {
-		await tx.insert(staffsTable).values({ email, id: staffId, name });
+	try {
+		return await db.transaction(async (tx) => {
+			await tx.insert(staffsTable).values({ authUserId, id: staffId, name });
 
-		const { error } = await supabase.auth.admin.createUser({
-			app_metadata: { role, staffId },
-			email,
-			email_confirm: true,
-			password,
-		});
+			const { error } = await supabase.auth.admin.createUser({
+				app_metadata: { role, staffId },
+				email,
+				email_confirm: true,
+				id: authUserId,
+				password,
+			});
 
-		if (error) {
-			if (error.message.includes("already registered")) {
-				tx.rollback();
-				return fail("このメールアドレスは既に登録されています");
+			if (error) {
+				throw error;
 			}
-			throw error;
-		}
 
-		return succeed({ staffId });
-	});
+			return succeed({ staffId });
+		});
+	} catch (error) {
+		if (
+			error instanceof Error &&
+			error.message.includes("already") &&
+			error.message.includes("registered")
+		) {
+			return fail("このメールアドレスは既に登録されています");
+		}
+		throw error;
+	}
 }

@@ -7,25 +7,33 @@ import { test as base, expect } from "vitest";
 import { registerStaff } from "./register-staff";
 
 const test = base.extend<{
-	cleanup: { emails: string[] };
+	cleanup: { staffIds: string[]; authUserIds: string[] };
 }>({
 	cleanup: async (
 		// biome-ignore lint/correctness/noEmptyPattern: Vitestのfixtureパターンで使用する標準的な記法
 		{},
 		use,
 	) => {
-		const emails: string[] = [];
-		await use({ emails });
+		const staffIds: string[] = [];
+		const authUserIds: string[] = [];
+		await use({ authUserIds, staffIds });
 
 		const supabase = createAdminClient();
-		for (const email of emails) {
-			await db.delete(staffsTable).where(eq(staffsTable.email, email));
+		for (const staffId of staffIds) {
+			const [staff] = await db
+				.select({ authUserId: staffsTable.authUserId })
+				.from(staffsTable)
+				.where(eq(staffsTable.id, staffId))
+				.limit(1);
 
-			const { data } = await supabase.auth.admin.listUsers();
-			const user = data.users.find((u) => u.email === email);
-			if (user) {
-				await supabase.auth.admin.deleteUser(user.id);
+			await db.delete(staffsTable).where(eq(staffsTable.id, staffId));
+
+			if (staff?.authUserId) {
+				await supabase.auth.admin.deleteUser(staff.authUserId);
 			}
+		}
+		for (const authUserId of authUserIds) {
+			await supabase.auth.admin.deleteUser(authUserId);
 		}
 	},
 });
@@ -38,30 +46,32 @@ test("スタッフを正常に登録できる", async ({ cleanup }) => {
 		password: "TestPassword123!",
 		role: "user" as const,
 	};
-	cleanup.emails.push(input.email);
 
 	const result = await registerStaff(input);
 
 	expect(result.success).toBe(true);
 	if (result.success) {
 		expect(result.data.staffId).toBeDefined();
+		cleanup.staffIds.push(result.data.staffId);
 	}
+
+	if (!result.success) return;
 
 	const staffs = await db
 		.select()
 		.from(staffsTable)
-		.where(eq(staffsTable.email, input.email))
+		.where(eq(staffsTable.id, result.data.staffId))
 		.limit(1);
 
 	expect(staffs).toHaveLength(1);
 	expect(staffs[0]?.name).toBe(input.name);
-	expect(staffs[0]?.email).toBe(input.email);
 
 	const supabase = createAdminClient();
 	const { data } = await supabase.auth.admin.listUsers();
 	const user = data.users.find((u) => u.email === input.email);
 	expect(user).toBeDefined();
 	expect(user?.app_metadata?.role).toBe(input.role);
+	expect(user?.app_metadata?.staffId).toBe(result.data.staffId);
 });
 
 test("name が24文字（境界値）で登録できる", async ({ cleanup }) => {
@@ -72,16 +82,20 @@ test("name が24文字（境界値）で登録できる", async ({ cleanup }) =>
 		password: "TestPassword123!",
 		role: "user" as const,
 	};
-	cleanup.emails.push(input.email);
 
 	const result = await registerStaff(input);
 
 	expect(result.success).toBe(true);
+	if (result.success) {
+		cleanup.staffIds.push(result.data.staffId);
+	}
+
+	if (!result.success) return;
 
 	const staffs = await db
 		.select()
 		.from(staffsTable)
-		.where(eq(staffsTable.email, input.email))
+		.where(eq(staffsTable.id, result.data.staffId))
 		.limit(1);
 
 	expect(staffs).toHaveLength(1);
@@ -96,11 +110,13 @@ test("管理者ロールで登録できる", async ({ cleanup }) => {
 		password: "TestPassword123!",
 		role: "admin" as const,
 	};
-	cleanup.emails.push(input.email);
 
 	const result = await registerStaff(input);
 
 	expect(result.success).toBe(true);
+	if (result.success) {
+		cleanup.staffIds.push(result.data.staffId);
+	}
 
 	const supabase = createAdminClient();
 	const { data } = await supabase.auth.admin.listUsers();
@@ -108,18 +124,21 @@ test("管理者ロールで登録できる", async ({ cleanup }) => {
 	expect(user?.app_metadata?.role).toBe("admin");
 });
 
-test("DBに既に存在するメールアドレスで登録するとエラーになる", async ({
+test("Supabase Auth に既に存在するメールアドレスで登録するとエラーになる", async ({
 	cleanup,
 }) => {
 	const uniqueId = randomUUID().slice(0, 8);
 	const email = `staff-dup-${uniqueId}@example.com`;
-	cleanup.emails.push(email);
 
-	await db.insert(staffsTable).values({
+	const supabase = createAdminClient();
+	const { data: existingUser } = await supabase.auth.admin.createUser({
 		email,
-		id: randomUUID(),
-		name: `既存スタッフ${uniqueId}`,
+		email_confirm: true,
+		password: "TestPassword123!",
 	});
+	if (existingUser.user) {
+		cleanup.authUserIds.push(existingUser.user.id);
+	}
 
 	const input = {
 		email,

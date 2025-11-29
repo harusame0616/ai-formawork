@@ -6,8 +6,14 @@ type Staff = {
 	email: string;
 	id: string;
 	name: string;
+	role: string;
 	updatedAt: Date;
 };
+
+const RoleLabel = {
+	admin: "管理者",
+	user: "一般",
+} as const;
 
 type StaffBasicInfoPresenterProps = {
 	staff: Staff;
@@ -21,14 +27,19 @@ type StaffField = {
 export function StaffBasicInfoPresenter({
 	staff,
 }: StaffBasicInfoPresenterProps) {
+	const roleLabel =
+		staff.role in RoleLabel
+			? RoleLabel[staff.role as keyof typeof RoleLabel]
+			: staff.role;
+
 	const fields: StaffField[] = [
 		{
 			label: "メールアドレス",
-			value: (
-				<a className="text-primary underline" href={`mailto:${staff.email}`}>
-					{staff.email}
-				</a>
-			),
+			value: staff.email || "-",
+		},
+		{
+			label: "ロール",
+			value: roleLabel,
 		},
 		{
 			label: "登録日",

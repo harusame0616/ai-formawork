@@ -3,18 +3,21 @@ import { createClient } from "@supabase/supabase-js";
 const usersFixture = [
 	{
 		email: "test1@example.com",
+		id: "a0000000-0000-0000-0000-000000000001",
 		password: "Test@Pass123",
 		role: "user",
 		staffId: "00000000-0000-0000-0000-000000000001",
 	},
 	{
 		email: "test2@example.com",
+		id: "a0000000-0000-0000-0000-000000000002",
 		password: "Secure@456",
 		role: "user",
 		staffId: "00000000-0000-0000-0000-000000000002",
 	},
 	{
 		email: "admin@example.com",
+		id: "a0000000-0000-0000-0000-000000000003",
 		password: "Admin@789!",
 		role: "admin",
 		staffId: "00000000-0000-0000-0000-000000000003",
@@ -48,6 +51,7 @@ async function seedUsers() {
 				app_metadata: { role: user.role, staffId: user.staffId },
 				email: user.email,
 				email_confirm: true,
+				id: user.id,
 				password: user.password,
 			});
 

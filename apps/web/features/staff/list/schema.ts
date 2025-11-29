@@ -35,7 +35,7 @@ export function parseStaffsConditionSearchParams(value: unknown) {
 }
 
 export type StaffsListItem = {
+	email: string;
 	id: string;
 	name: string;
-	email: string;
 };

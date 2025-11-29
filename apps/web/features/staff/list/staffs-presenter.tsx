@@ -51,7 +51,7 @@ export function StaffsPresenter({
 									{staff.name}
 								</Link>
 							</TableCell>
-							<TableCell>{staff.email}</TableCell>
+							<TableCell>{staff.email || "-"}</TableCell>
 						</TableRow>
 					))}
 				</TableBody>
