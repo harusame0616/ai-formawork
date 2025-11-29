@@ -1,0 +1,32 @@
+{
+	"background_color": "#FFFFFF",
+	"category": ["business"],
+	"display": "standalone",
+	"icons": [
+		{
+			"sizes": "192x192",
+			"src": "/icon-192x192.png",
+			"type": "image/png"
+		},
+		{
+			"sizes": "512x512",
+			"src": "/icon-512x512.png",
+			"type": "image/png"
+		}
+	],
+	"name": "FORMAWORK.AI",
+	"scope": "/",
+	"short_name": "FW.AI",
+	"shortcuts": [
+		{
+			"name": "顧客一覧",
+			"url": "/customers"
+		},
+		{
+			"name": "スタッフ一覧",
+			"url": "/staffs"
+		}
+	],
+	"start_url": "/",
+	"theme_color": "#FFffff"
+}

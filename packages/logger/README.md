@@ -327,12 +327,12 @@ logger.trace("HTTP request/response details", { req, res });
 
 ```bash
 # 開発環境
-APP_NAME=ai-formawork
+APP_NAME=formawork.ai
 SERVICE_NAME=web
 LOG_LEVEL=debug
 
 # 本番環境（最小限の設定）
-APP_NAME=ai-formawork
+APP_NAME=formawork.ai
 HOST_ENVIRONMENT=production
 SERVICE_NAME=api
 ```

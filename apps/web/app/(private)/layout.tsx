@@ -11,13 +11,13 @@ export default function PrivateLayout({
 		<div className="grid grid-rows-[auto_1fr] h-dvh">
 			<header className="border-b grid grid-cols-[auto_1fr_auto] h-16 items-center gap-4 px-4">
 				<NavigationMenu />
-				<span className="text-lg font-semibold">FORMAWORK - CRM for 看護</span>
+				<span className="text-lg font-semibold">FORMAWORK.AI 顧客管理</span>
 				<Button size="icon" variant="ghost">
 					<User className="size-6" />
 					<span className="sr-only">ユーザーメニューを開く</span>
 				</Button>
 			</header>
-			<main className="overflow-y-auto [scrollbar-gutter:stable] bg-gray-100">
+			<main className="overflow-y-auto [scrollbar-gutter:stable] bg-background">
 				{children}
 			</main>
 		</div>
