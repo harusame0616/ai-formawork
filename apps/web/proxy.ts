@@ -1,5 +1,5 @@
 import { updateSession } from "@repo/supabase/nextjs/proxy";
-import type { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { getLoggerConfig } from "./config/logger";
 
 function setLoggerHeaders(
@@ -20,6 +20,25 @@ function setLoggerHeaders(
 
 export async function proxy(request: NextRequest) {
 	const { response, userId } = await updateSession(request);
+	const path = request.nextUrl.pathname;
+	const isLoggedIn = userId !== null;
+	const isLoginPage = path === "/login";
+
+	if (!isLoggedIn && !isLoginPage) {
+		const redirectResponse = NextResponse.redirect(
+			new URL("/login", request.url),
+		);
+		setLoggerHeaders(redirectResponse, request, userId);
+		return redirectResponse;
+	}
+
+	if (isLoggedIn && isLoginPage) {
+		const redirectResponse = NextResponse.redirect(
+			new URL("/customers", request.url),
+		);
+		setLoggerHeaders(redirectResponse, request, userId);
+		return redirectResponse;
+	}
 
 	setLoggerHeaders(response, request, userId);
 
