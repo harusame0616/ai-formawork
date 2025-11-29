@@ -19,6 +19,8 @@ import {
 	FormLabel,
 	FormMessage,
 } from "@workspace/ui/components/form";
+import { OptionalBadge } from "@workspace/ui/components/optional-badge";
+import { RequiredBadge } from "@workspace/ui/components/required-badge";
 import { Textarea } from "@workspace/ui/components/textarea";
 import { AlertCircle, Edit, Loader2, X } from "lucide-react";
 import Image from "next/image";
@@ -177,8 +179,8 @@ export function EditCustomerNoteDialog({
 		<Dialog onOpenChange={handleOpenChange} open={open}>
 			<DialogTrigger asChild>
 				<Button size="sm" type="button" variant="outline">
-					<Edit className="h-4 w-4 mr-1" />
-					編集
+					<Edit aria-hidden className="size-4" />
+					<span className="sr-only">編集</span>
 				</Button>
 			</DialogTrigger>
 			<DialogContent>
@@ -200,7 +202,9 @@ export function EditCustomerNoteDialog({
 							name="content"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>内容</FormLabel>
+									<FormLabel className="flex items-center gap-2">
+										内容 <RequiredBadge />
+									</FormLabel>
 									<FormDescription>
 										顧客に関するメモや連絡事項を記録できます
 									</FormDescription>
@@ -218,7 +222,10 @@ export function EditCustomerNoteDialog({
 						/>
 
 						<div>
-							<FormLabel>画像</FormLabel>
+							<FormLabel className="flex items-center gap-2">
+								画像
+								<OptionalBadge />
+							</FormLabel>
 							<FormDescription className="mb-2">
 								既存の画像を削除したり、新しい画像を追加できます（最大5枚）
 							</FormDescription>

@@ -24,11 +24,8 @@ async function Action({
 	const isAdmin = userRole === UserRole.Admin;
 
 	return (
-		<div className="flex items-center gap-2">
-			<Link
-				className="text-primary underline flex items-center gap-1"
-				href={`/customers/${customerId}/edit`}
-			>
+		<div className="flex items-center gap-4">
+			<Link className="underline gap-1" href={`/customers/${customerId}/edit`}>
 				編集
 			</Link>
 			{isAdmin && <DeleteCustomerDialog customerId={customerId} />}

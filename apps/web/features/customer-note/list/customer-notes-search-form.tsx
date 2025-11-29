@@ -92,7 +92,7 @@ export function CustomerNotesSearchForm(props: CustomerNotesSearchFormProps) {
 		<Collapsible disabled={isDisabled} onOpenChange={setIsOpen} open={isOpen}>
 			<Card>
 				<CollapsibleTrigger asChild disabled={isDisabled}>
-					<CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
+					<CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors py-2">
 						<div className="flex items-center justify-between">
 							<div className="flex items-center gap-2">
 								<CardTitle className="h-6 flex items-center">検索</CardTitle>

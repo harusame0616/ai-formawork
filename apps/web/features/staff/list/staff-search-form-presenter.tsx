@@ -54,7 +54,7 @@ export function StaffSearchForm({
 					name="keyword"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>検索キーワード</FormLabel>
+							<FormLabel>キーワード</FormLabel>
 							<FormDescription>
 								名前、メールアドレス（最大
 								{STAFF_SEARCH_KEYWORD_MAX_LENGTH}文字）

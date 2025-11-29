@@ -82,7 +82,7 @@ test("管理者が顧客を削除できる", async ({ adminUserPage: page, custo
 	});
 
 	await test.step("削除された顧客を検索してもヒットしないことを確認", async () => {
-		await page.getByLabel("検索キーワード").fill(customer.name);
+		await page.getByLabel("キーワード").fill(customer.name);
 		await page.getByRole("button", { name: "検索" }).click();
 
 		// 「顧客が見つかりませんでした」が表示される

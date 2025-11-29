@@ -13,7 +13,9 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="ja">
-			<body className="antialiased font-sans bg-white">{children}</body>
+			<body className="antialiased font-sans bg-white overflow-hidden">
+				{children}
+			</body>
 		</html>
 	);
 }

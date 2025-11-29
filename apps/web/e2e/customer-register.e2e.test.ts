@@ -93,7 +93,7 @@ test("全フィールドを境界値一杯で入力して顧客を登録し、�
 	});
 
 	await test.step("登録した顧客を検索", async () => {
-		await registerCustomerPage.getByLabel("検索キーワード").fill(testData.name);
+		await registerCustomerPage.getByLabel("キーワード").fill(testData.name);
 		await registerCustomerPage.getByRole("button", { name: "検索" }).click();
 		await registerCustomerPage.waitForURL("**/customers?keyword=*");
 	});

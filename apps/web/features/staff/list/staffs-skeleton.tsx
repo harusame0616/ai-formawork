@@ -3,6 +3,7 @@ import {
 	PaginationContent,
 	PaginationItem,
 } from "@workspace/ui/components/pagination";
+import { Skeleton } from "@workspace/ui/components/skeleton";
 import {
 	Table,
 	TableBody,
@@ -11,15 +12,6 @@ import {
 	TableHeader,
 	TableRow,
 } from "@workspace/ui/components/table";
-
-function SkeletonBox({ className = "" }: { className?: string }) {
-	return (
-		<div
-			aria-hidden="true"
-			className={`animate-pulse bg-muted rounded ${className}`}
-		/>
-	);
-}
 
 export function StaffsSkeleton() {
 	return (
@@ -36,10 +28,10 @@ export function StaffsSkeleton() {
 					{Array.from({ length: 5 }).map((_, index) => (
 						<TableRow key={index}>
 							<TableCell>
-								<SkeletonBox className="h-5 w-32" />
+								<Skeleton className="h-5 w-32" />
 							</TableCell>
 							<TableCell>
-								<SkeletonBox className="h-5 w-48" />
+								<Skeleton className="h-5 w-48" />
 							</TableCell>
 						</TableRow>
 					))}
@@ -49,15 +41,15 @@ export function StaffsSkeleton() {
 			<Pagination>
 				<PaginationContent>
 					<PaginationItem>
-						<SkeletonBox className="h-10 w-20" />
+						<Skeleton className="h-10 w-20" />
 					</PaginationItem>
 					{Array.from({ length: 5 }).map((_, index) => (
 						<PaginationItem key={index}>
-							<SkeletonBox className="h-10 w-10" />
+							<Skeleton className="h-10 w-10" />
 						</PaginationItem>
 					))}
 					<PaginationItem>
-						<SkeletonBox className="h-10 w-20" />
+						<Skeleton className="h-10 w-20" />
 					</PaginationItem>
 				</PaginationContent>
 			</Pagination>

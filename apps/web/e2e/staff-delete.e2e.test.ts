@@ -89,7 +89,7 @@ test("管理者がスタッフを削除できる", async ({
 	});
 
 	await test.step("削除されたスタッフを検索してもヒットしないことを確認", async () => {
-		await page.getByLabel("検索キーワード").fill(testStaff.name);
+		await page.getByLabel("キーワード").fill(testStaff.name);
 		await page.getByRole("button", { name: "検索" }).click();
 
 		await expect(
