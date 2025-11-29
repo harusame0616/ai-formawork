@@ -90,7 +90,7 @@ test("管理者が顧客を削除できる", async ({ adminUserPage: page, custo
 	});
 });
 
-test("一般ユーザーには顧客削除ボタンが表示されない", async ({
+test("一般ユーザーには顧客編集・削除ボタンが表示されない", async ({
 	normalUserPage: page,
 	customer,
 }) => {
@@ -99,8 +99,8 @@ test("一般ユーザーには顧客削除ボタンが表示されない", async
 		await page.waitForURL(`/customers/${customer.customerId}`);
 	});
 
-	await test.step("削除ボタンが表示されないことを確認", async () => {
-		await expect(page.getByRole("link", { name: "編集" })).toBeVisible();
+	await test.step("編集・削除ボタンが表示されないことを確認", async () => {
+		await expect(page.getByRole("link", { name: "編集" })).toBeHidden();
 		await expect(page.getByRole("button", { name: "削除" })).toBeHidden();
 	});
 });

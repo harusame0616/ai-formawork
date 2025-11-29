@@ -2,6 +2,7 @@
 
 import { succeed } from "@harusame0616/result";
 import { updateTag } from "next/cache";
+import { UserRole } from "@/features/auth/get-user-role";
 import { tagByCustomerId } from "@/features/customer/tag";
 import { createServerAction } from "@/libs/create-server-action";
 import { editCustomer } from "./edit-customer";
@@ -20,6 +21,7 @@ export const editCustomerAction = createServerAction(
 		onSuccess: ({ input }) => {
 			updateTag(tagByCustomerId(input.customerId));
 		},
+		role: [UserRole.Admin],
 		schema: editCustomerSchema,
 	},
 );

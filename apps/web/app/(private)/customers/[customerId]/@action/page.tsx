@@ -19,16 +19,21 @@ async function Action({
 }: {
 	customerIdPromise: Promise<string>;
 }) {
-	const customerId = await customerIdPromise;
-	const userRole = await getUserRole();
-	const isAdmin = userRole === UserRole.Admin;
+	const [customerId, userRole] = await Promise.all([
+		customerIdPromise,
+		getUserRole(),
+	]);
+
+	if (userRole !== UserRole.Admin) {
+		return null;
+	}
 
 	return (
 		<div className="flex items-center gap-4">
 			<Link className="underline gap-1" href={`/customers/${customerId}/edit`}>
 				編集
 			</Link>
-			{isAdmin && <DeleteCustomerDialog customerId={customerId} />}
+			<DeleteCustomerDialog customerId={customerId} />
 		</div>
 	);
 }

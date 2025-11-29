@@ -1,17 +1,38 @@
-import { test as base, expect } from "@playwright/test";
+import { test as base, expect, type Page } from "@playwright/test";
 import { db } from "@workspace/db/client";
 import { customersTable } from "@workspace/db/schema/customer";
 import { eq } from "drizzle-orm";
 import { v4 } from "uuid";
 
-const test = base.extend<{
+type Fixtures = {
 	customer: {
 		customerId: string;
 		email: string;
 		name: string;
 		phone: string;
 	};
-}>({
+	adminUserPage: Page;
+	normalUserPage: Page;
+};
+
+const test = base.extend<Fixtures>({
+	async adminUserPage({ page }, use) {
+		const adminUser = {
+			email: "admin@example.com",
+			password: "Admin@789!",
+		};
+
+		await page.goto("/login");
+		await page.getByLabel("メールアドレス").fill(adminUser.email);
+		await page
+			.getByRole("textbox", { name: "パスワード" })
+			.fill(adminUser.password);
+		await page.getByRole("button", { name: "ログイン" }).click();
+		await page.waitForURL("/");
+
+		await use(page);
+	},
+
 	// biome-ignore lint/correctness/noEmptyPattern: The first argument inside a fixture must use object destructuring pattern, e.g. ({ test } => {}). Instead, received "_".
 	async customer({}, use) {
 		const customer = {
@@ -27,26 +48,29 @@ const test = base.extend<{
 			.delete(customersTable)
 			.where(eq(customersTable.customerId, customer.customerId));
 	},
-});
 
-test("必須フィールドを全て入力して編集できる", async ({ page, customer }) => {
-	const testUser = {
-		email: "test1@example.com",
-		password: "Test@Pass123",
-	};
+	async normalUserPage({ page }, use) {
+		const testUser = {
+			email: "test1@example.com",
+			password: "Test@Pass123",
+		};
 
-	await test.step("ログイン", async () => {
 		await page.goto("/login");
-
 		await page.getByLabel("メールアドレス").fill(testUser.email);
 		await page
 			.getByRole("textbox", { name: "パスワード" })
 			.fill(testUser.password);
-
 		await page.getByRole("button", { name: "ログイン" }).click();
 		await page.waitForURL("/");
-	});
 
+		await use(page);
+	},
+});
+
+test("管理者が必須フィールドを全て入力して編集できる", async ({
+	adminUserPage: page,
+	customer,
+}) => {
 	await test.step("顧客編集ページへ遷移", async () => {
 		await page.goto(`/customers/${customer.customerId}/edit`);
 		await page.waitForURL(`/customers/${customer.customerId}/edit`);
@@ -79,29 +103,15 @@ test("必須フィールドを全て入力して編集できる", async ({ page,
 		await expect(
 			page.getByRole("heading", { name: newCustomer.name }),
 		).toBeVisible();
-
-		// 編集後のメールアドレスと電話番号が表示されることを確認
 		await expect(page.getByText(newCustomer.email)).toBeVisible();
 		await expect(page.getByText(newCustomer.phone)).toBeVisible();
 	});
 });
 
-test("必須フィールド以外を空で編集できる", async ({ page, customer }) => {
-	const testUser = {
-		email: "test1@example.com",
-		password: "Test@Pass123",
-	};
-
-	await test.step("ログイン", async () => {
-		await page.goto("/login");
-		await page.getByLabel("メールアドレス").fill(testUser.email);
-		await page
-			.getByRole("textbox", { name: "パスワード" })
-			.fill(testUser.password);
-		await page.getByRole("button", { name: "ログイン" }).click();
-		await page.waitForURL("/");
-	});
-
+test("管理者が必須フィールド以外を空で編集できる", async ({
+	adminUserPage: page,
+	customer,
+}) => {
 	await test.step("編集ページへ遷移", async () => {
 		await page.goto(`/customers/${customer.customerId}/edit`);
 		await page.waitForURL(`/customers/${customer.customerId}/edit`);
@@ -122,12 +132,25 @@ test("必須フィールド以外を空で編集できる", async ({ page, custo
 	});
 
 	await test.step("メールアドレスと電話番号が「未登録」と表示されることを確認", async () => {
-		// メールアドレスと電話番号のフィールドに「未登録」が表示されることを確認
 		await expect(
 			page.locator('text="メールアドレス"').locator("..").getByText("未登録"),
 		).toBeVisible();
 		await expect(
 			page.locator('text="電話番号"').locator("..").getByText("未登録"),
 		).toBeVisible();
+	});
+});
+
+test("一般ユーザーには顧客詳細ページで編集リンクが表示されない", async ({
+	normalUserPage: page,
+	customer,
+}) => {
+	await test.step("顧客詳細ページに遷移", async () => {
+		await page.goto(`/customers/${customer.customerId}`);
+		await page.waitForURL(`/customers/${customer.customerId}`);
+	});
+
+	await test.step("編集リンクが表示されないことを確認", async () => {
+		await expect(page.getByRole("link", { name: "編集" })).toBeHidden();
 	});
 });

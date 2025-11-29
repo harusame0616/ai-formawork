@@ -1,6 +1,7 @@
 "use server";
 
 import { updateTag } from "next/cache";
+import { UserRole } from "@/features/auth/get-user-role";
 import { createServerAction } from "@/libs/create-server-action";
 import { CustomerTag, tagByCustomerId } from "../tag";
 import { registerCustomer } from "./register-customer";
@@ -12,5 +13,6 @@ export const registerCustomerAction = createServerAction(registerCustomer, {
 		updateTag(CustomerTag.crud);
 		updateTag(tagByCustomerId(result.customerId));
 	},
+	role: [UserRole.Admin],
 	schema: registerCustomerSchema,
 });
