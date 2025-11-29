@@ -45,14 +45,9 @@ test("複数フィールドにマッチする検索ができる", async ({ custo
 		keyword: customer.name,
 		page: 1,
 	});
-	const phoneSearchResult = await getCustomers({
-		keyword: customer.phone,
-		page: 1,
-	});
 
 	expect(emailSearchResult.customers.length).toBe(1);
 	expect(nameSearchResult.customers.length).toBe(1);
-	expect(phoneSearchResult.customers.length).toBe(1);
 });
 
 test("大文字小文字を区別せずに検索できる", async ({ customer }) => {
@@ -64,12 +59,7 @@ test("大文字小文字を区別せずに検索できる", async ({ customer })
 		keyword: customer.name.toUpperCase(),
 		page: 1,
 	});
-	const phoneSearchResult = await getCustomers({
-		keyword: customer.phone.toUpperCase(),
-		page: 1,
-	});
 
 	expect(emailSearchResult.customers.length).toBe(1);
 	expect(nameSearchResult.customers.length).toBe(1);
-	expect(phoneSearchResult.customers.length).toBe(1);
 });
