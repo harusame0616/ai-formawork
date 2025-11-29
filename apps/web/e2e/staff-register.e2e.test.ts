@@ -61,7 +61,7 @@ test("全フィールドを境界値一杯で入力してスタッフを登録�
 	});
 
 	await test.step("登録したスタッフを検索", async () => {
-		await registerStaffPage.getByLabel("検索キーワード").fill(testData.name);
+		await registerStaffPage.getByLabel("キーワード").fill(testData.name);
 		await registerStaffPage.getByRole("button", { name: "検索" }).click();
 		await registerStaffPage.waitForURL("**/staffs?keyword=*");
 		await expect(
@@ -106,7 +106,7 @@ test("一般ロールでスタッフを登録できる", async ({ registerStaffP
 	});
 
 	await test.step("登録したスタッフを検索", async () => {
-		await registerStaffPage.getByLabel("検索キーワード").fill(testData.name);
+		await registerStaffPage.getByLabel("キーワード").fill(testData.name);
 		await registerStaffPage.getByRole("button", { name: "検索" }).click();
 		await registerStaffPage.waitForURL("**/staffs?keyword=*");
 		await expect(

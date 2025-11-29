@@ -25,7 +25,6 @@ export async function getCustomers({
 		? or(
 				ilike(customersTable.name, `%${keyword}%`),
 				ilike(customersTable.email, `%${keyword}%`),
-				ilike(customersTable.phone, `%${keyword}%`),
 			)
 		: undefined;
 

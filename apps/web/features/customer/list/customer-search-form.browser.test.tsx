@@ -20,7 +20,7 @@ vi.mock("next/navigation", () => ({
 test("最大文字数を超えて入力できない", async () => {
 	render(<CustomerSearchForm condition={{ keyword: "" }} />);
 
-	const input = page.getByLabelText("検索キーワード");
+	const input = page.getByLabelText("キーワード");
 
 	const overLimitText = "あ".repeat(MAX_KEYWORD_LENGTH + 1);
 

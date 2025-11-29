@@ -19,6 +19,8 @@ import {
 	FormLabel,
 	FormMessage,
 } from "@workspace/ui/components/form";
+import { OptionalBadge } from "@workspace/ui/components/optional-badge";
+import { RequiredBadge } from "@workspace/ui/components/required-badge";
 import { Textarea } from "@workspace/ui/components/textarea";
 import { AlertCircle, Loader2, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -172,7 +174,10 @@ export function RegisterCustomerNoteDialog({
 							name="content"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>内容</FormLabel>
+									<FormLabel className="flex items-center gap-2">
+										内容
+										<RequiredBadge />
+									</FormLabel>
 									<FormDescription>
 										顧客に関するメモや連絡事項を記録できます
 									</FormDescription>
@@ -190,7 +195,10 @@ export function RegisterCustomerNoteDialog({
 						/>
 
 						<div>
-							<FormLabel>画像</FormLabel>
+							<FormLabel className="flex items-center gap-2">
+								画像
+								<OptionalBadge />
+							</FormLabel>
 							<FormDescription className="mb-2">
 								ノートに添付する画像を選択できます（最大5枚）
 							</FormDescription>

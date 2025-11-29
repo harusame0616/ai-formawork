@@ -55,8 +55,8 @@ export function DeleteCustomerNoteDialog({
 		<Dialog onOpenChange={handleOpenChange} open={open}>
 			<DialogTrigger asChild>
 				<Button size="sm" type="button" variant="outline">
-					<Trash2 className="h-4 w-4 mr-1" />
-					削除
+					<Trash2 aria-hidden className="size-4" />
+					<span className="sr-only">削除</span>
 				</Button>
 			</DialogTrigger>
 			<DialogContent>

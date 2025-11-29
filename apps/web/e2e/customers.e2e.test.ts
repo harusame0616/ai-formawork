@@ -66,7 +66,7 @@ test("名前で検索できる", async ({ customersPage }) => {
 	const searchKeyword = "太郎";
 
 	await test.step("名前を入力して検索", async () => {
-		await customersPage.getByLabel("検索キーワード").fill(searchKeyword);
+		await customersPage.getByLabel("キーワード").fill(searchKeyword);
 		await customersPage.getByRole("button", { name: "検索" }).click();
 		await customersPage.waitForURL("**/customers?keyword=*");
 		await expect(
@@ -75,7 +75,7 @@ test("名前で検索できる", async ({ customersPage }) => {
 	});
 
 	await test.step("検索結果を確認", async () => {
-		// 表示されている全てのデータが検索キーワードを含んでいることを確認
+		// 表示されている全てのデータがキーワードを含んでいることを確認
 		const rows = customersPage.locator("table tbody tr");
 		const count = await rows.count();
 		for (let i = 0; i < count; i++) {
@@ -90,7 +90,7 @@ test("メールアドレスで検索できる", async ({ customersPage }) => {
 	const searchKeyword = "admin";
 
 	await test.step("メールアドレスで検索", async () => {
-		await customersPage.getByLabel("検索キーワード").fill(searchKeyword);
+		await customersPage.getByLabel("キーワード").fill(searchKeyword);
 		await customersPage.getByRole("button", { name: "検索" }).click();
 		await customersPage.waitForURL("**/customers?keyword=*");
 		await expect(
@@ -99,31 +99,7 @@ test("メールアドレスで検索できる", async ({ customersPage }) => {
 	});
 
 	await test.step("検索結果を確認", async () => {
-		// 表示されている全てのデータが検索キーワードを含んでいることを確認
-		const rows = customersPage.locator("table tbody tr");
-		const count = await rows.count();
-		for (let i = 0; i < count; i++) {
-			const row = rows.nth(i);
-			const text = await row.textContent();
-			expect(text).toContain(searchKeyword);
-		}
-	});
-});
-
-test("電話番号で検索できる", async ({ customersPage }) => {
-	const searchKeyword = "080-9876";
-
-	await test.step("電話番号で検索", async () => {
-		await customersPage.getByLabel("検索キーワード").fill(searchKeyword);
-		await customersPage.getByRole("button", { name: "検索" }).click();
-		await customersPage.waitForURL("**/customers?keyword=*");
-		await expect(
-			customersPage.getByRole("main").getByText("読み込み中"),
-		).toBeHidden();
-	});
-
-	await test.step("検索結果を確認", async () => {
-		// 表示されている全てのデータが検索キーワードを含んでいることを確認
+		// 表示されている全てのデータがキーワードを含んでいることを確認
 		const rows = customersPage.locator("table tbody tr");
 		const count = await rows.count();
 		for (let i = 0; i < count; i++) {
@@ -138,7 +114,7 @@ test("該当する顧客がいない場合、メッセージが表示される",
 	customersPage,
 }) => {
 	await test.step("存在しないキーワードで検索", async () => {
-		await customersPage.getByLabel("検索キーワード").fill("存在しない顧客");
+		await customersPage.getByLabel("キーワード").fill("存在しない顧客");
 		await customersPage.getByRole("button", { name: "検索" }).click();
 		await customersPage.waitForURL("**/customers?keyword=*");
 		await expect(
@@ -188,7 +164,7 @@ test("検索とページネーションを組み合わせて使用できる", as
 
 	await test.step("検索を実行", async () => {
 		// seedデータには複数の「example.com」のメールアドレスがある（25件）
-		await customersPage.getByLabel("検索キーワード").fill(searchKeyword);
+		await customersPage.getByLabel("キーワード").fill(searchKeyword);
 		await customersPage.getByRole("button", { name: "検索" }).click();
 		await customersPage.waitForURL("**/customers?keyword=*");
 	});
@@ -199,7 +175,7 @@ test("検索とページネーションを組み合わせて使用できる", as
 			customersPage.getByRole("main").getByText("読み込み中"),
 		).toBeHidden();
 
-		// 表示されている全てのデータが検索キーワードを含んでいることを確認
+		// 表示されている全てのデータがキーワードを含んでいることを確認
 		const rows = customersPage.locator("table tbody tr");
 		await expect(rows).toHaveCount(20);
 		for (let i = 0; i < 20; i++) {
@@ -220,7 +196,7 @@ test("検索とページネーションを組み合わせて使用できる", as
 			customersPage.getByRole("main").getByText("読み込み中"),
 		).toBeHidden();
 
-		// 表示されている全てのデータが検索キーワードを含んでいることを確認
+		// 表示されている全てのデータがキーワードを含んでいることを確認
 		const rows = customersPage.locator("table tbody tr");
 		const count = await rows.count();
 		for (let i = 0; i < count; i++) {
@@ -230,8 +206,8 @@ test("検索とページネーションを組み合わせて使用できる", as
 		}
 	});
 
-	await test.step("検索キーワードが保持されていることを確認", async () => {
-		const searchInput = customersPage.getByLabel("検索キーワード");
+	await test.step("キーワードが保持されていることを確認", async () => {
+		const searchInput = customersPage.getByLabel("キーワード");
 		await expect(searchInput).toHaveValue(searchKeyword);
 	});
 });

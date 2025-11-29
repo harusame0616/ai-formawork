@@ -79,7 +79,7 @@ test("名前で検索できる", async ({ staffsPage }) => {
 	const searchKeyword = "田中";
 
 	await test.step("名前を入力して検索", async () => {
-		await staffsPage.getByLabel("検索キーワード").fill(searchKeyword);
+		await staffsPage.getByLabel("キーワード").fill(searchKeyword);
 		await staffsPage.getByRole("button", { name: "検索" }).click();
 		await staffsPage.waitForURL("**/staffs?keyword=*");
 		await expect(
@@ -102,7 +102,7 @@ test("メールアドレスで検索できる", async ({ staffsPage }) => {
 	const searchKeyword = "yamada";
 
 	await test.step("メールアドレスで検索", async () => {
-		await staffsPage.getByLabel("検索キーワード").fill(searchKeyword);
+		await staffsPage.getByLabel("キーワード").fill(searchKeyword);
 		await staffsPage.getByRole("button", { name: "検索" }).click();
 		await staffsPage.waitForURL("**/staffs?keyword=*");
 		await expect(
@@ -125,7 +125,7 @@ test("該当するスタッフがいない場合、メッセージが表示さ�
 	staffsPage,
 }) => {
 	await test.step("存在しないキーワードで検索", async () => {
-		await staffsPage.getByLabel("検索キーワード").fill("存在しないスタッフ");
+		await staffsPage.getByLabel("キーワード").fill("存在しないスタッフ");
 		await staffsPage.getByRole("button", { name: "検索" }).click();
 		await staffsPage.waitForURL("**/staffs?keyword=*");
 		await expect(

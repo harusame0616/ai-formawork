@@ -54,7 +54,7 @@ export function CustomerSearchForm({
 					name="keyword"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>検索キーワード</FormLabel>
+							<FormLabel>キーワード</FormLabel>
 							<FormDescription>
 								名前、メールアドレス、電話番号（最大
 								{CUSTOMER_SEARCH_KEYWORD_MAX_LENGTH}文字）
