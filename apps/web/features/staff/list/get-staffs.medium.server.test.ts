@@ -27,10 +27,9 @@ const test = base.extend<{
 }>({
 	// biome-ignore lint/correctness/noEmptyPattern: Vitestのfixtureパターンで使用する標準的な記法
 	async staff({}, use) {
-		const uniqueId = v4().slice(0, 8);
-		const email = `test-staff-${uniqueId}@example.com`;
-		const firstName = `太郎${uniqueId}`;
-		const lastName = `テスト${uniqueId}`;
+		const email = `test-staff-${v4()}@example.com`;
+		const firstName = v4();
+		const lastName = v4();
 
 		const result = await registerStaff({
 			email,
@@ -78,8 +77,19 @@ test("lastName で完全一致検索できる", async ({ staff }) => {
 	expect(nameSearchResult.staffs[0]?.lastName).toBe(staff.lastName);
 });
 
-test("部分一致では検索できない", async ({ staff }) => {
-	const partialFirstName = staff.firstName.slice(0, 2);
+test("lastName の部分一致では検索できない", async ({ staff }) => {
+	const partialLastName = staff.lastName.slice(0, 8);
+
+	const nameSearchResult = await getStaffs({
+		keyword: partialLastName,
+		page: 1,
+	});
+
+	expect(nameSearchResult.staffs.length).toBe(0);
+});
+
+test("firstName の部分一致では検索できない", async ({ staff }) => {
+	const partialFirstName = staff.firstName.slice(0, 8);
 
 	const nameSearchResult = await getStaffs({
 		keyword: partialFirstName,
