@@ -7,7 +7,8 @@ import type { RegisterStaffParams } from "./schema";
 
 export async function registerStaff({
 	email,
-	name,
+	firstName,
+	lastName,
 	password,
 	role,
 }: RegisterStaffParams): Promise<Result<{ staffId: string }, string>> {
@@ -17,7 +18,9 @@ export async function registerStaff({
 
 	try {
 		return await db.transaction(async (tx) => {
-			await tx.insert(staffsTable).values({ authUserId, id: staffId, name });
+			await tx
+				.insert(staffsTable)
+				.values({ authUserId, firstName, lastName, staffId });
 
 			const { error } = await supabase.auth.admin.createUser({
 				app_metadata: { role, staffId },

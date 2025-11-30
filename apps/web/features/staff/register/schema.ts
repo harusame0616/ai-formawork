@@ -1,14 +1,16 @@
 import * as v from "valibot";
 import {
 	staffEmailSchema,
-	staffNameSchema,
+	staffFirstNameSchema,
+	staffLastNameSchema,
 	staffPasswordSchema,
 	staffRoleSchema,
 } from "../schema";
 
 export const registerStaffSchema = v.object({
 	email: staffEmailSchema,
-	name: staffNameSchema,
+	firstName: staffFirstNameSchema,
+	lastName: staffLastNameSchema,
 	password: staffPasswordSchema,
 	role: staffRoleSchema,
 });

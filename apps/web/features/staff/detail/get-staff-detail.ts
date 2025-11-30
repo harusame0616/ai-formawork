@@ -17,14 +17,15 @@ export const getStaffDetail = cache(async (staffId: string) => {
 			authUserId: staffsTable.authUserId,
 			createdAt: staffsTable.createdAt,
 			email: sql<string>`COALESCE(${authUsers.email}, '')`,
-			id: staffsTable.id,
-			name: staffsTable.name,
+			firstName: staffsTable.firstName,
+			lastName: staffsTable.lastName,
 			role: sql<string>`COALESCE("auth"."users".raw_app_meta_data->>'role', ${UserRole.Admin})`,
+			staffId: staffsTable.staffId,
 			updatedAt: staffsTable.updatedAt,
 		})
 		.from(staffsTable)
 		.leftJoin(authUsers, eq(staffsTable.authUserId, authUsers.id))
-		.where(eq(staffsTable.id, staffId))
+		.where(eq(staffsTable.staffId, staffId))
 		.limit(1);
 
 	return staffs[0] ?? null;

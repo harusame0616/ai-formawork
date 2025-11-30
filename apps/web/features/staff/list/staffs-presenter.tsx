@@ -42,13 +42,13 @@ export function StaffsPresenter({
 				</TableHeader>
 				<TableBody>
 					{staffs.map((staff) => (
-						<TableRow key={staff.id}>
+						<TableRow key={staff.staffId}>
 							<TableCell>
 								<Link
 									className="text-primary underline"
-									href={`/staffs/${staff.id}`}
+									href={`/staffs/${staff.staffId}`}
 								>
-									{staff.name}
+									{staff.lastName} {staff.firstName}
 								</Link>
 							</TableCell>
 							<TableCell>{staff.email || "-"}</TableCell>

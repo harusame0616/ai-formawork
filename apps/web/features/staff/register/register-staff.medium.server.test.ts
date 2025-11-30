@@ -23,10 +23,10 @@ const test = base.extend<{
 			const [staff] = await db
 				.select({ authUserId: staffsTable.authUserId })
 				.from(staffsTable)
-				.where(eq(staffsTable.id, staffId))
+				.where(eq(staffsTable.staffId, staffId))
 				.limit(1);
 
-			await db.delete(staffsTable).where(eq(staffsTable.id, staffId));
+			await db.delete(staffsTable).where(eq(staffsTable.staffId, staffId));
 
 			if (staff?.authUserId) {
 				await supabase.auth.admin.deleteUser(staff.authUserId);
@@ -42,7 +42,8 @@ test("スタッフを正常に登録できる", async ({ cleanup }) => {
 	const uniqueId = randomUUID().slice(0, 8);
 	const input = {
 		email: `staff-${uniqueId}@example.com`,
-		name: `テスト太郎${uniqueId}`,
+		firstName: `太郎${uniqueId}`,
+		lastName: "テスト",
 		password: "TestPassword123!",
 		role: "user" as const,
 	};
@@ -60,11 +61,12 @@ test("スタッフを正常に登録できる", async ({ cleanup }) => {
 	const staffs = await db
 		.select()
 		.from(staffsTable)
-		.where(eq(staffsTable.id, result.data.staffId))
+		.where(eq(staffsTable.staffId, result.data.staffId))
 		.limit(1);
 
 	expect(staffs).toHaveLength(1);
-	expect(staffs[0]?.name).toBe(input.name);
+	expect(staffs[0]?.firstName).toBe(input.firstName);
+	expect(staffs[0]?.lastName).toBe(input.lastName);
 
 	const supabase = createAdminClient();
 	const { data } = await supabase.auth.admin.listUsers();
@@ -74,11 +76,14 @@ test("スタッフを正常に登録できる", async ({ cleanup }) => {
 	expect(user?.app_metadata?.staffId).toBe(result.data.staffId);
 });
 
-test("name が24文字（境界値）で登録できる", async ({ cleanup }) => {
+test("firstName と lastName が24文字（境界値）で登録できる", async ({
+	cleanup,
+}) => {
 	const uniqueId = randomUUID().slice(0, 8);
 	const input = {
 		email: `staff-name24-${uniqueId}@example.com`,
-		name: "あ".repeat(24),
+		firstName: "あ".repeat(24),
+		lastName: "い".repeat(24),
 		password: "TestPassword123!",
 		role: "user" as const,
 	};
@@ -95,18 +100,20 @@ test("name が24文字（境界値）で登録できる", async ({ cleanup }) =>
 	const staffs = await db
 		.select()
 		.from(staffsTable)
-		.where(eq(staffsTable.id, result.data.staffId))
+		.where(eq(staffsTable.staffId, result.data.staffId))
 		.limit(1);
 
 	expect(staffs).toHaveLength(1);
-	expect(staffs[0]?.name).toBe(input.name);
+	expect(staffs[0]?.firstName).toBe(input.firstName);
+	expect(staffs[0]?.lastName).toBe(input.lastName);
 });
 
 test("管理者ロールで登録できる", async ({ cleanup }) => {
 	const uniqueId = randomUUID().slice(0, 8);
 	const input = {
 		email: `staff-admin-${uniqueId}@example.com`,
-		name: `管理者太郎${uniqueId}`,
+		firstName: `太郎${uniqueId}`,
+		lastName: "管理者",
 		password: "TestPassword123!",
 		role: "admin" as const,
 	};
@@ -142,7 +149,8 @@ test("Supabase Auth に既に存在するメールアドレスで登録すると
 
 	const input = {
 		email,
-		name: "テスト太郎",
+		firstName: "太郎",
+		lastName: "テスト",
 		password: "TestPassword123!",
 		role: "user" as const,
 	};

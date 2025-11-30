@@ -15,21 +15,23 @@ vi.mock("next/navigation", () => ({
 const mockStaffs: StaffsListItem[] = [
 	{
 		email: "staff1@example.com",
+		firstName: "太郎",
 		id: "1",
-		name: "スタッフ1",
+		lastName: "田中",
 	},
 	{
 		email: "staff2@example.com",
+		firstName: "花子",
 		id: "2",
-		name: "スタッフ2",
+		lastName: "鈴木",
 	},
 ];
 
 test("スタッフ一覧が表示される", async () => {
 	render(<StaffsPresenter page={1} staffs={mockStaffs} totalPages={1} />);
 
-	await expect.element(page.getByText("スタッフ1")).toBeInTheDocument();
-	await expect.element(page.getByText("スタッフ2")).toBeInTheDocument();
+	await expect.element(page.getByText("田中 太郎")).toBeInTheDocument();
+	await expect.element(page.getByText("鈴木 花子")).toBeInTheDocument();
 	await expect
 		.element(page.getByText("staff1@example.com"))
 		.toBeInTheDocument();

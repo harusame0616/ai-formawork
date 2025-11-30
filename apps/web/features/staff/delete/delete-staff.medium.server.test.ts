@@ -19,39 +19,43 @@ vi.mock("@repo/supabase/admin", () => ({
 
 const test = base.extend<{
 	staff: {
-		id: string;
-		name: string;
+		firstName: string;
+		lastName: string;
+		staffId: string;
 	};
 	staffWithAuthUser: {
-		id: string;
-		name: string;
 		authUserId: string;
+		firstName: string;
+		lastName: string;
+		staffId: string;
 	};
 	supabaseAdminMock: Mock;
 }>({
 	// biome-ignore lint/correctness/noEmptyPattern: Vitestのfixtureパターンで使用する標準的な記法
 	async staff({}, use) {
 		const staff = {
-			id: v4(),
-			name: v4().slice(0, 24),
+			firstName: "太郎",
+			lastName: "テスト",
+			staffId: v4(),
 		};
 
 		await db.insert(staffsTable).values(staff);
 		await use(staff);
-		await db.delete(staffsTable).where(eq(staffsTable.id, staff.id));
+		await db.delete(staffsTable).where(eq(staffsTable.staffId, staff.staffId));
 	},
 	// biome-ignore lint/correctness/noEmptyPattern: Vitestのfixtureパターンで使用する標準的な記法
 	async staffWithAuthUser({}, use) {
 		const authUserId = v4();
 		const staff = {
 			authUserId,
-			id: v4(),
-			name: v4().slice(0, 24),
+			firstName: "太郎",
+			lastName: "テスト",
+			staffId: v4(),
 		};
 
 		await db.insert(staffsTable).values(staff);
 		await use(staff);
-		await db.delete(staffsTable).where(eq(staffsTable.id, staff.id));
+		await db.delete(staffsTable).where(eq(staffsTable.staffId, staff.staffId));
 	},
 	// biome-ignore lint/correctness/noEmptyPattern: Vitestのfixtureパターンで使用する標準的な記法
 	// biome-ignore lint/suspicious/noExplicitAny: https://github.com/vitest-dev/vitest/discussions/5710
@@ -80,8 +84,8 @@ test("存在しないスタッフを削除しようとした場合にエラー�
 
 test("自分自身を削除しようとした場合にエラーが返される", async ({ staff }) => {
 	const result = await deleteStaff({
-		currentUserStaffId: staff.id,
-		staffId: staff.id,
+		currentUserStaffId: staff.staffId,
+		staffId: staff.staffId,
 	});
 
 	expect(result.success).toBe(false);
@@ -106,7 +110,7 @@ test("存在するスタッフを削除できる", async ({
 
 	const result = await deleteStaff({
 		currentUserStaffId,
-		staffId: staffWithAuthUser.id,
+		staffId: staffWithAuthUser.staffId,
 	});
 
 	expect(result.success).toBe(true);
@@ -114,7 +118,7 @@ test("存在するスタッフを削除できる", async ({
 	const [deletedStaff] = await db
 		.select()
 		.from(staffsTable)
-		.where(eq(staffsTable.id, staffWithAuthUser.id))
+		.where(eq(staffsTable.staffId, staffWithAuthUser.staffId))
 		.limit(1);
 
 	expect(deletedStaff).toBeUndefined();
@@ -125,7 +129,7 @@ test("authUserId が null のスタッフを削除できる", async ({ staff }) 
 
 	const result = await deleteStaff({
 		currentUserStaffId,
-		staffId: staff.id,
+		staffId: staff.staffId,
 	});
 
 	expect(result.success).toBe(true);
@@ -133,7 +137,7 @@ test("authUserId が null のスタッフを削除できる", async ({ staff }) 
 	const [deletedStaff] = await db
 		.select()
 		.from(staffsTable)
-		.where(eq(staffsTable.id, staff.id))
+		.where(eq(staffsTable.staffId, staff.staffId))
 		.limit(1);
 
 	expect(deletedStaff).toBeUndefined();

@@ -1,10 +1,16 @@
 import * as v from "valibot";
 import { UserRole } from "@/features/auth/user/role";
 
-export const staffNameSchema = v.pipe(
-	v.string("名前を入力してください"),
-	v.minLength(1, "名前を入力してください"),
-	v.maxLength(24, "名前は24文字以内で入力してください"),
+export const staffLastNameSchema = v.pipe(
+	v.string("姓を入力してください"),
+	v.minLength(1, "姓を入力してください"),
+	v.maxLength(24, "姓は24文字以内で入力してください"),
+);
+
+export const staffFirstNameSchema = v.pipe(
+	v.string("名を入力してください"),
+	v.minLength(1, "名を入力してください"),
+	v.maxLength(24, "名は24文字以内で入力してください"),
 );
 
 export const staffEmailSchema = v.pipe(

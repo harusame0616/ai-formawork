@@ -84,7 +84,8 @@ export async function getCustomerNotes(
 		filters.push(
 			or(
 				ilike(customerNotesTable.content, `%${condition.keyword}%`),
-				ilike(staffsTable.name, `%${condition.keyword}%`),
+				ilike(staffsTable.firstName, `%${condition.keyword}%`),
+				ilike(staffsTable.lastName, `%${condition.keyword}%`),
 			),
 		);
 	}
@@ -104,11 +105,11 @@ export async function getCustomerNotes(
 				) ORDER BY ${customerNoteImagesTable.displayOrder}
 			) FILTER (WHERE ${customerNoteImagesTable.customerNoteId} IS NOT NULL), '[]')`,
 			staffId: customerNotesTable.staffId,
-			staffName: staffsTable.name,
+			staffName: sql<string>`CONCAT(${staffsTable.lastName}, ' ', ${staffsTable.firstName})`,
 			updatedAt: customerNotesTable.updatedAt,
 		})
 		.from(customerNotesTable)
-		.leftJoin(staffsTable, eq(customerNotesTable.staffId, staffsTable.id))
+		.leftJoin(staffsTable, eq(customerNotesTable.staffId, staffsTable.staffId))
 		.leftJoin(
 			customerNoteImagesTable,
 			eq(customerNotesTable.id, customerNoteImagesTable.customerNoteId),
@@ -121,7 +122,8 @@ export async function getCustomerNotes(
 			customerNotesTable.staffId,
 			customerNotesTable.createdAt,
 			customerNotesTable.updatedAt,
-			staffsTable.name,
+			staffsTable.lastName,
+			staffsTable.firstName,
 		)
 		.orderBy(desc(customerNotesTable.createdAt))
 		.limit(NOTES_PER_PAGE)
@@ -152,7 +154,7 @@ export async function getCustomerNotes(
 			count: count(),
 		})
 		.from(customerNotesTable)
-		.leftJoin(staffsTable, eq(customerNotesTable.staffId, staffsTable.id))
+		.leftJoin(staffsTable, eq(customerNotesTable.staffId, staffsTable.staffId))
 		.where(and(...filters));
 
 	const totalCount = totalCountResult[0]?.count ?? 0;

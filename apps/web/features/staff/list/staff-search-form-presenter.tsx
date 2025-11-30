@@ -56,7 +56,7 @@ export function StaffSearchForm({
 						<FormItem>
 							<FormLabel>キーワード</FormLabel>
 							<FormDescription>
-								名前、メールアドレス（最大
+								姓または名で完全一致検索（最大
 								{STAFF_SEARCH_KEYWORD_MAX_LENGTH}文字）
 							</FormDescription>
 							<div className="flex gap-4 items-center">

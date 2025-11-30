@@ -30,9 +30,12 @@ export async function deleteStaff({
 	}
 
 	const [staff] = await db
-		.select({ authUserId: staffsTable.authUserId, id: staffsTable.id })
+		.select({
+			authUserId: staffsTable.authUserId,
+			staffId: staffsTable.staffId,
+		})
 		.from(staffsTable)
-		.where(eq(staffsTable.id, staffId))
+		.where(eq(staffsTable.staffId, staffId))
 		.limit(1);
 
 	if (!staff) {
@@ -43,7 +46,7 @@ export async function deleteStaff({
 	const supabase = createAdminClient();
 
 	await db.transaction(async (tx) => {
-		await tx.delete(staffsTable).where(eq(staffsTable.id, staffId));
+		await tx.delete(staffsTable).where(eq(staffsTable.staffId, staffId));
 
 		if (!staff.authUserId) {
 			return;

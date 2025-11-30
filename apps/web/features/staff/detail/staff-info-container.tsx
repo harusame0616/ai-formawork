@@ -15,5 +15,7 @@ export async function StaffInfoContainer({
 		notFound();
 	}
 
-	return <StaffInfoPresenter name={staff.name} />;
+	return (
+		<StaffInfoPresenter firstName={staff.firstName} lastName={staff.lastName} />
+	);
 }

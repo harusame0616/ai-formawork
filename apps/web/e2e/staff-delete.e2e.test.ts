@@ -7,7 +7,8 @@ type Fixtures = {
 	normalUserPage: Page;
 	testStaff: {
 		email: string;
-		name: string;
+		firstName: string;
+		lastName: string;
 		staffId: string;
 	};
 };
@@ -49,9 +50,11 @@ const test = base.extend<Fixtures>({
 
 	// biome-ignore lint/correctness/noEmptyPattern: Playwrightのfixtureパターンで使用する標準的な記法
 	async testStaff({}, use) {
+		const uniqueId = v4().slice(0, 8);
 		const staffData = {
 			email: `test-staff-${v4()}@example.com`,
-			name: `テスト削除用スタッフ ${v4().slice(0, 8)}`,
+			firstName: `削除用${uniqueId}`,
+			lastName: `テスト${uniqueId}`,
 			password: "TestStaff@123",
 			role: "user" as const,
 		};
@@ -63,7 +66,8 @@ const test = base.extend<Fixtures>({
 
 		await use({
 			email: staffData.email,
-			name: staffData.name,
+			firstName: staffData.firstName,
+			lastName: staffData.lastName,
 			staffId: result.data.staffId,
 		});
 	},
@@ -76,7 +80,9 @@ test("管理者がスタッフを削除できる", async ({
 	await test.step("スタッフ詳細ページに遷移", async () => {
 		await page.goto(`/staffs/${testStaff.staffId}`);
 		await page.waitForURL(`/staffs/${testStaff.staffId}`);
-		await expect(page.getByText(testStaff.name)).toBeVisible();
+		await expect(
+			page.getByText(`${testStaff.lastName} ${testStaff.firstName}`),
+		).toBeVisible();
 	});
 
 	await test.step("削除実行", async () => {
@@ -89,7 +95,7 @@ test("管理者がスタッフを削除できる", async ({
 	});
 
 	await test.step("削除されたスタッフを検索してもヒットしないことを確認", async () => {
-		await page.getByLabel("キーワード").fill(testStaff.name);
+		await page.getByLabel("キーワード").fill(testStaff.lastName);
 		await page.getByRole("button", { name: "検索" }).click();
 
 		await expect(

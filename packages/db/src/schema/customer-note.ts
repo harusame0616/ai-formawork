@@ -21,7 +21,7 @@ export const customerNotesTable = pgTable(
 		id: uuid("id").primaryKey().defaultRandom(),
 		staffId: uuid("staff_id")
 			.notNull()
-			.references(() => staffsTable.id, { onDelete: "cascade" }),
+			.references(() => staffsTable.staffId, { onDelete: "cascade" }),
 		updatedAt: timestamp("updated_at")
 			.defaultNow()
 			.notNull()

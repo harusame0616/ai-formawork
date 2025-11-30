@@ -4,9 +4,10 @@ import { DateTime } from "@/components/date-time";
 type Staff = {
 	createdAt: Date;
 	email: string;
-	id: string;
-	name: string;
+	firstName: string;
+	lastName: string;
 	role: string;
+	staffId: string;
 	updatedAt: Date;
 };
 

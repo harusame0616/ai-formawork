@@ -23,7 +23,7 @@ const test = base.extend<RegisterStaffPageFixture>({
 		await page.goto("/staffs/new");
 		await page.waitForURL("/staffs/new");
 
-		await expect(page.getByLabel("名前")).not.toBeDisabled();
+		await expect(page.getByLabel("姓")).not.toBeDisabled();
 
 		await use(page);
 	},
@@ -35,13 +35,15 @@ test("全フィールドを境界値一杯で入力してスタッフを登録�
 	const uniqueId = randomUUID().slice(0, 8);
 	const testData = {
 		email: `staff-${uniqueId}@example.com`,
-		name: `テスト太郎${uniqueId}`.slice(0, 24),
+		firstName: `太郎${uniqueId}`.slice(0, 24),
+		lastName: `テスト${uniqueId}`.slice(0, 24),
 		password: "TestPassword123!",
 		role: "admin" as const,
 	};
 
 	await test.step("フォームに境界値一杯のデータを入力", async () => {
-		await registerStaffPage.getByLabel("名前").fill(testData.name);
+		await registerStaffPage.getByLabel("姓").fill(testData.lastName);
+		await registerStaffPage.getByLabel("名").fill(testData.firstName);
 		await registerStaffPage.getByLabel("メールアドレス").fill(testData.email);
 		await registerStaffPage
 			.getByRole("textbox", { name: "パスワード" })
@@ -60,8 +62,8 @@ test("全フィールドを境界値一杯で入力してスタッフを登録�
 		).toBeVisible();
 	});
 
-	await test.step("登録したスタッフを検索", async () => {
-		await registerStaffPage.getByLabel("キーワード").fill(testData.name);
+	await test.step("登録したスタッフを姓で検索", async () => {
+		await registerStaffPage.getByLabel("キーワード").fill(testData.lastName);
 		await registerStaffPage.getByRole("button", { name: "検索" }).click();
 		await registerStaffPage.waitForURL("**/staffs?keyword=*");
 		await expect(
@@ -70,7 +72,12 @@ test("全フィールドを境界値一杯で入力してスタッフを登録�
 	});
 
 	await test.step("検索結果に登録したスタッフが表示されることを確認", async () => {
-		await expect(registerStaffPage.getByText(testData.name)).toBeVisible();
+		await expect(
+			registerStaffPage.getByRole("cell", { name: testData.lastName }),
+		).toBeVisible();
+		await expect(
+			registerStaffPage.getByRole("cell", { name: testData.firstName }),
+		).toBeVisible();
 		await expect(registerStaffPage.getByText(testData.email)).toBeVisible();
 	});
 });
@@ -79,12 +86,14 @@ test("一般ロールでスタッフを登録できる", async ({ registerStaffP
 	const uniqueId = randomUUID().slice(0, 8);
 	const testData = {
 		email: `user-${uniqueId}@example.com`,
-		name: `一般ユーザー${uniqueId}`.slice(0, 24),
+		firstName: `ユーザー${uniqueId}`.slice(0, 24),
+		lastName: `一般${uniqueId}`.slice(0, 24),
 		password: "UserPassword123!",
 	};
 
 	await test.step("フォームにデータを入力（ロールは一般のまま）", async () => {
-		await registerStaffPage.getByLabel("名前").fill(testData.name);
+		await registerStaffPage.getByLabel("姓").fill(testData.lastName);
+		await registerStaffPage.getByLabel("名").fill(testData.firstName);
 		await registerStaffPage.getByLabel("メールアドレス").fill(testData.email);
 		await registerStaffPage
 			.getByRole("textbox", { name: "パスワード" })
@@ -105,8 +114,8 @@ test("一般ロールでスタッフを登録できる", async ({ registerStaffP
 		await registerStaffPage.waitForURL("/staffs");
 	});
 
-	await test.step("登録したスタッフを検索", async () => {
-		await registerStaffPage.getByLabel("キーワード").fill(testData.name);
+	await test.step("登録したスタッフを姓で検索", async () => {
+		await registerStaffPage.getByLabel("キーワード").fill(testData.lastName);
 		await registerStaffPage.getByRole("button", { name: "検索" }).click();
 		await registerStaffPage.waitForURL("**/staffs?keyword=*");
 		await expect(
@@ -115,7 +124,12 @@ test("一般ロールでスタッフを登録できる", async ({ registerStaffP
 	});
 
 	await test.step("検索結果に登録したスタッフが表示されることを確認", async () => {
-		await expect(registerStaffPage.getByText(testData.name)).toBeVisible();
+		await expect(
+			registerStaffPage.getByRole("cell", { name: testData.lastName }),
+		).toBeVisible();
+		await expect(
+			registerStaffPage.getByRole("cell", { name: testData.firstName }),
+		).toBeVisible();
 		await expect(registerStaffPage.getByText(testData.email)).toBeVisible();
 	});
 });
@@ -125,12 +139,14 @@ test("重複するメールアドレスで登録するとエラーが表示さ�
 }) => {
 	const testData = {
 		email: "tanaka@staff.example.com",
-		name: "重複テスト",
+		firstName: "テスト",
+		lastName: "重複",
 		password: "TestPassword123!",
 	};
 
 	await test.step("既存のメールアドレスでフォームを入力", async () => {
-		await registerStaffPage.getByLabel("名前").fill(testData.name);
+		await registerStaffPage.getByLabel("姓").fill(testData.lastName);
+		await registerStaffPage.getByLabel("名").fill(testData.firstName);
 		await registerStaffPage.getByLabel("メールアドレス").fill(testData.email);
 		await registerStaffPage
 			.getByRole("textbox", { name: "パスワード" })

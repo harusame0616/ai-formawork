@@ -37,7 +37,8 @@ export function EditStaffForm({ disabled: disabledProp }: EditStaffFormProps) {
 	const form = useForm<RegisterStaffParams>({
 		defaultValues: {
 			email: "",
-			name: "",
+			firstName: "",
+			lastName: "",
 			password: "",
 			role: UserRole.User,
 		},
@@ -73,17 +74,41 @@ export function EditStaffForm({ disabled: disabledProp }: EditStaffFormProps) {
 			>
 				<FormField
 					control={form.control}
-					name="name"
+					name="lastName"
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel className="flex items-center gap-2">
-								名前
+								姓
 								<RequiredBadge />
 							</FormLabel>
 							<FormDescription>24文字以内で入力してください</FormDescription>
 							<FormControl>
 								<Input
-									autoComplete="name"
+									autoComplete="family-name"
+									className="max-w-xs"
+									disabled={disabled}
+									type="text"
+									{...field}
+								/>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+
+				<FormField
+					control={form.control}
+					name="firstName"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel className="flex items-center gap-2">
+								名
+								<RequiredBadge />
+							</FormLabel>
+							<FormDescription>24文字以内で入力してください</FormDescription>
+							<FormControl>
+								<Input
+									autoComplete="given-name"
 									className="max-w-xs"
 									disabled={disabled}
 									type="text"

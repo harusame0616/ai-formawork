@@ -1,6 +1,6 @@
 import { db } from "@workspace/db/client";
 import { staffsTable } from "@workspace/db/schema/staff";
-import { desc, eq, ilike, or, sql } from "drizzle-orm";
+import { asc, eq, or, sql } from "drizzle-orm";
 import { authUsers } from "drizzle-orm/supabase";
 import { cacheLife, cacheTag } from "next/cache";
 import { StaffTag } from "../tag";
@@ -8,8 +8,9 @@ import type { StaffsCondition } from "./schema";
 
 type Staff = {
 	email: string;
-	id: string;
-	name: string;
+	firstName: string;
+	lastName: string;
+	staffId: string;
 };
 
 type GetStaffsResult = {
@@ -28,22 +29,20 @@ export async function getStaffs({
 
 	const pageSize = 20;
 	const whereConditions = keyword
-		? or(
-				ilike(staffsTable.name, `%${keyword}%`),
-				ilike(authUsers.email, `%${keyword}%`),
-			)
+		? or(eq(staffsTable.firstName, keyword), eq(staffsTable.lastName, keyword))
 		: undefined;
 
 	const staffs = await db
 		.select({
 			email: sql<string>`COALESCE(${authUsers.email}, '')`,
-			id: staffsTable.id,
-			name: staffsTable.name,
+			firstName: staffsTable.firstName,
+			lastName: staffsTable.lastName,
+			staffId: staffsTable.staffId,
 		})
 		.from(staffsTable)
 		.leftJoin(authUsers, eq(staffsTable.authUserId, authUsers.id))
 		.where(whereConditions)
-		.orderBy(desc(staffsTable.createdAt))
+		.orderBy(asc(staffsTable.lastName), asc(staffsTable.firstName))
 		.limit(pageSize)
 		.offset((page - 1) * pageSize);
 

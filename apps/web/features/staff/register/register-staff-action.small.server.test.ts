@@ -38,12 +38,34 @@ vi.mock("./register-staff", () => ({
 	registerStaff: vi.fn(),
 }));
 
-test("名前が空の場合にバリデーションエラーを返す", async () => {
+test("姓が空の場合にバリデーションエラーを返す", async () => {
 	const { registerStaff } = await import("./register-staff");
 
 	const input = {
 		email: "test@example.com",
-		name: "",
+		firstName: "",
+		lastName: "山田",
+		password: "password123",
+		role: "user" as const,
+	};
+
+	const result = await registerStaffAction(input);
+
+	expect(result).toBeDefined();
+	expect(result?.success).toBe(false);
+	if (result && !result.success) {
+		expect(result.error).toBe("入力内容に誤りがあります");
+	}
+	expect(registerStaff).not.toHaveBeenCalled();
+});
+
+test("名が空の場合にバリデーションエラーを返す", async () => {
+	const { registerStaff } = await import("./register-staff");
+
+	const input = {
+		email: "test@example.com",
+		firstName: "太郎",
+		lastName: "",
 		password: "password123",
 		role: "user" as const,
 	};
@@ -63,7 +85,8 @@ test("メール形式が不正な場合にバリデーションエラーを返�
 
 	const input = {
 		email: "invalid-email",
-		name: "テスト太郎",
+		firstName: "太郎",
+		lastName: "山田",
 		password: "password123",
 		role: "user" as const,
 	};
@@ -83,7 +106,8 @@ test("パスワードが8文字未満の場合にバリデーションエラー�
 
 	const input = {
 		email: "test@example.com",
-		name: "テスト太郎",
+		firstName: "太郎",
+		lastName: "山田",
 		password: "1234567",
 		role: "user" as const,
 	};
@@ -98,12 +122,34 @@ test("パスワードが8文字未満の場合にバリデーションエラー�
 	expect(registerStaff).not.toHaveBeenCalled();
 });
 
-test("name が25文字（境界値超過）の場合にバリデーションエラーを返す", async () => {
+test("firstName が25文字（境界値超過）の場合にバリデーションエラーを返す", async () => {
 	const { registerStaff } = await import("./register-staff");
 
 	const input = {
 		email: "test@example.com",
-		name: "あ".repeat(25),
+		firstName: "あ".repeat(25),
+		lastName: "山田",
+		password: "password123",
+		role: "user" as const,
+	};
+
+	const result = await registerStaffAction(input);
+
+	expect(result).toBeDefined();
+	expect(result?.success).toBe(false);
+	if (result && !result.success) {
+		expect(result.error).toBe("入力内容に誤りがあります");
+	}
+	expect(registerStaff).not.toHaveBeenCalled();
+});
+
+test("lastName が25文字（境界値超過）の場合にバリデーションエラーを返す", async () => {
+	const { registerStaff } = await import("./register-staff");
+
+	const input = {
+		email: "test@example.com",
+		firstName: "太郎",
+		lastName: "あ".repeat(25),
 		password: "password123",
 		role: "user" as const,
 	};
@@ -123,7 +169,8 @@ test("email が255文字（境界値超過）の場合にバリデーション�
 
 	const input = {
 		email: `${"a".repeat(243)}@example.com`,
-		name: "テスト太郎",
+		firstName: "太郎",
+		lastName: "山田",
 		password: "password123",
 		role: "user" as const,
 	};
@@ -143,7 +190,8 @@ test("password が129文字（境界値超過）の場合にバリデーショ�
 
 	const input = {
 		email: "test@example.com",
-		name: "テスト太郎",
+		firstName: "太郎",
+		lastName: "山田",
 		password: "a".repeat(129),
 		role: "user" as const,
 	};
@@ -165,7 +213,8 @@ test("登録処理でエラーが発生した場合にエラーメッセージ�
 
 	const input = {
 		email: "test@example.com",
-		name: "テスト太郎",
+		firstName: "太郎",
+		lastName: "山田",
 		password: "password123",
 		role: "user" as const,
 	};
