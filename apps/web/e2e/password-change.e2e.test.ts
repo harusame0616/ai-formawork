@@ -63,7 +63,6 @@ const test = base.extend<PasswordChangeFixture>({
 			staffId: result.data.staffId,
 		});
 
-		// クリーンアップ: スタッフを削除
 		await deleteStaff({
 			currentUserStaffId: ADMIN_STAFF_ID,
 			staffId: result.data.staffId,
@@ -115,10 +114,14 @@ test("正しい現在のパスワードと新しいパスワードでパスワ�
 		await expect(passwordChangePage).toHaveURL("/");
 	});
 
-	await test.step("新しいパスワードでログインできることを確認", async () => {
-		// ログアウト後、新しいパスワードでログインを試行
+	await test.step("ログアウトする", async () => {
+		// ログアウト機能が未実装のため、クッキーをクリアすることで対応
+		await passwordChangePage.context().clearCookies();
 		await passwordChangePage.goto("/login");
+		await passwordChangePage.waitForURL("/login");
+	});
 
+	await test.step("新しいパスワードでログインできることを確認", async () => {
 		await passwordChangePage.getByLabel("メールアドレス").fill(testUser.email);
 		await passwordChangePage
 			.getByRole("textbox", { name: "パスワード" })
