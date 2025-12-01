@@ -68,6 +68,19 @@ type ServerActionErrorMessage =
 	| typeof FORBIDDEN_ERROR_MESSAGE
 	| typeof INTERNAL_SERVER_ERROR_MESSAGE;
 
+// schema なしの場合（引数なし）
+export function createServerAction<TData, TError extends string>(
+	logicFunc: (
+		input: undefined,
+		context: ServerActionContext,
+	) => Promise<Result<TData, TError>>,
+	options: Omit<
+		ServerActionOptions<v.UndefinedSchema<undefined>, TData, TError>,
+		"schema"
+	>,
+): () => Promise<Result<TData, TError | ServerActionErrorMessage>>;
+
+// schema ありの場合（引数あり）
 export function createServerAction<
 	TSchema extends v.GenericSchema,
 	TData,
@@ -77,12 +90,27 @@ export function createServerAction<
 		input: v.InferOutput<TSchema>,
 		context: ServerActionContext,
 	) => Promise<Result<TData, TError>>,
-	options: ServerActionOptions<TSchema, TData, TError>,
+	options: ServerActionOptions<TSchema, TData, TError> & { schema: TSchema },
 ): (
 	input: v.InferInput<TSchema>,
+) => Promise<Result<TData, TError | ServerActionErrorMessage>>;
+
+// 実装
+export function createServerAction<
+	TSchema extends v.GenericSchema,
+	TData,
+	TError extends string,
+>(
+	logicFunc: (
+		input: v.InferOutput<TSchema> | undefined,
+		context: ServerActionContext,
+	) => Promise<Result<TData, TError>>,
+	options: ServerActionOptions<TSchema, TData, TError>,
+): (
+	input?: v.InferInput<TSchema>,
 ) => Promise<Result<TData, TError | ServerActionErrorMessage>> {
 	return async (
-		input: v.InferInput<TSchema>,
+		input?: v.InferInput<TSchema>,
 	): Promise<Result<TData, TError | ServerActionErrorMessage>> => {
 		const logger = await getLogger(options.name);
 		logger.info(`${options.name} を実行`, { input });

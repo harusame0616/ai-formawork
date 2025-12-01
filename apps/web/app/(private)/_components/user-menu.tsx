@@ -5,10 +5,12 @@ import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
+	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@workspace/ui/components/dropdown-menu";
 import { User } from "lucide-react";
 import Link from "next/link";
+import { LogoutButton } from "../../../features/auth/logout/logout-button";
 
 export function UserMenu() {
 	return (
@@ -22,6 +24,10 @@ export function UserMenu() {
 			<DropdownMenuContent align="end">
 				<DropdownMenuItem asChild>
 					<Link href="/settings/password">パスワード変更</Link>
+				</DropdownMenuItem>
+				<DropdownMenuSeparator />
+				<DropdownMenuItem asChild>
+					<LogoutButton />
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>
