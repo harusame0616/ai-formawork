@@ -1,5 +1,6 @@
 {
 	"dependencies": {
+		"next": "catalog:",
 		"pino": "catalog:",
 		"valibot": "catalog:"
 	},
@@ -17,14 +18,6 @@
 	},
 	"name": "@repo/logger",
 	"packageManager": "pnpm@10.12.4",
-	"peerDependencies": {
-		"next": ">=15.0.0"
-	},
-	"peerDependenciesMeta": {
-		"next": {
-			"optional": true
-		}
-	},
 	"private": true,
 	"type": "module",
 	"version": "0.0.0"
