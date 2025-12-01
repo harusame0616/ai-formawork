@@ -1,5 +1,4 @@
 import { fail, type Result, succeed } from "@harusame0616/result";
-import { getLogger } from "@repo/logger/nextjs/server";
 import { createAdminClient } from "@repo/supabase/admin";
 import { db } from "@workspace/db/client";
 import { staffsTable } from "@workspace/db/schema/staff";
@@ -22,10 +21,7 @@ export async function deleteStaff({
 	currentUserStaffId,
 	staffId,
 }: DeleteStaffInput): Promise<Result<undefined, DeleteStaffErrorMessage>> {
-	const logger = await getLogger("deleteStaff");
-
 	if (staffId === currentUserStaffId) {
-		logger.warn("自分自身を削除しようとしました", { staffId });
 		return fail(CANNOT_DELETE_SELF_ERROR_MESSAGE);
 	}
 
@@ -39,7 +35,6 @@ export async function deleteStaff({
 		.limit(1);
 
 	if (!staff) {
-		logger.warn("スタッフが見つかりません", { staffId });
 		return fail(STAFF_NOT_FOUND_ERROR_MESSAGE);
 	}
 
@@ -57,17 +52,8 @@ export async function deleteStaff({
 		);
 
 		if (deleteError) {
-			logger.error("Auth ユーザーの削除に失敗", {
-				err: deleteError,
-				staffId,
-			});
 			throw deleteError;
 		}
-	});
-
-	logger.info("スタッフの削除に成功", {
-		action: "delete-staff",
-		staffId,
 	});
 
 	return succeed();
