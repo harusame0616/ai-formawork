@@ -7,7 +7,7 @@ export const schemaName = v.parse(
 			v.object({
 				appName: v.pipe(
 					v.string("appName は文字列である必要があります"),
-					v.transform((branchName) => branchName.replace(/[\W]/g, "_")),
+					v.transform((appName) => appName.replace(/[\W]/g, "_")),
 				),
 				branchName: v.pipe(
 					v.string("branchName は文字列である必要があります"),
@@ -16,7 +16,7 @@ export const schemaName = v.parse(
 				environment: v.picklist(["production", "preview"]),
 				serviceName: v.pipe(
 					v.string("serviceName は必須です"),
-					v.transform((branchName) => branchName.replace(/[\W]/g, "_")),
+					v.transform((serviceName) => serviceName.replace(/[\W]/g, "_")),
 				),
 			}),
 			v.object({
