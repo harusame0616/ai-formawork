@@ -56,10 +56,9 @@ jobs:
 
       - name: Supabase の起動
         run: |
-          pnpm --filter @repo/supabase supabase:start && pnpm --filter @repo/supabase supabase:seed
-      - name: データベースマイグレーション
-        run: pnpm --filter @workspace/db db:push && pnpm --filter @workspace/db db:seed
-
+          pnpm -w supabase:start && pnpm -w supabase:seed
+      - name: データベースリセット
+        run: pnpm -w db:reset
       - name: Next.js のビルド
         run: pnpm --filter web build
 
