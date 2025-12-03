@@ -21,9 +21,10 @@
 	"private": true,
 	"scripts": {
 		"db:generate": "drizzle-kit generate",
-		"db:migrate": "drizzle-kit migrate",
-		"db:push": "drizzle-kit push",
-		"db:reset": "pnpm --filter @repo/supabase supabase:reset && pnpm --filter @workspace/db db:push && pnpm --filter @workspace/db db:seed",
+		"db:migrate": "pnpm db:pgschema:create && drizzle-kit migrate",
+		"db:pgschema:create": "tsx --env-file-if-exists=.env src/create-pg-schema.ts",
+		"db:pgschema:drop": "tsx --env-file-if-exists=.env src/drop-pg-schema.ts",
+		"db:reset": "pnpm db:pgschema:drop && pnpm db:migrate && pnpm db:seed",
 		"db:seed": "tsx --env-file-if-exists=.env src/seed.ts",
 		"db:studio": "drizzle-kit studio",
 		"type:check": "tsc --noEmit"

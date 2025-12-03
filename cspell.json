@@ -42,6 +42,7 @@
 		"vitest",
 		"wcag",
 		"WCAG",
-		"Vali"
+		"Vali",
+		"pgschema"
 	]
 }

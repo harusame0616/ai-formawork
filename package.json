@@ -9,17 +9,17 @@
 		"build": "pnpm --filter @workspace/supabase supabase:start && pnpm --filter web build",
 		"db:generate": "pnpm --filter @workspace/db db:generate",
 		"db:migrate": "pnpm --filter @workspace/db db:migrate",
-		"db:push": "pnpm --filter @workspace/db db:push",
 		"db:reset": "pnpm --filter @workspace/db db:reset",
 		"db:seed": "pnpm --filter @workspace/db db:seed",
 		"dev": "pnpm --filter @workspace/supabase supabase:start && pnpm --filter web dev",
 		"start": "pnpm --filter @workspace/supabase supabase:start && pnpm --filter web start",
+		"supabase:seed": "pnpm --filter @repo/supabase supabase:seed",
 		"supabase:start": "pnpm --filter @repo/supabase supabase:start",
 		"supabase:stop": "pnpm --filter @repo/supabase supabase:stop",
 		"test:browser": "pnpm --filter web test:browser",
 		"test:e2e": "pnpm --filter web test:e2e",
 		"test:server": "pnpm --filter web test:server",
-		"validate:check": "biome check . && knip && cspell . && pnpm -r type:check",
-		"validate:fix": "biome check --write . && knip --fix --allow-remove-files"
+		"validate:check": "biome check . && DATABASE_URL=postgres://dummy:dummy@localhost:5432/dummy knip && cspell . && pnpm -r type:check",
+		"validate:fix": "biome check --write . && DATABASE_URL=postgres://dummy:dummy@localhost:5432/dummy knip --fix --allow-remove-files"
 	}
 }

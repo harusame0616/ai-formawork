@@ -23,7 +23,7 @@ env:
 jobs:
   medium-e2e-test:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
 
     strategy:
       fail-fast: false
@@ -56,17 +56,14 @@ jobs:
 
       - name: Supabase の起動
         run: |
-          pnpm --filter @repo/supabase supabase:start && pnpm --filter @repo/supabase supabase:seed
-      - name: データベースマイグレーション
-        run: pnpm --filter @workspace/db db:push && pnpm --filter @workspace/db db:seed
-
+          pnpm -w supabase:start && pnpm -w supabase:seed
+      - name: データベースリセット
+        run: pnpm -w db:reset
       - name: Next.js のビルド
         run: pnpm --filter web build
 
       - name: E2E テストの実行
-        run: pnpm --filter web exec playwright test --project=${{ matrix.browser }}
-        env:
-          CI: true
+        run: pnpm -w test:e2e --project=${{ matrix.browser }}
 
       - name: テストレポートのアップロード
         if: failure()
