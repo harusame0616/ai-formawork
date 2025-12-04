@@ -3,12 +3,16 @@ import { db } from "./client";
 import { schemaName } from "./pgschema";
 
 async function main() {
+	console.log("Drop postgresql schema");
 	const result = await db.execute(
 		sql.raw(`DROP SCHEMA IF EXISTS ${schemaName} CASCADE`),
 	);
-	console.log(result);
+	console.log("result", { ...result });
 }
 
 await main()
-	.then(() => process.exit())
-	.catch((error) => console.log(error));
+	.then(() => process.exit(0))
+	.catch((error) => {
+		console.log(error);
+		process.exit(1);
+	});
