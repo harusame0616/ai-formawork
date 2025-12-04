@@ -2,17 +2,20 @@
 	"dependencies": {
 		"@harusame0616/result": "catalog:",
 		"@hookform/resolvers": "catalog:",
+		"@modelcontextprotocol/sdk": "catalog:",
 		"@repo/logger": "workspace:",
 		"@repo/supabase": "workspace:",
 		"@workspace/db": "workspace:",
 		"@workspace/ui": "workspace:",
 		"lucide-react": "catalog:",
+		"mcp-handler": "catalog:",
 		"next": "catalog:",
 		"react": "catalog:",
 		"react-dom": "catalog:",
 		"react-hook-form": "catalog:",
 		"uuid": "catalog:",
-		"valibot": "catalog:"
+		"valibot": "catalog:",
+		"zod": "catalog:"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.56.1",

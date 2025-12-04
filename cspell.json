@@ -12,6 +12,7 @@
 	"version": "0.2",
 	"words": [
 		"apikey",
+		"modelcontextprotocol",
 		"biomejs",
 		"clsx",
 		"cmdk",
