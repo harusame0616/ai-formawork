@@ -14,3 +14,5 @@ export default defineConfig({
 	out: "./drizzle",
 	schema: "./src/schema/index.ts",
 });
+
+console.log("Drizzle kig Config", { schemaName });
