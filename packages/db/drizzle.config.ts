@@ -13,7 +13,7 @@ const directUrl = new URL(
 		process.env["DIRECT_URL"],
 	),
 );
-directUrl.searchParams.set("search_path", schemaName);
+directUrl.searchParams.set("schema", schemaName);
 
 export default defineConfig({
 	breakpoints: false,
