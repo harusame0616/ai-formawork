@@ -1,9 +1,8 @@
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { drizzle } from "drizzle-orm/postgres-js";
+import { migrate } from "drizzle-orm/postgres-js/migrator";
 import postgres from "postgres";
 import * as v from "valibot";
 import { schemaName } from "./pgschema";
-import * as schema from "./schema";
 
 const databaseUrl = new URL(
 	v.parse(
@@ -15,29 +14,35 @@ const databaseUrl = new URL(
 		process.env["DATABASE_URL"],
 	),
 );
-databaseUrl.searchParams.set("search_path", schemaName);
 
-console.log("drizzle client config", {
+console.log("migrate config", {
 	databaseHost: databaseUrl.hostname,
 	databaseName: databaseUrl.pathname,
 	databasePort: databaseUrl.port,
-	databaseSearchParams: databaseUrl.searchParams,
 	schemaName,
 });
-
-const globalForDb = global as unknown as {
-	db: PostgresJsDatabase<typeof schema>;
-};
 
 const client = postgres(databaseUrl.toString(), {
 	connection: {
 		search_path: schemaName,
 	},
+	max: 1,
 });
 
-export const db = globalForDb.db || drizzle(client, { schema });
+const db = drizzle(client);
 
-// biome-ignore lint/complexity/useLiteralKeys: ts(4111)
-if (process.env["NODE_ENV"] !== "production") globalForDb.db = db;
+async function main() {
+	console.log("Running migrations...");
+	await migrate(db, {
+		migrationsFolder: "./drizzle",
+		migrationsSchema: schemaName,
+	});
+	console.log("Migrations completed successfully");
+}
 
-export type DbClient = typeof db;
+await main()
+	.then(() => process.exit(0))
+	.catch((error) => {
+		console.error("Migration failed:", error);
+		process.exit(1);
+	});

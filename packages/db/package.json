@@ -21,7 +21,7 @@
 	"private": true,
 	"scripts": {
 		"db:generate": "drizzle-kit generate",
-		"db:migrate": "pnpm db:pgschema:create && pnpm drizzle-kit migrate",
+		"db:migrate": "pnpm db:pgschema:create && tsx --env-file-if-exists=.env src/migrate.ts",
 		"db:pgschema:create": "tsx --env-file-if-exists=.env src/create-pg-schema.ts",
 		"db:pgschema:drop": "tsx --env-file-if-exists=.env src/drop-pg-schema.ts",
 		"db:reset": "pnpm db:pgschema:drop && pnpm db:migrate && pnpm db:seed",
