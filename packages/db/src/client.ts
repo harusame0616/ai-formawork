@@ -27,11 +27,7 @@ const globalForDb = global as unknown as {
 	db: PostgresJsDatabase<typeof schema>;
 };
 
-const client = postgres(databaseUrl.toString(), {
-	connection: {
-		search_path: schemaName,
-	},
-});
+const client = postgres(databaseUrl.toString());
 
 export const db = globalForDb.db || drizzle(client, { schema });
 await db.execute(sql.raw(`SET search_path TO ${schemaName}`));
