@@ -5,9 +5,9 @@ import { redirect } from "next/navigation";
 export default async function ConsentPage({
 	searchParams,
 }: {
-	searchParams: { authorization_id?: string };
+	searchParams: Promise<{ authorization_id?: string }>;
 }) {
-	const authorizationId = searchParams.authorization_id;
+	const { authorization_id: authorizationId } = await searchParams;
 	if (!authorizationId) {
 		return <div>Error: Missing authorization_id</div>;
 	}
