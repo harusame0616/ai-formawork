@@ -36,7 +36,7 @@ async function verifyToken(
 			email: user.email,
 			userId: user.userId,
 		},
-		scopes: ["read:customers"],
+		scopes: [],
 		token: bearerToken,
 	};
 }

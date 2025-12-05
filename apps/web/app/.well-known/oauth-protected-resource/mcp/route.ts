@@ -16,7 +16,7 @@ export function GET() {
 			// biome-ignore lint/complexity/useLiteralKeys: ts(4111)
 			process.env["NEXT_PUBLIC_APP_URL"] ||
 			"https://formawork-ai-web-git-mcp-harusame-dev-team.vercel.app",
-		scopes_supported: ["read:customers"],
+		scopes_supported: [],
 	});
 }
 
