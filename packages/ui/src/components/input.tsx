@@ -38,9 +38,9 @@ const PasswordInput = forwardRef<
 	}
 
 	return (
-		<div className="relative w-fit">
+		<div className={cn("relative w-full", className)}>
 			<input
-				className={cn(INPUT_BASE_CLASSES, "pr-10", className)}
+				className={cn(INPUT_BASE_CLASSES, "pr-10")}
 				ref={ref}
 				type={showPassword ? "text" : "password"}
 				{...props}

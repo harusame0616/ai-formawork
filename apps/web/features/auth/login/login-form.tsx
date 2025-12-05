@@ -11,39 +11,34 @@ import {
 	FormMessage,
 } from "@workspace/ui/components/form";
 import { Input } from "@workspace/ui/components/input";
-import { Loader2 } from "lucide-react";
-import { useTransition } from "react";
 import { useForm } from "react-hook-form";
-import { type LoginSchema, loginSchema } from "@/features/auth/schema";
+import { LoadingIcon } from "@/components/loading-icon";
+import { type LoginParams, loginSchema } from "@/features/auth/login/schema";
 import { useIsHydrated } from "@/libs/use-is-hydrated";
+import { defaultPassword, defaultUserName } from "./default-user";
 import { loginAction } from "./login-action";
 
 export function LoginForm() {
-	const [isPending, startTransition] = useTransition();
 	const { isHydrated } = useIsHydrated();
 
-	const form = useForm<LoginSchema>({
+	const form = useForm<LoginParams>({
 		defaultValues: {
 			// デモ用に環境変数で初期値を設定できるようにする
-			// biome-ignore lint/complexity/useLiteralKeys: ts(4111)
-			password: process.env["NEXT_PUBLIC_DEFAULT_PASSWORD"] || "",
-			// biome-ignore lint/complexity/useLiteralKeys: ts(4111)
-			username: process.env["NEXT_PUBLIC_DEFAULT_USERNAME"] || "",
+			password: defaultPassword,
+			username: defaultUserName,
 		},
 		resolver: valibotResolver(loginSchema),
 	});
 
-	function onSubmit(values: LoginSchema) {
+	async function onSubmit(values: LoginParams) {
 		form.clearErrors("root");
-		startTransition(async () => {
-			const result = await loginAction(values);
-			if (!result.success) {
-				form.setError("root", {
-					message: result.error,
-				});
-			}
-			// 成功時はredirect()によって自動的にリダイレクトされる
-		});
+		const result = await loginAction(values);
+		if (!result.success) {
+			form.setError("root", {
+				message: result.error,
+			});
+		}
+		// 成功時はredirect()によって自動的にリダイレクトされる
 	}
 
 	return (
@@ -92,13 +87,13 @@ export function LoginForm() {
 				)}
 				<Button
 					className="w-full"
-					disabled={isPending || !isHydrated}
+					disabled={form.formState.isSubmitting || !isHydrated}
 					type="submit"
 				>
-					{isPending ? (
+					{form.formState.isSubmitting ? (
 						<>
-							<Loader2 className="mr-2 size-4 animate-spin" />
-							ログイン中...
+							ログイン中
+							<LoadingIcon />
 						</>
 					) : (
 						"ログイン"

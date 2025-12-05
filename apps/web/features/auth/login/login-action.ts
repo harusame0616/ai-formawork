@@ -2,7 +2,7 @@
 
 import { RedirectType, redirect } from "next/navigation";
 import { login } from "@/features/auth/login/login";
-import { loginSchema } from "@/features/auth/schema";
+import { loginSchema } from "@/features/auth/login/schema";
 import { createServerAction } from "@/libs/create-server-action";
 
 export const loginAction = createServerAction(login, {

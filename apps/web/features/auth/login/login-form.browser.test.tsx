@@ -95,7 +95,7 @@ test("送信中はボタンが無効化され、ローディング表示にな�
 	const button = page.getByRole("button", { name: /ログイン中/ });
 
 	await expect.element(button).toBeDisabled();
-	await expect.element(page.getByText("ログイン中...")).toBeInTheDocument();
+	await expect.element(page.getByText("ログイン中")).toBeInTheDocument();
 });
 
 test("認証エラー時にエラーメッセージが表示される", async ({

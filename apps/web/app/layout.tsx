@@ -3,7 +3,10 @@ import "@workspace/ui/globals.css";
 
 export const metadata: Metadata = {
 	description: "AI とともに仕事を形作る社内システムプラットフォーム",
-	title: "FORMAWORK.AI",
+	title: {
+		default: "FORMAWORK.ai",
+		template: "%s - FORMAWORK.ai",
+	},
 };
 
 export default function RootLayout({
