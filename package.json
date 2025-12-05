@@ -1,7 +1,7 @@
 {
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
-		"cspell": "^9.2.2",
+		"cspell": "catalog:",
 		"knip": "catalog:"
 	},
 	"packageManager": "pnpm@10.12.4",

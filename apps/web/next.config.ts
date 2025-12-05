@@ -22,6 +22,7 @@ const nextConfig: NextConfig = {
 			},
 		],
 	},
+	serverExternalPackages: ["pino"],
 	typedRoutes: true,
 };
 
