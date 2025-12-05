@@ -21,7 +21,7 @@ export function LogoutButton() {
 			onClick={handleOnClick}
 			variant="ghost"
 		>
-			{isPending && <LoadingIcon />}
+			{isPending && <LoadingIcon className="mr-2" />}
 			ログアウト
 		</Button>
 	);
