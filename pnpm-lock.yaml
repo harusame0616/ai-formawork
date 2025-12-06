@@ -124,8 +124,8 @@ catalogs:
       specifier: 19.2.1
       version: 19.2.1
     react-hook-form:
-      specifier: 7.66.0
-      version: 7.66.0
+      specifier: 7.68.0
+      version: 7.68.0
     supabase:
       specifier: 2.54.11
       version: 2.54.11
@@ -148,8 +148,8 @@ catalogs:
       specifier: 13.0.0
       version: 13.0.0
     valibot:
-      specifier: 1.1.0
-      version: 1.1.0
+      specifier: 1.2.0
+      version: 1.2.0
     vaul:
       specifier: 1.1.2
       version: 1.1.2
@@ -181,7 +181,7 @@ importers:
         version: 0.1.3
       '@hookform/resolvers':
         specifier: 'catalog:'
-        version: 5.2.2(react-hook-form@7.66.0(react@19.2.1))
+        version: 5.2.2(react-hook-form@7.68.0(react@19.2.1))
       '@repo/logger':
         specifier: 'workspace:'
         version: link:../../packages/logger
@@ -211,13 +211,13 @@ importers:
         version: 19.2.1(react@19.2.1)
       react-hook-form:
         specifier: 'catalog:'
-        version: 7.66.0(react@19.2.1)
+        version: 7.68.0(react@19.2.1)
       uuid:
         specifier: 'catalog:'
         version: 13.0.0
       valibot:
         specifier: 'catalog:'
-        version: 1.1.0(typescript@5.9.3)
+        version: 1.2.0(typescript@5.9.3)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -278,7 +278,7 @@ importers:
         version: 3.4.5
       valibot:
         specifier: 'catalog:'
-        version: 1.1.0(typescript@5.9.3)
+        version: 1.2.0(typescript@5.9.3)
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -306,7 +306,7 @@ importers:
         version: 9.7.0
       valibot:
         specifier: 'catalog:'
-        version: 1.1.0(typescript@5.9.3)
+        version: 1.2.0(typescript@5.9.3)
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -334,7 +334,7 @@ importers:
         version: 2.54.11
       valibot:
         specifier: 'catalog:'
-        version: 1.1.0(typescript@5.9.3)
+        version: 1.2.0(typescript@5.9.3)
     devDependencies:
       '@workspace/tsconfig':
         specifier: 'workspace:'
@@ -406,7 +406,7 @@ importers:
         version: 19.2.1(react@19.2.1)
       react-hook-form:
         specifier: 'catalog:'
-        version: 7.66.0(react@19.2.1)
+        version: 7.68.0(react@19.2.1)
       tailwind-merge:
         specifier: 'catalog:'
         version: 3.3.1
@@ -3501,8 +3501,8 @@ packages:
     peerDependencies:
       react: ^19.2.1
 
-  react-hook-form@7.66.0:
-    resolution: {integrity: sha512-xXBqsWGKrY46ZqaHDo+ZUYiMUgi8suYu5kdrS20EG8KiL7VRQitEbNjm+UcrDYrNi1YLyfpmAeGjCZYXLT9YBw==}
+  react-hook-form@7.68.0:
+    resolution: {integrity: sha512-oNN3fjrZ/Xo40SWlHf1yCjlMK417JxoSJVUXQjGdvdRCU07NTFei1i1f8ApUAts+IVh14e4EdakeLEA+BEAs/Q==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18 || ^19
@@ -3934,8 +3934,8 @@ packages:
   v8-compile-cache-lib@3.0.1:
     resolution: {integrity: sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==}
 
-  valibot@1.1.0:
-    resolution: {integrity: sha512-Nk8lX30Qhu+9txPYTwM0cFlWLdPFsFr6LblzqIySfbZph9+BFsAHsNvHOymEviUepeIW6KFHzpX8TKhbptBXXw==}
+  valibot@1.2.0:
+    resolution: {integrity: sha512-mm1rxUsmOxzrwnX5arGS+U4T25RdvpPjPN4yR0u9pUBov9+zGVtO84tif1eY4r6zWxVxu3KzIyknJy3rxfRZZg==}
     peerDependencies:
       typescript: '>=5'
     peerDependenciesMeta:
@@ -4687,10 +4687,10 @@ snapshots:
 
   '@harusame0616/result@0.1.3': {}
 
-  '@hookform/resolvers@5.2.2(react-hook-form@7.66.0(react@19.2.1))':
+  '@hookform/resolvers@5.2.2(react-hook-form@7.68.0(react@19.2.1))':
     dependencies:
       '@standard-schema/utils': 0.3.0
-      react-hook-form: 7.66.0(react@19.2.1)
+      react-hook-form: 7.68.0(react@19.2.1)
 
   '@img/colour@1.0.0':
     optional: true
@@ -7006,7 +7006,7 @@ snapshots:
       react: 19.2.1
       scheduler: 0.27.0
 
-  react-hook-form@7.66.0(react@19.2.1):
+  react-hook-form@7.68.0(react@19.2.1):
     dependencies:
       react: 19.2.1
 
@@ -7428,7 +7428,7 @@ snapshots:
 
   v8-compile-cache-lib@3.0.1: {}
 
-  valibot@1.1.0(typescript@5.9.3):
+  valibot@1.2.0(typescript@5.9.3):
     optionalDependencies:
       typescript: 5.9.3
 
