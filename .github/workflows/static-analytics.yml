@@ -18,13 +18,13 @@ jobs:
 
     steps:
       - name: コードをチェックアウト
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: pnpm をインストール
         uses: pnpm/action-setup@v4
 
       - name: Node.js をセットアップ
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version-file: ".node-version"
           cache: "pnpm"

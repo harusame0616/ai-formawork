@@ -32,13 +32,13 @@ jobs:
 
     steps:
       - name: リポジトリのチェックアウト
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: pnpm のセットアップ
         uses: pnpm/action-setup@v4
 
       - name: Node.js のセットアップ
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version-file: .node-version
           cache: pnpm
@@ -67,7 +67,7 @@ jobs:
 
       - name: テストレポートのアップロード
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: playwright-report-${{ matrix.browser }}
           path: apps/web/playwright-report/
@@ -75,7 +75,7 @@ jobs:
 
       - name: テスト結果アップロード
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: playwright-screenshots-${{ matrix.browser }}
           path: apps/web/test-results/
