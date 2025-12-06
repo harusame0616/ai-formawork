@@ -27,13 +27,13 @@ jobs:
 
     steps:
       - name: リポジトリのチェックアウト
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: pnpm のセットアップ
         uses: pnpm/action-setup@v4
 
       - name: Node.js のセットアップ
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version-file: .node-version
           cache: pnpm
@@ -56,7 +56,7 @@ jobs:
 
       - name: テスト結果のアップロード
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: vitest-results
           path: "**/__screenshots__/**"
