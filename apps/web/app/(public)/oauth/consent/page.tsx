@@ -50,54 +50,39 @@ async function ConsentContent({
 		);
 	}
 
-	async function approveAction() {
-		"use server";
-		const supabase = await createClient();
-		const { data, error } = await supabase.auth.oauth.approveAuthorization(
-			authorizationId!,
-		);
-
-		if (error) {
-			console.error("OAuth approve error (server action):", {
-				authorizationId,
-				error: {
-					code: error.code,
-					message: error.message,
-					status: error.status,
-				},
-			});
-			throw new Error(error.message);
-		}
-
-		console.log("OAuth approve success:", data);
-		redirect(data.redirect_url);
-	}
-
-	async function denyAction() {
-		"use server";
-		const supabase = await createClient();
-		const { data, error } = await supabase.auth.oauth.denyAuthorization(
-			authorizationId!,
-		);
-
-		if (error) {
-			console.error("OAuth deny error (server action):", error);
-			throw new Error(error.message);
-		}
-
-		redirect(data.redirect_url);
-	}
+	// Try approving directly to test
+	const approveResult =
+		await supabase.auth.oauth.approveAuthorization(authorizationId);
+	console.log("OAuth direct approve test:", {
+		data: approveResult.data,
+		error: approveResult.error
+			? {
+					code: approveResult.error.code,
+					message: approveResult.error.message,
+					status: approveResult.error.status,
+				}
+			: null,
+	});
 
 	return (
 		<div>
 			<h1>Authorize {JSON.stringify(authDetails.user)}</h1>
 			<p>This application wants to access your account.</p>
 			<div>{authDetails.scope}</div>
-			<form>
-				<button formAction={approveAction} type="submit">
+			<div>
+				<strong>Direct approve test result:</strong>
+				<pre>
+					{approveResult.error
+						? `Error: ${approveResult.error.message}`
+						: `Success: ${approveResult.data?.redirect_url}`}
+				</pre>
+			</div>
+			<form action="/api/oauth/decision" method="POST">
+				<input name="authorization_id" type="hidden" value={authorizationId} />
+				<button name="decision" type="submit" value="approve">
 					Approve
 				</button>
-				<button formAction={denyAction} type="submit">
+				<button name="decision" type="submit" value="deny">
 					Deny
 				</button>
 			</form>
