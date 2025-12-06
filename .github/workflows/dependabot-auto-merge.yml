@@ -17,8 +17,10 @@ jobs:
     name: Dependabot PR の自動マージ
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    # Dependabot の PR のみ対象
-    if: github.actor == 'dependabot[bot]'
+    # Dependabot の PR のみ対象（二重チェックでセキュリティ強化）
+    if: >-
+      github.actor == 'dependabot[bot]' &&
+      github.event.pull_request.user.login == 'dependabot[bot]'
 
     steps:
       - name: Dependabot メタデータ取得
@@ -29,9 +31,13 @@ jobs:
 
       - name: 更新情報をログ出力
         run: |
+          echo "::group::Dependabot 更新情報"
           echo "パッケージエコシステム: ${{ steps.metadata.outputs.package-ecosystem }}"
-          echo "更新タイプ: ${{ steps.metadata.outputs.update-type }}"
           echo "依存関係名: ${{ steps.metadata.outputs.dependency-names }}"
+          echo "更新タイプ: ${{ steps.metadata.outputs.update-type }}"
+          echo "旧バージョン: ${{ steps.metadata.outputs.previous-version }}"
+          echo "新バージョン: ${{ steps.metadata.outputs.new-version }}"
+          echo "::endgroup::"
 
       - name: 自動マージ有効化
         run: gh pr merge --auto --squash "$PR_URL"

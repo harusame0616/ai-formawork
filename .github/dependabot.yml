@@ -20,6 +20,7 @@ updates:
           - "*"
 
   # npm パッケージの更新（pnpm catalog mode 対応）
+  # グループ化されていないパッケージは個別PRとして作成される
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
@@ -92,7 +93,3 @@ updates:
         patterns:
           - "pino"
           - "pino-pretty"
-      utils:
-        patterns:
-          - "uuid"
-          - "@harusame0616/*"
